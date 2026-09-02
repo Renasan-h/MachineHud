@@ -1,0 +1,14 @@
+{
+  "itemGroup.machinehud": "machineHud Tab",
+  "block.machinehud.example_block": "Utility",
+  "item.machinehud.example_item": "analyze item",
+
+  "machinehud.configuration.title": "Machine HUD Configs",
+  "machinehud.configuration.section.machinehud.common.toml": "Machine HUD Configs",
+  "machinehud.configuration.section.machinehud.common.toml.title": "Machine HUD Configs",
+  "machinehud.configuration.items": "Item List",
+  "machinehud.configuration.logDirtBlock": "Log Dirt Block",
+  "machinehud.configuration.magicNumberIntroduction": "Magic Number Text",
+  "machinehud.configuration.magicNumber": "Magic Number",
+  "item.machinehud.machine_hud_goggles": "Machine HUD Goggles"
+}

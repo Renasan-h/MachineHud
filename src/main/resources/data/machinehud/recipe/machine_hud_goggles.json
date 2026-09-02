@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BGB",
+    "EPE",
+    "LCL"
+  ],
+  "key": {
+    "B": {
+      "item": "create:brass_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "C": {
+      "item": "create:goggles"
+    }
+  },
+  "result": {
+    "id": "machinehud:machine_hud_goggles",
+    "count": 1
+  }
+}

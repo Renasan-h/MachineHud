@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "machinehud:item/machine_hud_goggles"
+  }
+}
