@@ -1,25 +1,44 @@
+## 概要
+create modのエンジニアのゴーグルだけでは情報が足りない！そんな人のためのMOD
+内容は、MachineHudというアイテムを追加しただけになります。
 
-Installation information
-=======
+## インストール
+- modsフォルダーにダウンロードしたmodファイルを入れてください。
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## 使い方
+- create modに存在するエンジニアのゴーグルを使用したレシピから作成
+<img width="346" height="160" alt="image" src="https://github.com/user-attachments/assets/829be22e-0276-47cc-b3f8-188d14e99f29" />
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+- 初期のキーバインドはEndキーになっています。押すことでHUDの表示/非表示を切り替えられます。
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+<img width="848" height="462" alt="image" src="https://github.com/user-attachments/assets/8481c7b2-b94f-45ba-8ae0-462ca4af3bd9" />
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+画面の情報は左上に固定されます。
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+<img width="463" height="460" alt="image" src="https://github.com/user-attachments/assets/2be5ed6a-2c28-424d-869b-09d758905983" />
+
+表示したい項目はmod - MachineHud選択時の設定ボタンから変更できます。
+
+## 表示項目について
+- Speed
+  - 機械の回転力（RPM）
+- Stress Impact
+  - 回転力（RPM）ごとにかかる応力（SU/RPM）
+- Stress
+  - 機械の応力
+- Status
+  - 機械の動作状態
+- Theoritical
+  - 理論上の回転力
+- Position
+  - 機械の配置座標
+- Network Stress
+  - ネットワーク全体の応力
+- Network Capacity
+  - ネットワーク全体の許容応力
+- Network Usage
+  - ネットワーク全体の応力使用量
+- Network Size
+  - ネットワーク全体のサイズ
+- Network Status
+  - ネットワーク全体の動作状態
