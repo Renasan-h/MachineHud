@@ -1,6 +1,6 @@
 package com.rsdvlp.machinehud.config;
 
-import com.rsdvlp.machinehud.hud.HudElement;
+import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.Arrays;
@@ -11,26 +11,6 @@ public class ClientConfig {
     // Config全体を組み立てるBuilder。
     private static final ModConfigSpec.Builder BUILDER =
             new ModConfigSpec.Builder();
-
-    /*
-     * 各HUD項目を表示するかどうか。
-     *
-     * true  = 表示する
-     * false = 表示しない
-     */
-    public static final ModConfigSpec.BooleanValue SHOW_HUD =
-            BUILDER
-                    .comment("Show Hud.")
-                    .define("showHud", true);
-    public static final ModConfigSpec.BooleanValue SHOW_BLOCK_NAME =
-            BUILDER
-                    .comment("Show target block name.")
-                    .define("showBlockName", true);
-
-    public static final ModConfigSpec.BooleanValue SHOW_MOD_NAME =
-            BUILDER
-                    .comment("Show target block mod name.")
-                    .define("showModName", true);
 
     public static final ModConfigSpec.BooleanValue SHOW_SPEED =
             BUILDER
@@ -112,14 +92,9 @@ public class ClientConfig {
                             "displayOrder",
 
                             // Configファイルが存在しない場合に使用する初期順序。
-                            Arrays.stream(HudElement.values())
-                                    .map(HudElement::getId)
+                            Arrays.stream(CreateHudElement.values())
+                                    .map(CreateHudElement::getId)
                                     .toList(),
-
-                            // Config画面などで新しい要素が追加される場合の初期値。
-                            // 今回は基本的に追加させないので、
-                            // POSITIONのIDを既定値として指定している。
-                            HudElement.POSITION::getId,
 
                             // Configに書かれた値が有効なHUD IDか確認する。
                             // 不正な文字列が入っていた場合に、
@@ -129,7 +104,7 @@ public class ClientConfig {
                                     return false;
                                 }
 
-                                return Arrays.stream(HudElement.values())
+                                return Arrays.stream(CreateHudElement.values())
                                         .anyMatch(element ->
                                                 element.getId().equals(id)
                                         );

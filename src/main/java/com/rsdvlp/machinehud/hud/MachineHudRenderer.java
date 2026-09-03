@@ -1,11 +1,11 @@
 package com.rsdvlp.machinehud.hud;
 
-import com.rsdvlp.machinehud.config.ClientConfig;
-import com.rsdvlp.machinehud.hud.data.CreateHudData;
-import com.rsdvlp.machinehud.hud.data.KineticStatus;
-import com.rsdvlp.machinehud.hud.data.NetworkStatus;
+import com.rsdvlp.machinehud.hud.element.HudElement;
+import com.rsdvlp.machinehud.hud.element.HudElementConfig;
+import com.rsdvlp.machinehud.hud.element.HudElements;
+import com.rsdvlp.machinehud.hud.provider.HudProvider;
+import com.rsdvlp.machinehud.hud.provider.HudProviders;
 import com.rsdvlp.machinehud.item.ModItems;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -148,8 +149,7 @@ public final class MachineHudRenderer {
          */
         // MachineHUD独自のレイキャストを行い、
         // 最大距離内でプレイヤーが見ているブロックを取得する。
-        BlockHitResult target =
-                getTargetBlock(minecraft, MAX_DISTANCE);
+        BlockHitResult target = getTargetBlock(minecraft, MAX_DISTANCE);
 
         // 最大距離内に対象ブロックが存在しない場合は
         // HUDを表示する必要がないため終了する。
@@ -161,8 +161,7 @@ public final class MachineHudRenderer {
         BlockPos blockPos = target.getBlockPos();
 
         // 対象座標に存在するブロックの現在状態を取得する。
-        BlockState blockState =
-                minecraft.level.getBlockState(blockPos);
+        BlockState blockState = minecraft.level.getBlockState(blockPos);
 
         // 空気ブロックはMachineHUDの表示対象外にする。
         if (blockState.isAir()) {
@@ -192,26 +191,27 @@ public final class MachineHudRenderer {
          */
 
         // 対象座標にBlockEntityが存在する場合は取得する。
-        //
         // 石などの単純なブロックではnullになる。
         // Createの機械などではBlockEntityを取得できる。
         BlockEntity blockEntity =
                 minecraft.level.getBlockEntity(blockPos);
 
+        Level level = minecraft.level;
+
         // 対象がCreateの回転機構を持っている場合のみ、
         // Create専用HUDデータを作成する。
         // Create以外のブロックではnullになる。
-        CreateHudData createData = null;
+        List<HudProvider> providers =
+                HudProviders.create(
+                        level,
+                        blockPos,
+                        blockState,
+                        blockEntity
+                );
 
-        if (blockEntity instanceof KineticBlockEntity kinetic) {
-
-            createData =
-                    new CreateHudData(
-                            kinetic,
-                            blockState
-                    );
-        } else {
-            // KineticBlockEntity以外は表示しない
+        // MachineHUDが対応しているProviderが1つも存在しない場合は、
+        // ブロック名やMOD名を含めHUD全体を表示しない。
+        if (providers.isEmpty()) {
             return;
         }
 
@@ -233,20 +233,11 @@ public final class MachineHudRenderer {
         String modName =
                 blockId.getNamespace();
 
-
         /*
          * =========================
          * HUD表示
          * =========================
          */
-
-        // HUDの描画開始Y座標。
-        int y = HUD_Y;
-
-        // Configの表示順を基準にしつつ、
-        // 新しく追加されたHUD項目も含めた完全な一覧を取得する。
-        List<HudElement> displayOrder =
-                HudElement.getOrderedElements();
 
         // 現在描画しているグループを保持する。
         // 前のHUD項目とグループが変わったときだけ
@@ -259,7 +250,7 @@ public final class MachineHudRenderer {
 
         // Configで指定されている順番に
         // HUD項目を1つずつ処理する。
-        for (HudElement element : displayOrder) {
+        for (HudElement element : HudElements.getOrderedElements()) {
 
             // Configが手動編集されるなどして
             // 存在しないIDが入っていた場合は無視する。
@@ -269,40 +260,63 @@ public final class MachineHudRenderer {
 
             // ConfigでこのHUD項目がOFFになっている場合は
             // 描画せず次の項目へ進む。
-            if (!isEnabled(element)) {
+            if (!HudElementConfig.isEnabled(element)) {
                 continue;
             }
 
-            // HUD項目を実際に描画する。
-            //
-            // 描画できた場合はtrue、
-            // 対象ブロックでは表示できない場合はfalseが返される。
-            HudLine line =
-                    createHudLine(
-                            element,
-                            blockPos,
-                            createData
-                    );
+            for (HudProvider provider : providers) {
 
-            // 現在のブロックでは表示できない項目の場合、
-            // nullが返るため一覧へ追加しない。
-            if (line == null) {
-                continue;
-            }
+                if (!provider.supports(element)) {
+                    continue;
+                }
 
-            // 前回表示した項目とは異なるグループになった場合、
-            // 値を追加する前にグループヘッダーを追加する。
-            if (element.getHudGroup() != currentGroup) {
+                HudLine line = provider.createLine(element);
 
-                currentGroup =
+                if (line == null) {
+                    lines.add(line);
+                }
+
+                /*
+                 * =========================
+                 * グループヘッダー
+                 * =========================
+                 */
+
+                HudGroup elementGroup =
                         element.getHudGroup();
 
-                lines.add(
-                        createGroupHeader(currentGroup)
-                );
-            }
+                // 前に表示した項目とは異なるグループになった場合だけ、
+                // 値を追加する前にグループヘッダーを追加する。
+                if (elementGroup != currentGroup) {
 
-            lines.add(line);
+                    currentGroup = elementGroup;
+
+                    lines.add(
+                            createGroupHeader(currentGroup)
+                    );
+                }
+
+                // 前回表示した項目とは異なるグループになった場合、
+                // 値を追加する前にグループヘッダーを追加する。
+                if (element.getHudGroup() != currentGroup) {
+
+                    currentGroup = element.getHudGroup();
+
+                    lines.add(createGroupHeader(currentGroup));
+                }
+
+                /*
+                 * =========================
+                 * HUD項目
+                 * =========================
+                 */
+
+                lines.add(line);
+
+                // 1つのHudElementは1つのProviderだけが担当するため、
+                // 処理できた時点でProvider検索を終了する。
+                break;
+            }
         }
 
         /* Body部の作成 */
@@ -311,21 +325,13 @@ public final class MachineHudRenderer {
 
         for (HudLine line : lines) {
 
-            if (line.type() != HudLineType.VALUE
-                    || line.value() == null) {
+            if (line.type() != HudLineType.VALUE || line.value() == null) {
                 continue;
             }
 
-            int valueWidth =
-                    minecraft.font.width(
-                            line.value()
-                    );
+            int valueWidth = minecraft.font.width(line.value());
 
-            maxValueWidth =
-                    Math.max(
-                            maxValueWidth,
-                            valueWidth
-                    );
+            maxValueWidth = Math.max(maxValueWidth, valueWidth);
         }
         // VALUE行の項目名の中で最も横幅の大きいものを調べる。
         int maxLabelWidth = 0;
@@ -338,16 +344,9 @@ public final class MachineHudRenderer {
                 continue;
             }
 
-            int labelWidth =
-                    minecraft.font.width(
-                            line.label()
-                    );
+            int labelWidth = minecraft.font.width(line.label());
 
-            maxLabelWidth =
-                    Math.max(
-                            maxLabelWidth,
-                            labelWidth
-                    );
+            maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
         }
 
         // VALUE行全体で必要になる横幅。
@@ -371,16 +370,11 @@ public final class MachineHudRenderer {
                             + GROUP_ICON_GAP
                             + minecraft.font.width(line.label());
 
-            groupHeaderWidth =
-                    Math.max(
-                            groupHeaderWidth,
-                            width
-                    );
+            groupHeaderWidth = Math.max(groupHeaderWidth, width);
         }
 
         // 本文側で必要になる最大横幅。
-        int bodyWidth =
-                Math.max(valueRowWidth, groupHeaderWidth);
+        int bodyWidth = Math.max(valueRowWidth, groupHeaderWidth);
 
         /* Header部の作成 */
         // Headerのタイトル部分の横幅を計算する。
@@ -397,12 +391,10 @@ public final class MachineHudRenderer {
                         + minecraft.font.width(modName);
 
         // Headerで必要になる最大横幅。
-        int headerWidth =
-                Math.max(headerTitleWidth, headerModWidth);
+        int headerWidth = Math.max(headerTitleWidth, headerModWidth);
 
         // HeaderとBodyのうち、横幅が大きい方をパネルのコンテンツ幅として採用する。
-        int contentWidth =
-                Math.max(headerWidth, bodyWidth);
+        int contentWidth = Math.max(headerWidth, bodyWidth);
 
         // 左右のPaddingを追加して実際のパネル横幅を決定する。
         int panelWidth =
@@ -568,51 +560,51 @@ public final class MachineHudRenderer {
                             + line.indent() * INDENT_WIDTH;
 
             // グループヘッダーの場合は、文字の左側へ専用アイコンを描画する。
-            if (line.type() == HudLineType.GROUP_HEADER
-                    && line.group() != null) {
+            if (line.type() == HudLineType.GROUP_HEADER) {
 
-                HudGroup group =
-                        line.group();
+                HudGroup group = line.group();
+                if (group != null) {
+                    ResourceLocation icon = group.getIcon();
 
-                int headerIconX = textX;
+                    int headerIconX = textX;
 
-                // Minecraftの文字は約9px程度の高さなので、10pxアイコンと中央が合うように調整する。
-                int headerIconY =
-                        textY - 1;
+                    // Minecraftの文字は約9px程度の高さなので、10pxアイコンと中央が合うように調整する。
+                    int headerIconY = textY - 1;
 
-                // MachineHUDのassetsからグループ専用アイコンを描画する。
-                guiGraphics.blit(
-                        group.getIcon(),
-                        headerIconX,
-                        headerIconY,
-                        0,
-                        0,
-                        GROUP_ICON_SIZE,
-                        GROUP_ICON_SIZE,
-                        GROUP_ICON_SIZE,
-                        GROUP_ICON_SIZE
-                );
+                    // MachineHUDのassetsからグループ専用アイコンを描画する。
+                    guiGraphics.blit(
+                            icon,
+                            headerIconX,
+                            headerIconY,
+                            0,
+                            0,
+                            GROUP_ICON_SIZE,
+                            GROUP_ICON_SIZE,
+                            GROUP_ICON_SIZE,
+                            GROUP_ICON_SIZE
+                    );
 
-                // アイコンの右側へグループ名を表示する。
-                int headerGroupTextX =
-                        headerIconX
-                                + GROUP_ICON_SIZE
-                                + GROUP_ICON_GAP;
+                    // アイコンの右側へグループ名を表示する。
+                    int headerGroupTextX =
+                            headerIconX
+                                    + GROUP_ICON_SIZE
+                                    + GROUP_ICON_GAP;
 
-                guiGraphics.drawString(
-                        minecraft.font,
-                        line.label(),
-                        headerGroupTextX,
-                        textY,
-                        line.color()
-                );
+                    guiGraphics.drawString(
+                            minecraft.font,
+                            line.label(),
+                            headerGroupTextX,
+                            textY,
+                            line.color()
+                    );
 
-                // グループヘッダー1行分だけ下へ進める。
-                textY += LINE_HEIGHT;
+                    // グループヘッダー1行分だけ下へ進める。
+                    textY += LINE_HEIGHT;
 
-                // この行はグループヘッダーとして描画済みなので、
-                // VALUE用の処理には進まない。
-                continue;
+                    // この行はグループヘッダーとして描画済みなので、
+                    // VALUE用の処理には進まない。
+                    continue;
+                }
             }
 
             if (line.type() == HudLineType.VALUE) {
@@ -663,267 +655,6 @@ public final class MachineHudRenderer {
         }
     }
 
-
-    /**
-     * 指定されたHUD項目がConfigで有効になっているか確認する。
-     * <p>
-     * 表示設定の判定をrenderElement()に散らさず、
-     * このメソッドへまとめて管理する。
-     */
-    private static boolean isEnabled(HudElement element) {
-
-        return switch (element) {
-
-            // Createの現在回転速度を表示するか確認する。
-            case SPEED -> ClientConfig.SHOW_SPEED.get();
-
-            // CreateのStress Impact係数を表示するか確認する。
-            case IMPACT -> ClientConfig.SHOW_IMPACT.get();
-
-            // Createの現在Stress消費量を表示するか確認する。
-            case STRESS -> ClientConfig.SHOW_STRESS.get();
-
-            // Createの回転状態を表示するか確認する。
-            case STATUS -> ClientConfig.SHOW_STATUS.get();
-
-            // Createの理論回転速度を表示するか確認する。
-            case THEORETICAL_SPEED -> ClientConfig.SHOW_THEORETICAL_SPEED.get();
-
-            // 対象ブロックの座標を表示するか確認する。
-            case POSITION -> ClientConfig.SHOW_POSITION.get();
-
-            case NETWORK_STRESS -> ClientConfig.SHOW_NETWORK_STRESS.get();
-
-            case NETWORK_CAPACITY -> ClientConfig.SHOW_NETWORK_CAPACITY.get();
-
-            case NETWORK_USAGE -> ClientConfig.SHOW_NETWORK_USAGE.get();
-
-            case NETWORK_SIZE -> ClientConfig.SHOW_NETWORK_SIZE.get();
-
-            case NETWORK_STATUS -> ClientConfig.SHOW_NETWORK_STATUS.get();
-        };
-    }
-
-
-    /**
-     * HudElementに対応する情報を1行描画する。
-     *
-     * @return 実際に描画した場合true
-     */
-    private static HudLine createHudLine(
-            HudElement element,
-            BlockPos blockPos,
-            CreateHudData createHudData
-    ) {
-
-        return switch (element) {
-
-            case POSITION ->
-
-                // 対象ブロックのワールド座標をHUDへ描画する。
-                    new HudLine(
-                            "pos",
-                            blockPos.getX() + ", "
-                                    + blockPos.getY() + ", "
-                                    + blockPos.getZ(),
-                            0,
-                            0xAAAAAA,
-                            HudLineType.VALUE,
-                            null
-                    );
-
-            case SPEED -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                float speed = createHudData.getSpeed();
-
-                yield new HudLine(
-                        "Speed",
-                        String.format("%.1f RPM", speed),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case THEORETICAL_SPEED -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                float theoreticalSpeed = createHudData.getTheoreticalSpeed();
-
-                yield new HudLine(
-                        "Theoretical",
-                        String.format("%.1f RPM", theoreticalSpeed),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case IMPACT -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                double impact = createHudData.getImpact();
-
-                yield new HudLine(
-                        "Stress Impact",
-                        String.format("%.2f SU/RPM", impact),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case STRESS -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                double stress = createHudData.getStress();
-
-                yield new HudLine(
-                        "Stress",
-                        String.format("%.1f SU", stress),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case STATUS -> {
-
-                // Createの回転情報を持たないブロックでは
-                // Statusを表示しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-
-                // CreateHudDataから現在の回転状態を取得する。
-                KineticStatus status =
-                        createHudData.getKineticStatus();
-
-                yield new HudLine(
-                        "Status",
-                        status.getStatus(),
-                        1,
-                        status.getColor(),
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case NETWORK_STRESS -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-
-                boolean hasNetwork = createHudData.hasNetwork();
-                float networkStress = createHudData.getNetworkStress();
-
-                yield new HudLine(
-                        "Stress",
-                        String.format(
-                                "%.1f SU",
-                                networkStress
-                        ),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case NETWORK_CAPACITY -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                float networkCapacity = createHudData.getNetworkCapacity();
-
-                yield new HudLine(
-                        "Capacity",
-                        String.format("%.1f SU", networkCapacity),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case NETWORK_USAGE -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                double usage = createHudData.getNetworkUsage();
-
-                yield new HudLine(
-                        "Usage",
-                        String.format("%.1f%%", usage),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case NETWORK_SIZE -> {
-
-                // Createの回転情報を持たないブロックでは、
-                // Speedを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-                int networkSize = createHudData.getNetworkSize();
-
-                yield new HudLine(
-                        "Network Size",
-                        Integer.toString(networkSize),
-                        1,
-                        0xFFFFFF,
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-            case NETWORK_STATUS -> {
-                // Createの回転情報を持たないブロックでは、
-                // Network Statusを表示できないため描画しない。
-                if (createHudData == null) {
-                    yield null;
-                }
-
-                // CreateHudDataからネットワーク状態を取得する。
-                NetworkStatus status =
-                        createHudData.getNetworkStatus();
-
-                yield new HudLine(
-                        "Network Status: ",
-                        status.getStatus(),
-                        1,
-                        status.getColor(),
-                        HudLineType.VALUE,
-                        null
-                );
-            }
-        };
-    }
 
     /**
      * プレイヤーが見ているブロックを取得する。
@@ -995,39 +726,14 @@ public final class MachineHudRenderer {
     private static HudLine createGroupHeader(
             HudGroup group
     ) {
-
-        return switch (group) {
-
-            // MOD共通情報のグループ。
-            case COMMON -> new HudLine(
-                    "Information",
-                    null,
-                    0,
-                    0xFFFFAA00,
-                    HudLineType.GROUP_HEADER,
-                    group
-            );
-
-            // Createの機械単体に関する情報。
-            case MACHINE -> new HudLine(
-                    "Kinetic Stats",
-                    null,
-                    0,
-                    0xFFFFAA00,
-                    HudLineType.GROUP_HEADER,
-                    group
-            );
-
-            // Createの回転ネットワーク全体に関する情報。
-            case NETWORK -> new HudLine(
-                    "Network",
-                    null,
-                    0,
-                    0xFFFFAA00,
-                    HudLineType.GROUP_HEADER,
-                    group
-            );
-        };
+        return new HudLine(
+                group.getDisplayName(),
+                "",
+                0,
+                0xFFFFFF,
+                HudLineType.GROUP_HEADER,
+                group
+        );
     }
 
     /**
