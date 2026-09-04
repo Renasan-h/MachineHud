@@ -1,16 +1,14 @@
 package com.rsdvlp.machinehud.screen;
 
-import com.rsdvlp.machinehud.config.ClientConfig;
-import com.rsdvlp.machinehud.hud.HudElement;
+import com.rsdvlp.machinehud.hud.element.HudElement;
+import com.rsdvlp.machinehud.hud.element.HudElementConfig;
+import com.rsdvlp.machinehud.hud.element.HudElements;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MachineHudConfigScreen extends Screen {
 
@@ -73,7 +71,7 @@ public class MachineHudConfigScreen extends Screen {
         // スクロール位置を反映した最初の行のY座標。
         int y = LIST_TOP - scrollOffset;
 
-        for (HudElement element : getElementsInDisplayOrder()) {
+        for (HudElement element : HudElements.getOrderedElements()) {
 
             int rowY = y;
 
@@ -90,7 +88,7 @@ public class MachineHudConfigScreen extends Screen {
             y += ROW_HEIGHT;
         }
         // 設定一覧全体の高さを計算する。
-        int contentHeight = getElementsInDisplayOrder().size() * ROW_HEIGHT;
+        int contentHeight = HudElements.getOrderedElements().size() * ROW_HEIGHT;
 
         // 画面上で設定一覧を表示できる高さ。
         int visibleHeight = getListBottom() - LIST_TOP;
@@ -134,60 +132,85 @@ public class MachineHudConfigScreen extends Screen {
         }
     }
 
-    // 現在のscrollOffsetを使って、
-    // 設定画面上のWidgetをすべて作り直す。
+    // 現在のscrollOffsetを使って、設定画面上のWidgetをすべて作り直す。
     @Override
     public void rebuildWidgets() {
-
-        // スクロール前に作成されていたWidgetをすべて削除する。
-        // 現在のスクロール位置を基準に作り直すため。
+        // スクロール前のWidgetを削除し、
+        // 現在のスクロール位置を基準に再構築する。
         clearWidgets();
 
-        // scrollOffset分だけ上方向へずらした位置から
-        // HUD設定項目の配置を開始する。
         int y = LIST_TOP - scrollOffset;
 
-        for (HudElement element : getElementsInDisplayOrder()) {
+        for (HudElement element : HudElements.getOrderedElements()) {
 
             int rowY = y;
 
-            // この行全体が表示領域内に収まっているか確認する。
-            //
-            // 上側または下側にはみ出している行は、
-            // ボタン自体を生成しない。
-            boolean visible = isRowVisible(rowY);
+            // 表示領域からはみ出している行は
+            // Widget自体を生成しない。
+            if (isRowVisible(rowY)) {
 
-            if (visible) {
+                // HudElementに対応するConfigを
+                // 共通のHudElementConfigから取得する。
+                ModConfigSpec.BooleanValue enabledConfig =
+                        HudElementConfig.getConfig(element);
 
-                ModConfigSpec.BooleanValue enabledConfig = getEnabledConfig(element);
+                /*
+                 * Configがまだ登録されていないHudElementの場合は、ボタンを生成しない。
+                 * 将来HudElementだけ追加して、Config登録を忘れた場合などでも
+                 * NullPointerExceptionを防げる。
+                 */
+                if (enabledConfig != null) {
 
-                // 表示領域内にある項目だけ
-                // ON/OFFボタンを生成する。
-                addRenderableWidget(Button.builder(getToggleText(enabledConfig), button -> {
-
-                    // 現在のON/OFF状態を反転する。
-                    enabledConfig.set(!enabledConfig.get());
-
-                    // ボタン上の表示も現在値へ更新する。
-                    button.setMessage(getToggleText(enabledConfig));
-                }).bounds(this.width / 2 + 40, rowY, 50, 20).build());
+                    addRenderableWidget(
+                            Button.builder(
+                                            getToggleText(enabledConfig),
+                                            button -> {
+                                                // 現在のON/OFF状態を反転する。
+                                                enabledConfig.set(
+                                                        !enabledConfig.get()
+                                                );
+                                                // ボタン上の表示も更新する。
+                                                button.setMessage(
+                                                        getToggleText(enabledConfig)
+                                                );
+                                            }
+                                    )
+                                    .bounds(
+                                            this.width / 2 + 40,
+                                            rowY,
+                                            50,
+                                            20
+                                    )
+                                    .build()
+                    );
+                }
             }
 
-            // 次の設定項目の位置へ進む。
             y += ROW_HEIGHT;
         }
 
-
         // Doneボタンはスクロール対象ではないため、
-        // 常に画面下部へ固定して表示する。
-        addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose()).bounds(this.width / 2 - 100, this.height - 30, 200, 20).build());
+        // 常に画面下へ固定する。
+        addRenderableWidget(
+                Button.builder(
+                                Component.literal("Done"),
+                                button -> onClose()
+                        )
+                        .bounds(
+                                this.width / 2 - 100,
+                                this.height - 30,
+                                200,
+                                20
+                        )
+                        .build()
+        );
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 
         // HUD項目数から、一覧全体の高さを計算する。
-        int contentHeight = getElementsInDisplayOrder().size() * ROW_HEIGHT;
+        int contentHeight = HudElements.getOrderedElements().size() * ROW_HEIGHT;
 
         // 実際に設定一覧を表示できる高さ。
         int visibleHeight = getListBottom() - LIST_TOP;
@@ -219,72 +242,12 @@ public class MachineHudConfigScreen extends Screen {
         return true;
     }
 
-    // HudElementに対応するBoolean Configを取得する。
-    // 設定画面側でSHOW_SPEEDやSHOW_IMPACTなどを
-    // 個別に意識しなくて済むよう、対応関係をここへ集約する。
-    private ModConfigSpec.BooleanValue getEnabledConfig(HudElement element) {
-
-        return switch (element) {
-            case SPEED -> ClientConfig.SHOW_SPEED;
-
-            case IMPACT -> ClientConfig.SHOW_IMPACT;
-
-            case STRESS -> ClientConfig.SHOW_STRESS;
-
-            case STATUS -> ClientConfig.SHOW_STATUS;
-
-            case THEORETICAL_SPEED -> ClientConfig.SHOW_THEORETICAL_SPEED;
-
-            case POSITION -> ClientConfig.SHOW_POSITION;
-
-            case NETWORK_STRESS -> ClientConfig.SHOW_NETWORK_STRESS;
-
-            case NETWORK_CAPACITY -> ClientConfig.SHOW_NETWORK_CAPACITY;
-
-            case NETWORK_USAGE -> ClientConfig.SHOW_NETWORK_USAGE;
-
-            case NETWORK_SIZE -> ClientConfig.SHOW_NETWORK_SIZE;
-
-            case NETWORK_STATUS -> ClientConfig.SHOW_NETWORK_STATUS;
-        };
-    }
-
     // Boolean Configの現在値から
     // ON/OFFボタンに表示するComponentを生成する。
     private Component getToggleText(ModConfigSpec.BooleanValue config) {
 
         // trueならON、falseならOFFと表示する。
         return Component.literal(config.get() ? "ON" : "OFF");
-    }
-
-    // Configに保存されている表示順を基準にしつつ、
-    // MOD更新などで新しく追加されたHudElementがConfigに存在しない場合は
-    // 自動的に末尾へ追加した一覧を生成する。
-    private List<HudElement> getElementsInDisplayOrder() {
-
-        List<HudElement> elements = new ArrayList<>();
-
-        // まずConfigに保存されている既存の順番を読み込む。
-        for (String id : ClientConfig.DISPLAY_ORDER.get()) {
-
-            HudElement element = HudElement.fromId(id);
-
-            // 有効なIDだけ追加する。
-            if (element != null) {
-                elements.add(element);
-            }
-        }
-
-        // HudElementに存在するがConfigにはまだ存在しない項目を探す。
-        // MOD更新でSTATUSなどを追加した場合に必要。
-        for (HudElement element : HudElement.values()) {
-
-            if (!elements.contains(element)) {
-                elements.add(element);
-            }
-        }
-
-        return elements;
     }
 
     private boolean isRowVisible(int rowY) {

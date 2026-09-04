@@ -10,13 +10,13 @@ import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,7 +32,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -58,15 +57,6 @@ public class MachineHUD {
     // Creates a new food item with the id "machinehud:example_id", nutrition 1 and saturation 2
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder()
             .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
-
-    // Creates a creative tab with the id "machinehud:example_tab" for the example item, that is placed after the combat tab
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.machinehud")) //The language key for the title of your CreativeModeTab
-            .withTabsBefore(CreativeModeTabs.COMBAT)
-            .icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
-            .displayItems((parameters, output) -> {
-                output.accept(EXAMPLE_ITEM.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
-            }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -178,11 +168,11 @@ public class MachineHUD {
                      * HumanoidModelを返す。
                      */
                     @Override
-                    public HumanoidModel<?> getHumanoidArmorModel(
-                            LivingEntity livingEntity,
-                            ItemStack itemStack,
-                            EquipmentSlot equipmentSlot,
-                            HumanoidModel<?> original
+                    public @NotNull HumanoidModel<?> getHumanoidArmorModel(
+                            @NotNull LivingEntity livingEntity,
+                            @NotNull ItemStack itemStack,
+                            @NotNull EquipmentSlot equipmentSlot,
+                            @NotNull HumanoidModel<?> original
                     ) {
 
                         // 頭装備以外として描画される場合は、
@@ -195,8 +185,8 @@ public class MachineHUD {
                         return MachineHudGogglesClient.getModel();
                     }
                 },
-
                 new Item[] {// このClient Extensionを適用するItem。
-                        ModItems.MACHINE_HUD_GOGGLES.get()});
+                        ModItems.MACHINE_HUD_GOGGLES.get()
+                });
     }
 }
