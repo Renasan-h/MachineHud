@@ -91,6 +91,7 @@ neoForge {
 
         // applies to all the run configs above
         configureEach {
+            jvmArguments.addAll('-Dfile.encoding=UTF-8', '-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8')
             // Recommended logging data for a userdev environment
             // The markers can be added/remove as needed separated by commas.
             // "SCAN": For mods scan.

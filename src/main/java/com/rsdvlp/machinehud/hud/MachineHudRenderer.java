@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -179,10 +180,7 @@ public final class MachineHudRenderer {
 
         // Minecraftが持っている翻訳済みブロック名を取得する。
         // 日本語環境なら日本語名になる。
-        String blockName =
-                blockState.getBlock()
-                        .getName()
-                        .getString();
+        Component blockName = blockState.getBlock().getName();
 
         /*
          * =========================
@@ -273,7 +271,7 @@ public final class MachineHudRenderer {
                 HudLine line = provider.createLine(element);
 
                 if (line == null) {
-                    lines.add(line);
+                    continue;
                 }
 
                 /*
@@ -286,17 +284,6 @@ public final class MachineHudRenderer {
                         element.getHudGroup();
 
                 // 前に表示した項目とは異なるグループになった場合だけ、
-                // 値を追加する前にグループヘッダーを追加する。
-                if (elementGroup != currentGroup) {
-
-                    currentGroup = elementGroup;
-
-                    lines.add(
-                            createGroupHeader(currentGroup)
-                    );
-                }
-
-                // 前回表示した項目とは異なるグループになった場合、
                 // 値を追加する前にグループヘッダーを追加する。
                 if (element.getHudGroup() != currentGroup) {
 
@@ -727,12 +714,13 @@ public final class MachineHudRenderer {
             HudGroup group
     ) {
         return new HudLine(
-                group.getDisplayName(),
-                "",
+                Component.literal(group.getDisplayName()),
+                null,
                 0,
                 0xFFFFFF,
                 HudLineType.GROUP_HEADER,
-                group
+                group,
+                null
         );
     }
 
@@ -750,7 +738,7 @@ public final class MachineHudRenderer {
     private static void drawScaledString(
             GuiGraphics guiGraphics,
             Minecraft minecraft,
-            String text,
+            Component text,
             int x,
             int y,
             int color,

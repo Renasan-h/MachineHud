@@ -1,8 +1,10 @@
 package com.rsdvlp.machinehud.hud.provider;
 
+import com.rsdvlp.machinehud.hud.data.CreateGoggleHudData;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,6 +20,7 @@ import java.util.List;
  * MOD固有BlockEntityを判定せず、このクラスへ任せる。
  */
 public final class HudProviders {
+    private static int putCnt = 0;
     private HudProviders() {
     }
 
@@ -37,6 +40,42 @@ public final class HudProviders {
          * Create
          * =========================
          */
+        CreateGoggleHudData goggleData =
+                CreateGoggleHudData.create(
+                        blockEntity,
+                        false
+                );
+
+        if (goggleData != null) {
+            if (putCnt < 2) {
+                for (Component component : goggleData.getTooltip()) {
+
+                    System.out.println("-----");
+
+                    System.out.println(
+                            "STRING   = "
+                                    + component.getString()
+                    );
+
+                    System.out.println(
+                            "CONTENTS = "
+                                    + component.getContents()
+                    );
+
+                    System.out.println(
+                            "SIBLINGS = "
+                                    + component.getSiblings()
+                    );
+
+                    System.out.println(
+                            "STYLE    = "
+                                    + component.getStyle()
+                    );
+                }
+                putCnt++;
+            }
+        }
+
         if (blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 
             CreateHudData createHudData = new CreateHudData(kineticBlockEntity, blockState);

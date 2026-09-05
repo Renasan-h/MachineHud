@@ -1,15 +1,22 @@
 package com.rsdvlp.machinehud.hud.provider;
 
+import com.rsdvlp.machinehud.hud.HudGroup;
+import com.rsdvlp.machinehud.hud.HudLevel;
 import com.rsdvlp.machinehud.hud.HudLine;
 import com.rsdvlp.machinehud.hud.HudLineType;
 import com.rsdvlp.machinehud.hud.element.CommonHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 
 /**
  * 特定MODに依存しない共通HUD情報を生成するProvider。
  */
 public final class CommonHudProvider implements HudProvider{
+
+    // 通常文字。
+    private static final int TEXT_PRIMARY = 0xAAAAAA;
+
     private final BlockPos blockPos;
 
     public CommonHudProvider(BlockPos blockPos){
@@ -32,15 +39,16 @@ public final class CommonHudProvider implements HudProvider{
 
             case POSITION ->
                     new HudLine(
-                            "Position",
-                            blockPos.getX()
+                            Component.literal("Position"),
+                            Component.literal(blockPos.getX()
                                     + ", "
                                     + blockPos.getY()
                                     + ", "
-                                    + blockPos.getZ(),
+                                    + blockPos.getZ()),
                             0,
-                            0xAAAAAA,
+                            TEXT_PRIMARY,
                             HudLineType.VALUE,
+                            HudGroup.INFORMATION,
                             null
                     );
         };

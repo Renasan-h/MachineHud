@@ -7,12 +7,17 @@ import com.rsdvlp.machinehud.hud.data.KineticStatus;
 import com.rsdvlp.machinehud.hud.data.NetworkStatus;
 import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
+import net.minecraft.network.chat.Component;
 
 /**
  * Create専用のHUD情報生成Provider。
  * Create固有のデータ取得・表示変換をRendererから分離する。
  */
 public final class CreateHudProvider implements HudProvider {
+
+    // 通常文字。
+    private static final int TEXT_PRIMARY = 0xFFFFFF;
+
     private final CreateHudData data;
 
     public CreateHudProvider(CreateHudData data) {
@@ -33,29 +38,32 @@ public final class CreateHudProvider implements HudProvider {
 
         return switch (createHudElement) {
             case SPEED -> new HudLine(
-                    "Speed",
-                    String.format("%.1f RPM", data.getSpeed()),
+                    Component.literal("Speed"),
+                    Component.literal(String.format("%.1f RPM", data.getSpeed())),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
             case IMPACT -> new HudLine(
-                    "Stress Impact",
-                    String.format("%.2f SU/RPM", data.getImpact()),
+                    Component.literal("Stress Impact"),
+                    Component.literal(String.format("%.2f SU/RPM", data.getImpact())),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
             case STRESS -> new HudLine(
-                    "Stress",
-                    String.format("%.1f SU", data.getStress()),
+                    Component.literal("Stress"),
+                    Component.literal(String.format("%.1f SU", data.getStress())),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
@@ -65,71 +73,77 @@ public final class CreateHudProvider implements HudProvider {
                         data.getKineticStatus();
 
                 yield new HudLine(
-                        "Status",
-                        status.getStatus(),
+                        Component.literal("Status"),
+                        Component.literal(status.getStatus()),
                         1,
                         status.getColor(),
                         HudLineType.VALUE,
+                        null,
                         null
                 );
             }
 
             case THEORETICAL_SPEED -> new HudLine(
-                    "Theoretical",
-                    String.format(
+                    Component.literal("Theoretical"),
+                    Component.literal(String.format(
                             "%.1f RPM",
-                            data.getTheoreticalSpeed()
+                            data.getTheoreticalSpeed())
                     ),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
             case NETWORK_STRESS -> new HudLine(
-                    "Stress",
-                    String.format(
+                    Component.literal("Stress"),
+                    Component.literal(String.format(
                             "%.1f SU",
-                            data.getNetworkStress()
+                            data.getNetworkStress())
                     ),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
             case NETWORK_CAPACITY -> new HudLine(
-                    "Capacity",
-                    String.format(
+                    Component.literal("Capacity"),
+                    Component.literal(String.format(
                             "%.1f SU",
                             data.getNetworkCapacity()
-                    ),
+                    )),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
             case NETWORK_USAGE -> new HudLine(
-                    "Usage",
-                    String.format(
+                    Component.literal("Usage"),
+                    Component.literal(String.format(
                             "%.1f%%",
                             data.getNetworkUsage()
-                    ),
+                    )),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
             case NETWORK_SIZE -> new HudLine(
-                    "Network Size",
-                    Integer.toString(
+                    Component.literal("Network Size"),
+                    Component.literal(Integer.toString(
                             data.getNetworkSize()
-                    ),
+                    )),
                     1,
-                    0xFFFFFF,
+                    TEXT_PRIMARY,
                     HudLineType.VALUE,
+                    null,
                     null
             );
 
@@ -139,11 +153,12 @@ public final class CreateHudProvider implements HudProvider {
                         data.getNetworkStatus();
 
                 yield new HudLine(
-                        "Network Status",
-                        status.getStatus(),
+                        Component.literal("Network Status"),
+                        Component.literal(status.getStatus()),
                         1,
                         status.getColor(),
                         HudLineType.VALUE,
+                        null,
                         null
                 );
             }
