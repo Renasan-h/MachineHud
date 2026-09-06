@@ -92,6 +92,10 @@ public final class MachineHudRenderer {
     // 項目名と値の間に最低限確保する横方向の余白。
     private static final int COLUMN_GAP = 16;
 
+    // LEVEL_BLOCKS / LEVEL_BARで、
+    // Visual表示と値の間に確保する余白。
+    private static final int VISUAL_VALUE_GAP = 8;
+
     // 項目名と値の文字サイズ倍率
     private static final float DRAW_VALUE_SCALE = 0.9F;
 
@@ -119,10 +123,7 @@ public final class MachineHudRenderer {
         }
 
         // プレイヤーの頭装備スロットにあるItemStackを取得する。
-        ItemStack headStack =
-                minecraft.player.getItemBySlot(
-                        EquipmentSlot.HEAD
-                );
+        ItemStack headStack = minecraft.player.getItemBySlot(EquipmentSlot.HEAD);
 
         // Machine HUD Gogglesを装備していない場合は、
         // HUDを一切表示しない。
@@ -136,18 +137,12 @@ public final class MachineHudRenderer {
             return;
         }
 
-        // タイトル画面やワールド読み込み中など、
-        // PlayerまたはLevelが存在しない状態では
+        // タイトル画面やワールド読み込み中など、PlayerまたはLevelが存在しない状態では
         // HUD情報を取得できないため描画処理を終了する。
         if (minecraft.player == null || minecraft.level == null) {
             return;
         }
 
-        /*
-         * =========================
-         * 照準先ブロックの取得
-         * =========================
-         */
         // MachineHUD独自のレイキャストを行い、
         // 最大距離内でプレイヤーが見ているブロックを取得する。
         BlockHitResult target = getTargetBlock(minecraft, MAX_DISTANCE);
@@ -170,29 +165,16 @@ public final class MachineHudRenderer {
         }
 
         // 対象ブロックに対応するアイテムを取得する。
-        // Mechanical PressならMechanical Pressのアイテムになる。
-        // 一部の特殊ブロックには対応するItemが存在しないため、
-        // その場合は空のItemStackになる可能性がある。
-        ItemStack blockIcon =
-                blockState.getBlock()
-                        .asItem()
-                        .getDefaultInstance();
+        // 一部の特殊ブロックには対応するItemが存在しないため、空のItemStackになる可能性がある。
+        ItemStack blockIcon = blockState.getBlock().asItem().getDefaultInstance();
 
         // Minecraftが持っている翻訳済みブロック名を取得する。
         // 日本語環境なら日本語名になる。
         Component blockName = blockState.getBlock().getName();
 
-        /*
-         * =========================
-         * ブロック情報の取得
-         * =========================
-         */
-
         // 対象座標にBlockEntityが存在する場合は取得する。
-        // 石などの単純なブロックではnullになる。
         // Createの機械などではBlockEntityを取得できる。
-        BlockEntity blockEntity =
-                minecraft.level.getBlockEntity(blockPos);
+        BlockEntity blockEntity = minecraft.level.getBlockEntity(blockPos);
 
         Level level = minecraft.level;
 
@@ -219,17 +201,13 @@ public final class MachineHudRenderer {
         // 例:
         // minecraft:stone
         // create:mechanical_press
-        ResourceLocation blockId =
-                BuiltInRegistries.BLOCK.getKey(
-                        blockState.getBlock()
-                );
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock());
 
         // Registry IDのnamespaceを取得する。
         // create:mechanical_press
         // ↓
         // create
-        String modName =
-                blockId.getNamespace();
+        String modName = blockId.getNamespace();
 
         /*
          * =========================
@@ -269,7 +247,6 @@ public final class MachineHudRenderer {
                 }
 
                 HudLine line = provider.createLine(element);
-
                 if (line == null) {
                     continue;
                 }
@@ -279,16 +256,10 @@ public final class MachineHudRenderer {
                  * グループヘッダー
                  * =========================
                  */
-
-                HudGroup elementGroup =
-                        element.getHudGroup();
-
                 // 前に表示した項目とは異なるグループになった場合だけ、
                 // 値を追加する前にグループヘッダーを追加する。
                 if (element.getHudGroup() != currentGroup) {
-
                     currentGroup = element.getHudGroup();
-
                     lines.add(createGroupHeader(currentGroup));
                 }
 
@@ -297,7 +268,6 @@ public final class MachineHudRenderer {
                  * HUD項目
                  * =========================
                  */
-
                 lines.add(line);
 
                 // 1つのHudElementは1つのProviderだけが担当するため、
@@ -307,75 +277,15 @@ public final class MachineHudRenderer {
         }
 
         /* Body部の作成 */
-        // VALUE行の値の中で最も横幅の大きいものを調べる。
-        int maxValueWidth = 0;
-
-        for (HudLine line : lines) {
-
-            if (line.type() != HudLineType.VALUE || line.value() == null) {
-                continue;
-            }
-
-            int valueWidth = minecraft.font.width(line.value());
-
-            maxValueWidth = Math.max(maxValueWidth, valueWidth);
-        }
-        // VALUE行の項目名の中で最も横幅の大きいものを調べる。
-        int maxLabelWidth = 0;
-
-        for (HudLine line : lines) {
-
-            // グループヘッダーは2カラム表示ではないため
-            // 計算対象から除外する。
-            if (line.type() != HudLineType.VALUE) {
-                continue;
-            }
-
-            int labelWidth = minecraft.font.width(line.label());
-
-            maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
-        }
-
-        // VALUE行全体で必要になる横幅。
-        // [indent][項目名][COLUMN_GAP][値]
-        int valueRowWidth =
-                INDENT_WIDTH
-                        + maxLabelWidth
-                        + COLUMN_GAP
-                        + maxValueWidth;
-
-        int groupHeaderWidth = 0;
-
-        for (HudLine line : lines) {
-
-            if (line.type() != HudLineType.GROUP_HEADER) {
-                continue;
-            }
-
-            int width =
-                    GROUP_ICON_SIZE
-                            + GROUP_ICON_GAP
-                            + minecraft.font.width(line.label());
-
-            groupHeaderWidth = Math.max(groupHeaderWidth, width);
-        }
-
-        // 本文側で必要になる最大横幅。
-        int bodyWidth = Math.max(valueRowWidth, groupHeaderWidth);
+        int bodyWidth = getBodyWidth(minecraft, lines);
 
         /* Header部の作成 */
         // Headerのタイトル部分の横幅を計算する。
         // [16px Icon] [5px Gap] [Block Name]
-        int headerTitleWidth =
-                HEADER_ICON_SIZE
-                        + HEADER_ICON_GAP
-                        + minecraft.font.width(blockName);
+        int headerTitleWidth = HEADER_ICON_SIZE + HEADER_ICON_GAP + minecraft.font.width(blockName);
 
         // MOD名がブロック名より長い可能性もあるため、MOD名側の横幅も計算する。
-        int headerModWidth =
-                HEADER_ICON_SIZE
-                        + HEADER_ICON_GAP
-                        + minecraft.font.width(modName);
+        int headerModWidth = HEADER_ICON_SIZE + HEADER_ICON_GAP + minecraft.font.width(modName);
 
         // Headerで必要になる最大横幅。
         int headerWidth = Math.max(headerTitleWidth, headerModWidth);
@@ -384,13 +294,10 @@ public final class MachineHudRenderer {
         int contentWidth = Math.max(headerWidth, bodyWidth);
 
         // 左右のPaddingを追加して実際のパネル横幅を決定する。
-        int panelWidth =
-                contentWidth
-                        + PANEL_PADDING * 2;
+        int panelWidth = contentWidth + PANEL_PADDING * 2;
+
         // Header下の区切り線を含めた領域。
-        int headerAreaHeight =
-                HEADER_HEIGHT
-                        + HEADER_SEPARATOR_GAP;
+        int headerAreaHeight = HEADER_HEIGHT + HEADER_SEPARATOR_GAP;
 
         int groupCount = 0;
 
@@ -402,19 +309,12 @@ public final class MachineHudRenderer {
         }
 
         // グループとグループの間に入る追加余白。
-        int groupSpacing =
-                Math.max(0, groupCount - 1) * 4;
+        int groupSpacing = Math.max(0, groupCount - 1) * 4;
 
-        int bodyHeight =
-                lines.size() * LINE_HEIGHT
-                        + groupSpacing;
+        int bodyHeight = lines.size() * LINE_HEIGHT + groupSpacing;
 
         // パネル全体の高さ。
-        int panelHeight =
-                PANEL_PADDING
-                        + headerAreaHeight
-                        + bodyHeight
-                        + PANEL_PADDING;
+        int panelHeight = PANEL_PADDING + headerAreaHeight + bodyHeight + PANEL_PADDING;
 
         // HUD情報の後ろに半透明背景を描画する。
         guiGraphics.fill(
@@ -526,11 +426,18 @@ public final class MachineHudRenderer {
         );
 
         // Headerと区切り線の下から本文の描画を開始する。
-        int bodyStartY =
-                separatorY + HEADER_SEPARATOR_GAP;
+        int bodyStartY = separatorY + HEADER_SEPARATOR_GAP;
 
-        int textY =
-                bodyStartY;
+        int textY = bodyStartY;
+
+        // 本文で共通使用するLabelカラムの最大幅。
+        // VALUE / LEVEL_BLOCKS / LEVEL_BARで
+        // VisualやValueの開始位置を揃えるために使用する。
+        int maxLabelWidth = getMaxLabelWidth(minecraft, lines);
+
+        // LEVEL_BLOCKSで使用するVisualカラムの最大幅。
+        // 各行のValue開始位置を揃えるために使用する。
+        int maxLevelBlocksWidth = getMaxLevelBlocksWidth(minecraft, lines);
 
         for (HudLine line : lines) {
             // 2つ目以降のグループヘッダーでは、前のグループとの間に少し余白を追加する。
@@ -594,14 +501,74 @@ public final class MachineHudRenderer {
                 }
             }
 
+            if (line.type() == HudLineType.LEVEL_BLOCKS) {
+
+                // Level情報が存在しない場合は描画できないため、
+                // この行をスキップする。
+                if (line.level() == null) {
+                    textY += LINE_HEIGHT;
+                    continue;
+                }
+
+                // HudLevelから視覚表示を生成する。
+                // current = 2, max = 5 → ■■□□□
+                Component blocks = createLevelBlocks(line.level());
+
+                /*
+                 * [indent][label][gap][visual][gap][value]
+                 */
+                int labelX = HUD_X + PANEL_PADDING + line.indent() * INDENT_WIDTH;
+
+                int visualX = HUD_X + PANEL_PADDING + INDENT_WIDTH + maxLabelWidth + COLUMN_GAP;
+
+                int valueX = visualX + maxLevelBlocksWidth + VISUAL_VALUE_GAP;
+
+                // Label
+                drawScaledString(
+                        guiGraphics,
+                        minecraft,
+                        line.label(),
+                        labelX,
+                        textY,
+                        TEXT_PRIMARY,
+                        DRAW_VALUE_SCALE
+                );
+
+                // Visual(□■)
+                drawScaledString(
+                        guiGraphics,
+                        minecraft,
+                        blocks,
+                        visualX,
+                        textY,
+                        line.color(),
+                        DRAW_VALUE_SCALE
+                );
+
+                // Value
+                if (line.value() != null) {
+
+                    drawScaledString(
+                            guiGraphics,
+                            minecraft,
+                            line.value(),
+                            valueX,
+                            textY,
+                            line.color(),
+                            DRAW_VALUE_SCALE
+                    );
+                }
+
+                textY += LINE_HEIGHT;
+
+                continue;
+            }
+
             if (line.type() == HudLineType.VALUE) {
 
                 // インデントを考慮した
                 // 左側カラムの開始位置。
-                int labelX =
-                        HUD_X
-                                + PANEL_PADDING
-                                + line.indent() * INDENT_WIDTH;
+                int labelX = HUD_X + PANEL_PADDING + line.indent() * INDENT_WIDTH;
 
                 // 項目名を描画する。
                 drawScaledString(
@@ -616,15 +583,9 @@ public final class MachineHudRenderer {
 
 
                 // 値カラムは、すべての行で同じX座標から開始する。
-                //
                 // これによってSpeed、Stress、Impactなどの
                 // 項目名の長さが違っても値が縦に揃う。
-                int valueX =
-                        HUD_X
-                                + PANEL_PADDING
-                                + INDENT_WIDTH
-                                + maxLabelWidth
-                                + COLUMN_GAP;
+                int valueX = HUD_X + PANEL_PADDING + INDENT_WIDTH + maxLabelWidth + COLUMN_GAP;
 
                 drawScaledString(
                         guiGraphics,
@@ -769,5 +730,240 @@ public final class MachineHudRenderer {
         // 後続の描画へscaleを影響させないため、
         // 描画状態を元へ戻す。
         guiGraphics.pose().popPose();
+    }
+
+    /**
+     * VALUE行に表示される値の中から、最も横幅の大きい値の描画幅を取得する。
+     * GROUP_HEADERやLEVEL系の行は、VALUE行とはカラム構成が異なるため対象外とする。
+     */
+    private static int getMaxValueWidth(Minecraft minecraft, List<HudLine> lines){
+        // VALUE行の値の中で最も横幅の大きいものを調べる。
+        int maxValueWidth = 0;
+
+        for (HudLine line : lines) {
+
+            if (line.type() != HudLineType.VALUE || line.value() == null) {
+                continue;
+            }
+
+            int valueWidth = minecraft.font.width(line.value());
+
+            maxValueWidth = Math.max(maxValueWidth, valueWidth);
+        }
+        return maxValueWidth;
+    }
+
+    /**
+     * VALUE行に表示される項目名の中から、最も横幅の大きいラベルの描画幅を取得する。
+     * GROUP_HEADERやLEVEL系の行は、VALUE行とはカラム構成が異なるため対象外とする。
+     */
+    private static int getMaxLabelWidth(
+            Minecraft minecraft,
+            List<HudLine> lines
+    ) {
+
+        int maxLabelWidth = 0;
+
+        for (HudLine line : lines) {
+
+            // GROUP_HEADERは本文のラベルカラムを使用しないため除外。
+            if (line.type() == HudLineType.GROUP_HEADER) {
+                continue;
+            }
+
+            if (line.label() == null) {
+                continue;
+            }
+
+            int labelWidth = minecraft.font.width(line.label());
+
+            maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+        }
+
+        return maxLabelWidth;
+    }
+
+    /**
+     * GROUP_HEADER行の中から、アイコン + グループ名を含めて
+     * 最も横幅の大きいヘッダー幅を取得する。
+     */
+    private static int getMaxGroupHeaderWidth(
+            Minecraft minecraft,
+            List<HudLine> lines
+    ) {
+
+        int maxWidth = 0;
+
+        for (HudLine line : lines) {
+
+            // GROUP_HEADER以外は対象外。
+            if (line.type() != HudLineType.GROUP_HEADER) {
+                continue;
+            }
+
+            // 念のためlabelが存在しない場合は無視する。
+            if (line.label() == null) {
+                continue;
+            }
+
+            int width = GROUP_ICON_SIZE + GROUP_ICON_GAP + minecraft.font.width(line.label());
+
+            maxWidth = Math.max(maxWidth, width);
+        }
+
+        return maxWidth;
+    }
+
+    /**
+     * VALUE行全体で必要になる最大横幅を取得する。
+     * VALUE行は、
+     * [indent][label][COLUMN_GAP][value]
+     * という2カラム構成で描画する。
+     */
+    private static int getValueRowWidth(
+            Minecraft minecraft,
+            List<HudLine> lines
+    ) {
+
+        // VALUE行の中で最も幅の大きいラベルを取得する。
+        int maxLabelWidth = getMaxLabelWidth(minecraft, lines);
+
+        // VALUE行の中で最も幅の大きい値を取得する。
+        int maxValueWidth = getMaxValueWidth(minecraft, lines);
+
+        return INDENT_WIDTH + maxLabelWidth + COLUMN_GAP + maxValueWidth;
+    }
+
+    /**
+     * HUD本文全体で必要になる最大横幅を取得する。
+     * 現在は、
+     * VALUE
+     * GROUP_HEADER
+     * の2種類について必要な横幅を比較し、最も大きいものを本文幅として返す。
+     * 今後LEVEL_BLOCKS / LEVEL_BARを追加する場合も、
+     * このメソッド内で各表示形式の横幅を比較する。
+     */
+    private static int getBodyWidth(Minecraft minecraft, List<HudLine> lines) {
+
+        // 通常のVALUE行で必要になる最大横幅。
+        int valueRowWidth = getValueRowWidth(minecraft, lines);
+
+        // LEVEL_BLOCKS行で必要になる最大横幅。
+        int levelBlocksRowWidth = getLevelBlocksRowWidth(minecraft, lines);
+
+        // グループヘッダーで必要になる最大横幅。
+        int groupHeaderWidth = getMaxGroupHeaderWidth(minecraft, lines);
+
+        // 現在存在する表示形式の中で、
+        // 最も横幅の大きいものを本文幅として使用する。
+        return Math.max(Math.max(valueRowWidth, levelBlocksRowWidth), groupHeaderWidth);
+    }
+
+    /**
+     * HudLevelの現在値と最大値から、LEVEL_BLOCKS用の視覚表示を生成する。
+     * 例:
+     * current = 2,max = 5 → ■■□□□
+     * 1ブロックを1 Levelとして扱う。
+     */
+    private static Component createLevelBlocks(
+            HudLevel level
+    ) {
+
+        if (level == null || level.max() <= 0) {
+            return Component.empty();
+        }
+
+        // LEVEL_BLOCKSは段階値を表すため、
+        // 描画時には整数のLevelとして扱う。
+        int max = Math.max(0, (int) Math.ceil(level.max()));
+        int current = Math.clamp((int) Math.floor(level.current()), 0, max);
+
+        String blocks = "■".repeat(current) + "□".repeat(max - current);
+
+        return Component.literal(blocks);
+    }
+
+    /**
+     * LEVEL_BLOCKS行のVisual表示の中から、
+     * 最も横幅の大きいものを取得する。
+     * 例:
+     * ■■□□□
+     * ■■■■□
+     * ■■■■■■■□□
+     * のようにHudLevelごとに最大Level数が異なる可能性があるため、
+     * 実際に表示するComponentを生成してFontから幅を取得する。
+     */
+    private static int getMaxLevelBlocksWidth(Minecraft minecraft, List<HudLine> lines) {
+
+        int maxWidth = 0;
+
+        for (HudLine line : lines) {
+
+            // LEVEL_BLOCKS以外の行は対象外。
+            if (line.type() != HudLineType.LEVEL_BLOCKS) {
+                continue;
+            }
+
+            // Level情報を持っていない場合は
+            // Visual表示を生成できないため対象外。
+            if (line.level() == null) {
+                continue;
+            }
+
+            Component blocks = createLevelBlocks(line.level());
+
+            int width = minecraft.font.width(blocks);
+
+            maxWidth = Math.max(maxWidth, width);
+        }
+
+        return maxWidth;
+    }
+
+    /**
+     * LEVEL_BLOCKS行に表示されるValueの中から、
+     * 最も横幅の大きいValue幅を取得する。
+     */
+    private static int getMaxLevelBlocksValueWidth(Minecraft minecraft, List<HudLine> lines) {
+
+        int maxWidth = 0;
+
+        for (HudLine line : lines) {
+
+            // LEVEL_BLOCKS以外は対象外。
+            if (line.type() != HudLineType.LEVEL_BLOCKS) {
+                continue;
+            }
+
+            if (line.value() == null) {
+                continue;
+            }
+
+            int width = minecraft.font.width(line.value());
+
+            maxWidth = Math.max(maxWidth, width);
+        }
+
+        return maxWidth;
+    }
+
+    /**
+     * LEVEL_BLOCKS行全体で必要になる最大横幅を取得する。
+     * LEVEL_BLOCKSは、
+     * [indent][label][COLUMN_GAP][visual][VISUAL_VALUE_GAP][value]
+     * という3カラム構成で描画する。
+     */
+    private static int getLevelBlocksRowWidth(Minecraft minecraft, List<HudLine> lines) {
+
+        // 本文で共通使用する最大Label幅。
+        int maxLabelWidth = getMaxLabelWidth(minecraft, lines);
+
+        // LEVEL_BLOCKSのVisual部分の最大幅。
+        int maxVisualWidth = getMaxLevelBlocksWidth(minecraft, lines);
+
+        // LEVEL_BLOCKSのValue部分の最大幅。
+        int maxValueWidth = getMaxLevelBlocksValueWidth(minecraft, lines);
+
+        return INDENT_WIDTH + maxLabelWidth + COLUMN_GAP + maxVisualWidth + VISUAL_VALUE_GAP + maxValueWidth;
     }
 }
