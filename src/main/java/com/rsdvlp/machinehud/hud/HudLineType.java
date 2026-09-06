@@ -2,7 +2,6 @@ package com.rsdvlp.machinehud.hud;
 
 /**
  * HUD上に表示する行の種類。
- *
  * 行の種類によって、文字色やインデントだけでなく
  * 将来的にアイコンなどの描画方法も変更できるようにする。
  */
@@ -40,5 +39,12 @@ public enum HudLineType {
      * Level 3
      * ■■■□□
      */
-    LEVEL_BLOCKS
+    LEVEL_BLOCKS,
+
+    /**
+     * min / current / max の3要素を比較するレベル表示。
+     * Create Boilerのゴーグル表示のように、
+     * 各要素の相対関係をバーとして可視化する。
+     */
+    LEVEL_COMPARE,
 }

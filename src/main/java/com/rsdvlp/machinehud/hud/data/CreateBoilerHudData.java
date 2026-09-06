@@ -41,7 +41,6 @@ public record CreateBoilerHudData(
 
     /**
      * Fluid Tankからボイラー情報を取得する。
-     *
      * マルチブロックTankの一部を見ている場合でも、
      * Controllerへ正規化してから情報を取得する。
      */
@@ -51,33 +50,38 @@ public record CreateBoilerHudData(
         // マルチブロック構造のControllerを取得する。
         FluidTankBlockEntity controller = tank.getControllerBE();
 
-        if(controller == null){
+        if (controller == null) {
             return null;
         }
 
         BoilerData boilerData = controller.boiler;
 
-        if(boilerData == null){
+        if (boilerData == null) {
             return null;
         }
 
         // 通常のFluid Tankであり、
         // Boilerとして動作していない場合は対象外。
-        if(!boilerData.isActive()){
+        if (!boilerData.isActive()) {
             return null;
         }
+        System.out.println("========== DEBUG ==========");
 
         int boilerSize = controller.getTotalTankSize();
+        System.out.println("boilerSize: " + boilerSize);
 
         /*
          * ボイラーサイズによって決まる最大Heat Level
          */
         int sizeLevel = boilerData.getMaxHeatLevelForBoilerSize(boilerSize);
+        System.out.println("sizeLevel: " + sizeLevel);
 
         /*
          * 現在の水供給量によって決まる最大Heat Level。
          */
         int waterLevel = boilerData.getMaxHeatLevelForWaterSupply();
+        System.out.println("waterSupply: " + boilerData.waterSupply);
+        System.out.println("waterLevel: " + waterLevel);
 
         /*
          * Heat SourceによるLevel。
@@ -85,6 +89,7 @@ public record CreateBoilerHudData(
          * Level 1として扱う。
          */
         int heatLevel = boilerData.passiveHeat ? 1 : boilerData.activeHeat;
+        System.out.println("heatLevel: " + heatLevel);
 
         /*
          * Size / Water / Heatの中で最も低い値を取得する。

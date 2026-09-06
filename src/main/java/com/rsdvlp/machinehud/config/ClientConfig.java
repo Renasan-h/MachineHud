@@ -1,9 +1,9 @@
 package com.rsdvlp.machinehud.config;
 
-import com.rsdvlp.machinehud.hud.element.CreateHudElement;
+import com.rsdvlp.machinehud.hud.element.HudElement;
+import com.rsdvlp.machinehud.hud.element.HudElements;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ClientConfig {
@@ -37,6 +37,12 @@ public class ClientConfig {
             BUILDER
                     .comment("Show theoretical Create rotation speed.")
                     .define("showTheoreticalSpeed", false);
+
+    // Create BoilerのWater LevelをHUDへ表示するかどうか。
+    public static final ModConfigSpec.BooleanValue SHOW_BOILER_WATER =
+            BUILDER
+                    .comment("Show Create boiler water level.")
+                    .define("showBoilerWater", true);
 
     public static final ModConfigSpec.BooleanValue SHOW_POSITION =
             BUILDER
@@ -92,9 +98,13 @@ public class ClientConfig {
                             "displayOrder",
 
                             // Configファイルが存在しない場合に使用する初期順序。
-                            Arrays.stream(CreateHudElement.values())
-                                    .map(CreateHudElement::getId)
+                            HudElements.getAll().stream()
+                                    .map(HudElement::getId)
                                     .toList(),
+
+                            // Config画面などから新しい要素を追加するときの初期値。
+                            // 空文字を入れておき、ユーザーが有効なHudElement IDへ変更する。
+                            () -> "",
 
                             // Configに書かれた値が有効なHUD IDか確認する。
                             // 不正な文字列が入っていた場合に、
@@ -104,10 +114,7 @@ public class ClientConfig {
                                     return false;
                                 }
 
-                                return Arrays.stream(CreateHudElement.values())
-                                        .anyMatch(element ->
-                                                element.getId().equals(id)
-                                        );
+                                return HudElements.fromId(id) != null;
                             }
                     );
 

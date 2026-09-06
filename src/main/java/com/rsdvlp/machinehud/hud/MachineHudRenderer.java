@@ -6,11 +6,13 @@ import com.rsdvlp.machinehud.hud.element.HudElements;
 import com.rsdvlp.machinehud.hud.provider.HudProvider;
 import com.rsdvlp.machinehud.hud.provider.HudProviders;
 import com.rsdvlp.machinehud.item.ModItems;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -736,7 +738,7 @@ public final class MachineHudRenderer {
      * VALUE行に表示される値の中から、最も横幅の大きい値の描画幅を取得する。
      * GROUP_HEADERやLEVEL系の行は、VALUE行とはカラム構成が異なるため対象外とする。
      */
-    private static int getMaxValueWidth(Minecraft minecraft, List<HudLine> lines){
+    private static int getMaxValueWidth(Minecraft minecraft, List<HudLine> lines) {
         // VALUE行の値の中で最も横幅の大きいものを調べる。
         int maxValueWidth = 0;
 
@@ -860,30 +862,6 @@ public final class MachineHudRenderer {
     }
 
     /**
-     * HudLevelの現在値と最大値から、LEVEL_BLOCKS用の視覚表示を生成する。
-     * 例:
-     * current = 2,max = 5 → ■■□□□
-     * 1ブロックを1 Levelとして扱う。
-     */
-    private static Component createLevelBlocks(
-            HudLevel level
-    ) {
-
-        if (level == null || level.max() <= 0) {
-            return Component.empty();
-        }
-
-        // LEVEL_BLOCKSは段階値を表すため、
-        // 描画時には整数のLevelとして扱う。
-        int max = Math.max(0, (int) Math.ceil(level.max()));
-        int current = Math.clamp((int) Math.floor(level.current()), 0, max);
-
-        String blocks = "■".repeat(current) + "□".repeat(max - current);
-
-        return Component.literal(blocks);
-    }
-
-    /**
      * LEVEL_BLOCKS行のVisual表示の中から、
      * 最も横幅の大きいものを取得する。
      * 例:
@@ -965,5 +943,96 @@ public final class MachineHudRenderer {
         int maxValueWidth = getMaxLevelBlocksValueWidth(minecraft, lines);
 
         return INDENT_WIDTH + maxLabelWidth + COLUMN_GAP + maxVisualWidth + VISUAL_VALUE_GAP + maxValueWidth;
+    }
+
+    /**
+     * HudLevelからLEVEL_BLOCKS用の視覚表示を生成する。
+     * 1ブロックを1 Levelとして表示する。<br/>
+     * 例:
+     * current = 2,  max = 5 →  ■■□□□
+     *
+     * @param level 表示するLevel情報
+     * @return LEVEL_BLOCKS用のComponent
+     */
+    private static Component createLevelBlocks(HudLevel level) {
+
+        // Level情報が存在しない、
+        // または最大値が0以下の場合は何も表示しない。
+        if (level == null || level.max() <= 0) {
+            return Component.empty();
+        }
+
+        // LEVEL_BLOCKSは段階表示なので、
+        // maxは表示するブロック数として整数へ変換する。
+        int max = Math.max(0, (int) Math.ceil(level.max()));
+
+        // currentもブロック数として整数へ変換する。
+        // 0未満やmaxを超える値が渡された場合でも、
+        // 表示が壊れないよう0～maxへ制限する。
+        int current = Math.clamp((int) Math.floor(level.current()), 0, max);
+
+        // 現在Level分を■、
+        // 残りを□として表示する。
+        String blocks = "■".repeat(current) + "□".repeat(max - current);
+
+        return Component.literal(blocks);
+    }
+
+    /**
+     * min / current / max の3要素から、Createゴーグル準拠の比較バーを生成する。
+     * HudLevel:
+     * min     = 3要素の最小値
+     * current = この行自身のLevel
+     * max     = 3要素の最大値
+     * 例:
+     * Size  = 1, Water = 4, Heat  = 2
+     * Water行では、
+     * min     = 1, current = 4, max     = 4
+     * となる。
+     */
+    private static Component createLevelCompareBar(HudLevel level) {
+
+        if (level == null) {
+            return Component.empty();
+        }
+
+        int min = Math.max(0, (int) level.min());
+
+        int current = Math.max(0, (int) level.current());
+
+        int max = Math.max(0, (int) level.max());
+
+        MutableComponent bar = Component.empty();
+
+        // minより前の有効範囲。
+        bar.append(createBars(Math.max(0, min - 1), ChatFormatting.DARK_GREEN));
+
+        // 3要素の最小値となる位置を強調する。
+        bar.append(createBars(min > 0 ? 1 : 0, ChatFormatting.GREEN));
+
+        // minから、この項目自身のLevelまで。
+        bar.append(createBars(Math.max(0, current - min), ChatFormatting.DARK_GREEN));
+
+        // この項目のLevelから3要素最大値まで。
+        bar.append(createBars(Math.max(0, max - current), ChatFormatting.DARK_RED));
+
+        // Create標準と同様に、
+        // 次の5Level区切りまでを灰色で補完する。
+        bar.append(createBars(Math.max(0, Math.min(18 - max, ((max / 5 + 1) * 5) - max)), ChatFormatting.DARK_GRAY));
+
+        return bar;
+    }
+
+    /**
+     * 指定された本数の "|" を、
+     * 指定色のComponentとして生成する。
+     */
+    private static Component createBars(int count, ChatFormatting color) {
+
+        if (count <= 0) {
+            return Component.empty();
+        }
+
+        return Component.literal("|".repeat(count)).withStyle(color);
     }
 }

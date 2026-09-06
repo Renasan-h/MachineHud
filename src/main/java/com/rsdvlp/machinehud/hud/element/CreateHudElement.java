@@ -19,31 +19,37 @@ public enum CreateHudElement implements HudElement {
             "Speed",
             HudGroup.CREATE_KINETIC
     ),
-
     IMPACT(
             "impact",
             "Stress Impact",
             HudGroup.CREATE_KINETIC
     ),
-
     STRESS(
             "stress",
             "Stress",
             HudGroup.CREATE_KINETIC
     ),
-
     STATUS(
             "status",
             "Status",
             HudGroup.CREATE_KINETIC
     ),
-
     THEORETICAL_SPEED(
             "theoreticalSpeed",
             "Theoretical Speed",
             HudGroup.CREATE_KINETIC
     ),
 
+    /*
+     * =========================
+     * ボイラー情報
+     * =========================
+     */
+    BOILER_WATER(
+            "boilerWater",
+            "Water",
+            HudGroup.CREATE_BOILER
+    ),
 
     /*
      * =========================
@@ -55,30 +61,26 @@ public enum CreateHudElement implements HudElement {
             "Network Stress",
             HudGroup.CREATE_NETWORK
     ),
-
     NETWORK_CAPACITY(
             "networkCapacity",
             "Network Capacity",
             HudGroup.CREATE_NETWORK
     ),
-
     NETWORK_USAGE(
             "networkUsage",
             "Network Usage",
             HudGroup.CREATE_NETWORK
     ),
-
     NETWORK_SIZE(
             "networkSize",
             "Network Size",
             HudGroup.CREATE_NETWORK
     ),
-
     NETWORK_STATUS(
             "networkStatus",
             "Network Status",
             HudGroup.CREATE_NETWORK
-    );
+    ),;
 
     private final String id;
     private final String displayName;

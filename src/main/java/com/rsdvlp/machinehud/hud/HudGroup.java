@@ -24,13 +24,21 @@ public enum HudGroup {
             )
     ),
 
+    CREATE_BOILER(
+            "Boiler Stats",
+            ResourceLocation.fromNamespaceAndPath(
+                    MachineHUD.MODID,
+                    "textures/gui/icon/kinetic.png"
+            )
+    ),
+
     CREATE_NETWORK(
             "Network",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/network.png"
             )
-    );
+    ),;
 
     // HUDへ表示するグループ名。
     private final String displayName;

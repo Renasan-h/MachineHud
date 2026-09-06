@@ -62,6 +62,16 @@ public final class HudElementConfig {
 
         /*
          * =========================
+         * Create - Boiler
+         * =========================
+         */
+        register(
+                CreateHudElement.BOILER_WATER,
+                ClientConfig.SHOW_BOILER_WATER
+        );
+
+        /*
+         * =========================
          * Create - Network
          * =========================
          */
