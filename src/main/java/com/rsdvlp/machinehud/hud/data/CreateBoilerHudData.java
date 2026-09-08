@@ -65,23 +65,18 @@ public record CreateBoilerHudData(
         if (!boilerData.isActive()) {
             return null;
         }
-        System.out.println("========== DEBUG ==========");
 
         int boilerSize = controller.getTotalTankSize();
-        System.out.println("boilerSize: " + boilerSize);
 
         /*
          * ボイラーサイズによって決まる最大Heat Level
          */
         int sizeLevel = boilerData.getMaxHeatLevelForBoilerSize(boilerSize);
-        System.out.println("sizeLevel: " + sizeLevel);
 
         /*
          * 現在の水供給量によって決まる最大Heat Level。
          */
         int waterLevel = boilerData.getMaxHeatLevelForWaterSupply();
-        System.out.println("waterSupply: " + boilerData.waterSupply);
-        System.out.println("waterLevel: " + waterLevel);
 
         /*
          * Heat SourceによるLevel。
@@ -89,33 +84,21 @@ public record CreateBoilerHudData(
          * Level 1として扱う。
          */
         int heatLevel = boilerData.passiveHeat ? 1 : boilerData.activeHeat;
-        System.out.println("heatLevel: " + heatLevel);
+
+        int boilerLevel = Math.min(boilerData.activeHeat, Math.min(waterLevel, sizeLevel));
 
         /*
          * Size / Water / Heatの中で最も低い値を取得する。
          * これがボイラー性能を制限している値になる。
          */
-        int minLevel =
-                Math.min(
-                        heatLevel,
-                        Math.min(waterLevel, sizeLevel)
-                );
+        int minLevel = Math.min(heatLevel, Math.min(waterLevel, sizeLevel));
 
         /*
          * 3要素の最大値。
          * Create標準ゴーグルのバー表示でも最大値の基準として使用される。
          * 最大側の値。
          */
-        int maxLevel =
-                Math.max(
-                        heatLevel,
-                        Math.max(waterLevel, sizeLevel)
-                );
-
-        /*
-         * MachineHUDで表示するボイラーレベル。
-         */
-        int boilerLevel = minLevel;
+        int maxLevel = Math.max(heatLevel, Math.max(waterLevel, sizeLevel));
 
         return new CreateBoilerHudData(
                 boilerLevel,

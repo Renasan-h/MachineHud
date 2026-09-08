@@ -66,8 +66,20 @@ public final class HudElementConfig {
          * =========================
          */
         register(
+                CreateHudElement.BOILER_SIZE,
+                ClientConfig.SHOW_BOILER_SIZE
+        );
+        register(
                 CreateHudElement.BOILER_WATER,
                 ClientConfig.SHOW_BOILER_WATER
+        );
+        register(
+                CreateHudElement.BOILER_HEAT,
+                ClientConfig.SHOW_BOILER_HEAT
+        );
+        register(
+                CreateHudElement.BOILER_LEVEL,
+                ClientConfig.SHOW_BOILER_LEVEL
         );
 
         /*

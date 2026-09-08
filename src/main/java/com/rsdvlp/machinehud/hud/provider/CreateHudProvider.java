@@ -164,7 +164,10 @@ public final class CreateHudProvider implements HudProvider {
             }
 
             // Boiler情報はCreateBoilerHudProviderが担当する。
-            case BOILER_WATER -> null;
+            case BOILER_LEVEL,
+                 BOILER_SIZE,
+                 BOILER_WATER,
+                 BOILER_HEAT-> null;
         };
     }
 }

@@ -43,6 +43,18 @@ public class ClientConfig {
             BUILDER
                     .comment("Show Create boiler water level.")
                     .define("showBoilerWater", true);
+    public static final ModConfigSpec.BooleanValue SHOW_BOILER_SIZE =
+            BUILDER
+                    .comment("Show Create boiler size level.")
+                    .define("showBoilerSize", true);
+    public static final ModConfigSpec.BooleanValue SHOW_BOILER_HEAT =
+            BUILDER
+                    .comment("Show Create boiler heat level.")
+                    .define("showBoilerHeat", true);
+    public static final ModConfigSpec.BooleanValue SHOW_BOILER_LEVEL =
+            BUILDER
+                    .comment("Show Create boiler level.")
+                    .define("showBoilerLevel", true);
 
     public static final ModConfigSpec.BooleanValue SHOW_POSITION =
             BUILDER
@@ -102,9 +114,11 @@ public class ClientConfig {
                                     .map(HudElement::getId)
                                     .toList(),
 
-                            // Config画面などから新しい要素を追加するときの初期値。
-                            // 空文字を入れておき、ユーザーが有効なHudElement IDへ変更する。
-                            () -> "",
+                            // Config画面などから新しい要素を追加するときに使用する初期値。
+                            // Validatorを必ず通過する既存HudElement IDを使用する。
+                            () -> HudElements.getAll()
+                                    .getFirst()
+                                    .getId(),
 
                             // Configに書かれた値が有効なHUD IDか確認する。
                             // 不正な文字列が入っていた場合に、

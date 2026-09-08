@@ -440,6 +440,7 @@ public final class MachineHudRenderer {
         // LEVEL_BLOCKSで使用するVisualカラムの最大幅。
         // 各行のValue開始位置を揃えるために使用する。
         int maxLevelBlocksWidth = getMaxLevelBlocksWidth(minecraft, lines);
+        int maxLevelCompareWidth = getMaxLevelCompareWidth(minecraft, lines);
 
         for (HudLine line : lines) {
             // 2つ目以降のグループヘッダーでは、前のグループとの間に少し余白を追加する。
@@ -501,6 +502,64 @@ public final class MachineHudRenderer {
                     // VALUE用の処理には進まない。
                     continue;
                 }
+            }
+
+            if (line.type() == HudLineType.LEVEL_COMPARE) {
+
+                if (line.level() == null) {
+                    textY += LINE_HEIGHT;
+                    continue;
+                }
+
+                Component bar = createLevelCompareBar(line.level());
+
+                /*
+                 * [indent][label][gap][visual][gap][value]
+                 */
+                int labelX = HUD_X + PANEL_PADDING + line.indent() * INDENT_WIDTH;
+
+                int visualX = HUD_X + PANEL_PADDING + INDENT_WIDTH + maxLabelWidth + COLUMN_GAP;
+
+                int valueX = visualX + maxLevelCompareWidth + VISUAL_VALUE_GAP;
+
+                // Label
+                drawScaledString(
+                        guiGraphics,
+                        minecraft,
+                        line.label(),
+                        labelX,
+                        textY,
+                        TEXT_PRIMARY,
+                        DRAW_VALUE_SCALE
+                );
+
+                // Visual
+                drawScaledString(
+                        guiGraphics,
+                        minecraft,
+                        bar,
+                        visualX,
+                        textY,
+                        TEXT_PRIMARY,
+                        DRAW_VALUE_SCALE
+                );
+
+                // Value
+                if (line.value() != null) {
+                    drawScaledString(
+                            guiGraphics,
+                            minecraft,
+                            line.value(),
+                            valueX,
+                            textY,
+                            line.color(),
+                            DRAW_VALUE_SCALE
+                    );
+                }
+
+                textY += LINE_HEIGHT;
+
+                continue;
             }
 
             if (line.type() == HudLineType.LEVEL_BLOCKS) {
@@ -850,15 +909,17 @@ public final class MachineHudRenderer {
         // 通常のVALUE行で必要になる最大横幅。
         int valueRowWidth = getValueRowWidth(minecraft, lines);
 
-        // LEVEL_BLOCKS行で必要になる最大横幅。
         int levelBlocksRowWidth = getLevelBlocksRowWidth(minecraft, lines);
+
+        // LEVEL_COMPARE行で必要になる最大横幅。
+        int levelCompareRowWidth = getLevelCompareRowWidth(minecraft, lines);
 
         // グループヘッダーで必要になる最大横幅。
         int groupHeaderWidth = getMaxGroupHeaderWidth(minecraft, lines);
 
         // 現在存在する表示形式の中で、
         // 最も横幅の大きいものを本文幅として使用する。
-        return Math.max(Math.max(valueRowWidth, levelBlocksRowWidth), groupHeaderWidth);
+        return Math.max(Math.max(valueRowWidth, levelCompareRowWidth), groupHeaderWidth);
     }
 
     /**
@@ -893,6 +954,57 @@ public final class MachineHudRenderer {
             int width = minecraft.font.width(blocks);
 
             maxWidth = Math.max(maxWidth, width);
+        }
+
+        return maxWidth;
+    }
+
+    /**
+     * LEVEL_COMPARE行で必要になる最大横幅を取得する。
+     * Label | Visual | Value
+     */
+    private static int getLevelCompareRowWidth(Minecraft minecraft, List<HudLine> lines) {
+
+        int maxLabelWidth = getMaxLabelWidth(minecraft, lines);
+
+        int maxVisualWidth = getMaxLevelCompareWidth(minecraft, lines);
+
+        int maxRowWidth = 0;
+
+        for (HudLine line : lines) {
+
+            if (line.type() != HudLineType.LEVEL_COMPARE) {
+                continue;
+            }
+
+            int indentWidth = line.indent() * INDENT_WIDTH;
+
+            int valueWidth = line.value() != null ? minecraft.font.width(line.value()) : 0;
+
+            int rowWidth = indentWidth + maxLabelWidth + COLUMN_GAP + maxVisualWidth + VISUAL_VALUE_GAP + valueWidth;
+
+            maxRowWidth = Math.max(maxRowWidth, rowWidth);
+        }
+
+        return maxRowWidth;
+    }
+
+    /**
+     * LEVEL_COMPARE行のVisual部分で必要になる最大幅を取得する。
+     */
+    private static int getMaxLevelCompareWidth(Minecraft minecraft, List<HudLine> lines) {
+
+        int maxWidth = 0;
+
+        for (HudLine line : lines) {
+
+            if (line.type() != HudLineType.LEVEL_COMPARE) {
+                continue;
+            }
+
+            Component visual = createLevelCompareBar(line.level());
+
+            maxWidth = Math.max(maxWidth, minecraft.font.width(visual));
         }
 
         return maxWidth;

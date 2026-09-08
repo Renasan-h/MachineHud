@@ -8,6 +8,8 @@ import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
 import net.minecraft.network.chat.Component;
 
+import static com.rsdvlp.machinehud.hud.element.CreateHudElement.*;
+
 /**
  * Create Boiler専用のHUD情報生成Provider。
  * BoilerDataから取得した情報を、
@@ -29,7 +31,10 @@ public final class CreateBoilerHudProvider implements HudProvider {
     public boolean supports(
             HudElement element
     ) {
-        return element == CreateHudElement.BOILER_WATER;
+        return element == BOILER_LEVEL
+                || element == BOILER_SIZE
+                || element == BOILER_WATER
+                || element == BOILER_HEAT;
     }
 
     @Override
@@ -37,25 +42,90 @@ public final class CreateBoilerHudProvider implements HudProvider {
             HudElement element
     ) {
 
-        if (element != CreateHudElement.BOILER_WATER) {
+        if (!(element instanceof CreateHudElement createElement)) {
             return null;
         }
 
+        return switch (createElement) {
+
+            case BOILER_LEVEL -> new HudLine(
+                    Component.translatable("machinehud.boiler.level"),
+                    getBoilerLevelDisplay(data.boilerLevel(), data.maxLevel()),
+                    1,
+                    0xFF55FF55,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case BOILER_SIZE -> createLevelCompareLine(
+                    Component.translatable("create.boiler.size"),
+                    data.sizeLevel()
+            );
+
+            case BOILER_WATER -> createLevelCompareLine(
+                    Component.translatable("create.boiler.water"),
+                    data.waterLevel()
+            );
+
+            case BOILER_HEAT -> createLevelCompareLine(
+                    Component.translatable("create.boiler.heat"),
+                    data.heatLevel()
+            );
+
+            default -> null;
+        };
+    }
+
+    private HudLine createLevelCompareLine(
+            Component label,
+            int currentLevel
+    ) {
+
         return new HudLine(
-                Component.literal("Water"),
-                Component.literal(
-                        Integer.toString(
-                                data.waterLevel()
-                        )
-                ),
+                label,
+                Component.literal(String.valueOf(currentLevel)),
                 1,
                 TEXT_PRIMARY,
-                HudLineType.LEVEL_BLOCKS,
+                HudLineType.LEVEL_COMPARE,
                 null,
                 new HudLevel(
-                        data.waterLevel(),
-                        data.maxLevel()
+                        currentLevel,
+                        data.maxLevel(),
+                        data.minLevel()
                 )
         );
+    }
+
+    private HudLine createLevelCompareLine(
+            String label,
+            int currentLevel
+    ) {
+
+        return new HudLine(
+                Component.literal(label),
+                Component.literal(String.valueOf(currentLevel)),
+                1,
+                TEXT_PRIMARY,
+                HudLineType.LEVEL_COMPARE,
+                null,
+                new HudLevel(
+                        currentLevel,
+                        data.maxLevel(),
+                        data.minLevel()
+                )
+        );
+    }
+
+    private Component getBoilerLevelDisplay(int boilerLevel, int maxLevel) {
+        if (boilerLevel == 0) {
+            return Component.translatable("create.boiler.passive");
+        }
+
+        if (boilerLevel == maxLevel) {
+            return Component.translatable("create.boiler.max_lvl");
+        }
+
+        return Component.literal(String.valueOf(boilerLevel));
     }
 }

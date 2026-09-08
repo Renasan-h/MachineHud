@@ -40,12 +40,6 @@ public final class HudProviders {
          * Create
          * =========================
          */
-        CreateGoggleHudData goggleData =
-                CreateGoggleHudData.create(
-                        blockEntity,
-                        false
-                );
-
         if (blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 
             CreateHudData createHudData = new CreateHudData(kineticBlockEntity, blockState);
@@ -60,19 +54,12 @@ public final class HudProviders {
          */
         if (blockEntity instanceof FluidTankBlockEntity fluidTankBlockEntity) {
 
-            CreateBoilerHudData boilerHudData =
-                    CreateBoilerHudData.create(
-                            fluidTankBlockEntity
-                    );
+            CreateBoilerHudData boilerHudData = CreateBoilerHudData.create(fluidTankBlockEntity);
 
             // 通常のFluid Tankなど、
             // Boilerとして動作していない場合は追加しない。
             if (boilerHudData != null) {
-                providers.add(
-                        new CreateBoilerHudProvider(
-                                boilerHudData
-                        )
-                );
+                providers.add(new CreateBoilerHudProvider(boilerHudData));
             }
         }
 

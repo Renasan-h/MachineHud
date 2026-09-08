@@ -45,9 +45,24 @@ public enum CreateHudElement implements HudElement {
      * ボイラー情報
      * =========================
      */
+    BOILER_LEVEL(
+            "boilerLevel",
+            "レベル",
+            HudGroup.CREATE_BOILER
+    ),
+    BOILER_SIZE(
+            "boilerSize",
+            "容量",
+            HudGroup.CREATE_BOILER
+    ),
     BOILER_WATER(
             "boilerWater",
-            "Water",
+            "水量",
+            HudGroup.CREATE_BOILER
+    ),
+    BOILER_HEAT(
+            "boilerHeat",
+            "熱量",
             HudGroup.CREATE_BOILER
     ),
 

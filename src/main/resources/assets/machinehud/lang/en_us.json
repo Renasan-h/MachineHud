@@ -10,5 +10,6 @@
   "machinehud.configuration.logDirtBlock": "Log Dirt Block",
   "machinehud.configuration.magicNumberIntroduction": "Magic Number Text",
   "machinehud.configuration.magicNumber": "Magic Number",
-  "item.machinehud.machine_hud_goggles": "Machine HUD Goggles"
+  "item.machinehud.machine_hud_goggles": "Machine HUD Goggles",
+  "machinehud.boiler.level": "Boiler Status"
 }
