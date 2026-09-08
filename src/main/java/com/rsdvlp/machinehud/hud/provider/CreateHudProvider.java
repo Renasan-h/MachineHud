@@ -9,6 +9,8 @@ import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
 import net.minecraft.network.chat.Component;
 
+import static com.rsdvlp.machinehud.hud.element.CreateHudElement.*;
+
 /**
  * Create専用のHUD情報生成Provider。
  * Create固有のデータ取得・表示変換をRendererから分離する。
@@ -38,7 +40,7 @@ public final class CreateHudProvider implements HudProvider {
 
         return switch (createHudElement) {
             case SPEED -> new HudLine(
-                    Component.literal("Speed"),
+                    Component.translatable(SPEED.getDisplayName()),
                     Component.literal(String.format("%.1f RPM", data.getSpeed())),
                     1,
                     TEXT_PRIMARY,
@@ -48,7 +50,7 @@ public final class CreateHudProvider implements HudProvider {
             );
 
             case IMPACT -> new HudLine(
-                    Component.literal("Stress Impact"),
+                    Component.translatable(IMPACT.getDisplayName()),
                     Component.literal(String.format("%.2f SU/RPM", data.getImpact())),
                     1,
                     TEXT_PRIMARY,
@@ -58,7 +60,7 @@ public final class CreateHudProvider implements HudProvider {
             );
 
             case STRESS -> new HudLine(
-                    Component.literal("Stress"),
+                    Component.translatable(STRESS.getDisplayName()),
                     Component.literal(String.format("%.1f SU", data.getStress())),
                     1,
                     TEXT_PRIMARY,
@@ -73,8 +75,8 @@ public final class CreateHudProvider implements HudProvider {
                         data.getKineticStatus();
 
                 yield new HudLine(
-                        Component.literal("Status"),
-                        Component.literal(status.getStatus()),
+                        Component.translatable(STATUS.getDisplayName()),
+                        Component.translatable(status.getStatus()),
                         1,
                         status.getColor(),
                         HudLineType.VALUE,
@@ -84,7 +86,7 @@ public final class CreateHudProvider implements HudProvider {
             }
 
             case THEORETICAL_SPEED -> new HudLine(
-                    Component.literal("Theoretical"),
+                    Component.translatable(THEORETICAL_SPEED.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f RPM",
                             data.getTheoreticalSpeed())
@@ -97,7 +99,7 @@ public final class CreateHudProvider implements HudProvider {
             );
 
             case NETWORK_STRESS -> new HudLine(
-                    Component.literal("Stress"),
+                    Component.translatable(NETWORK_STRESS.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f SU",
                             data.getNetworkStress())
@@ -110,7 +112,7 @@ public final class CreateHudProvider implements HudProvider {
             );
 
             case NETWORK_CAPACITY -> new HudLine(
-                    Component.literal("Capacity"),
+                    Component.translatable(NETWORK_CAPACITY.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f SU",
                             data.getNetworkCapacity()
@@ -123,7 +125,7 @@ public final class CreateHudProvider implements HudProvider {
             );
 
             case NETWORK_USAGE -> new HudLine(
-                    Component.literal("Usage"),
+                    Component.translatable(NETWORK_USAGE.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f%%",
                             data.getNetworkUsage()
@@ -136,7 +138,7 @@ public final class CreateHudProvider implements HudProvider {
             );
 
             case NETWORK_SIZE -> new HudLine(
-                    Component.literal("Network Size"),
+                    Component.translatable(NETWORK_SIZE.getDisplayName()),
                     Component.literal(Integer.toString(
                             data.getNetworkSize()
                     )),
@@ -153,7 +155,7 @@ public final class CreateHudProvider implements HudProvider {
                         data.getNetworkStatus();
 
                 yield new HudLine(
-                        Component.literal("Network Status"),
+                        Component.translatable(NETWORK_STATUS.getDisplayName()),
                         Component.literal(status.getStatus()),
                         1,
                         status.getColor(),
@@ -167,7 +169,8 @@ public final class CreateHudProvider implements HudProvider {
             case BOILER_LEVEL,
                  BOILER_SIZE,
                  BOILER_WATER,
-                 BOILER_HEAT-> null;
+                 BOILER_HEAT,
+                 BOILER_OUTPUT -> null;
         };
     }
 }

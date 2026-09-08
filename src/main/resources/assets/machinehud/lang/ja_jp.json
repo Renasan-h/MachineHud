@@ -1,4 +1,23 @@
 {
   "item.machinehud.machine_hud_goggles": "マシンHUDゴーグル",
-  "machinehud.boiler.level": "ボイラー状態"
+  "machinehud.header.information": "Information",
+  "machinehud.header.create_kinetic": "Kinetic Stats",
+  "machinehud.header.create_boiler": "Boiler Stats",
+  "machinehud.header.create_network": "Network",
+  "machinehud.status.run": "起動中",
+  "machinehud.status.stop": "停止中",
+  "machinehud.status.over_stressed": "応力超過",
+  "machinehud.unit.speed": "回転速度",
+  "machinehud.unit.stress_impact": "応力影響",
+  "machinehud.unit.stress": "応力",
+  "machinehud.unit.status": "状態",
+  "machinehud.unit.theoretical_speed": "論理回転速度",
+  "machinehud.boiler.level": "ボイラー状態",
+  "machinehud.boiler.steam_output": "蒸気出力",
+  "machinehud.boiler.water_input": "水入力",
+  "machinehud.create.network.stress": "応力",
+  "machinehud.create.network.capacity": "残許容応力",
+  "machinehud.create.network.usage": "使用率",
+  "machinehud.create.network.size": "容量",
+  "machinehud.create.network.status": "状態"
 }

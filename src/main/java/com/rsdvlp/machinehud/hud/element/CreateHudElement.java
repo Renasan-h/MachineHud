@@ -15,28 +15,28 @@ public enum CreateHudElement implements HudElement {
      * =========================
      */
     SPEED(
-            "speed",
-            "Speed",
+            "create.speed",
+            "machinehud.unit.speed",
             HudGroup.CREATE_KINETIC
     ),
     IMPACT(
             "impact",
-            "Stress Impact",
+            "machinehud.unit.stress_impact",
             HudGroup.CREATE_KINETIC
     ),
     STRESS(
             "stress",
-            "Stress",
+            "machinehud.unit.stress",
             HudGroup.CREATE_KINETIC
     ),
     STATUS(
             "status",
-            "Status",
+            "machinehud.unit.status",
             HudGroup.CREATE_KINETIC
     ),
     THEORETICAL_SPEED(
             "theoreticalSpeed",
-            "Theoretical Speed",
+            "machinehud.unit.theoretical_speed",
             HudGroup.CREATE_KINETIC
     ),
 
@@ -47,22 +47,27 @@ public enum CreateHudElement implements HudElement {
      */
     BOILER_LEVEL(
             "boilerLevel",
-            "レベル",
+            "machinehud.boiler.level",
             HudGroup.CREATE_BOILER
     ),
     BOILER_SIZE(
             "boilerSize",
-            "容量",
+            "create.boiler.size",
             HudGroup.CREATE_BOILER
     ),
     BOILER_WATER(
             "boilerWater",
-            "水量",
+            "create.boiler.water",
             HudGroup.CREATE_BOILER
     ),
     BOILER_HEAT(
             "boilerHeat",
-            "熱量",
+            "create.boiler.heat",
+            HudGroup.CREATE_BOILER
+    ),
+    BOILER_OUTPUT(
+            "boilerStreamOutput",
+            "machinehud.boiler.steam_output",
             HudGroup.CREATE_BOILER
     ),
 
@@ -73,29 +78,30 @@ public enum CreateHudElement implements HudElement {
      */
     NETWORK_STRESS(
             "networkStress",
-            "Network Stress",
+            "machinehud.create.network.stress",
             HudGroup.CREATE_NETWORK
     ),
     NETWORK_CAPACITY(
             "networkCapacity",
-            "Network Capacity",
+            "machinehud.create.network.capacity",
             HudGroup.CREATE_NETWORK
     ),
     NETWORK_USAGE(
             "networkUsage",
-            "Network Usage",
+            "machinehud.create.network.usage",
             HudGroup.CREATE_NETWORK
     ),
     NETWORK_SIZE(
             "networkSize",
-            "Network Size",
+            "machinehud.create.network.size",
             HudGroup.CREATE_NETWORK
     ),
     NETWORK_STATUS(
             "networkStatus",
-            "Network Status",
+            "machinehud.create.network.status",
             HudGroup.CREATE_NETWORK
-    ),;
+    ),
+    ;
 
     private final String id;
     private final String displayName;

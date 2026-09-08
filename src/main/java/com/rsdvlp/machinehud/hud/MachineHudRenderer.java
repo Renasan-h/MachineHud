@@ -736,7 +736,7 @@ public final class MachineHudRenderer {
             HudGroup group
     ) {
         return new HudLine(
-                Component.literal(group.getDisplayName()),
+                Component.translatable(group.getDisplayName()),
                 null,
                 0,
                 0xFFFFFF,

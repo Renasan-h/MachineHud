@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public enum HudGroup {
     INFORMATION(
-            "Information",
+            "machinehud.header.information",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/information.png"
@@ -17,7 +17,7 @@ public enum HudGroup {
     ),
 
     CREATE_KINETIC(
-            "Kinetic Stats",
+            "machinehud.header.create_kinetic",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
@@ -25,7 +25,7 @@ public enum HudGroup {
     ),
 
     CREATE_BOILER(
-            "Boiler Stats",
+            "machinehud.header.create_boiler",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
@@ -33,7 +33,7 @@ public enum HudGroup {
     ),
 
     CREATE_NETWORK(
-            "Network",
+            "machinehud.header.create_network",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/network.png"

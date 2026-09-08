@@ -1,7 +1,6 @@
 package com.rsdvlp.machinehud.hud.provider;
 
 import com.rsdvlp.machinehud.hud.data.CreateBoilerHudData;
-import com.rsdvlp.machinehud.hud.data.CreateGoggleHudData;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;

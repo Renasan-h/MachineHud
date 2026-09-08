@@ -81,6 +81,10 @@ public final class HudElementConfig {
                 CreateHudElement.BOILER_LEVEL,
                 ClientConfig.SHOW_BOILER_LEVEL
         );
+        register(
+                CreateHudElement.BOILER_OUTPUT,
+                ClientConfig.SHOW_BOILER_OUTPUT
+        );
 
         /*
          * =========================
@@ -123,11 +127,7 @@ public final class HudElementConfig {
             HudElement element,
             ModConfigSpec.BooleanValue config
     ) {
-
-        CONFIGS.put(
-                element.getId(),
-                config
-        );
+        CONFIGS.put(element.getId(), config);
     }
 
     /**

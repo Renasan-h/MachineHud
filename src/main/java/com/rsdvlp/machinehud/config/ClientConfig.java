@@ -55,6 +55,10 @@ public class ClientConfig {
             BUILDER
                     .comment("Show Create boiler level.")
                     .define("showBoilerLevel", true);
+    public static final ModConfigSpec.BooleanValue SHOW_BOILER_OUTPUT =
+            BUILDER
+                    .comment("Show Create boiler steam output.")
+                    .define("showBoilerSteamOutput", true);
 
     public static final ModConfigSpec.BooleanValue SHOW_POSITION =
             BUILDER

@@ -8,7 +8,6 @@ import net.minecraft.client.model.HumanoidModel;
 
 /**
  * Machine HUD Gogglesのクライアント専用処理。
- *
  * 専用ArmorModelを遅延生成して保持する。
  */
 public final class MachineHudGogglesClient {
@@ -21,7 +20,6 @@ public final class MachineHudGogglesClient {
 
     /**
      * Machine HUD Gogglesの専用モデルを取得する。
-     *
      * 初回呼び出し時だけbakeLayer()してモデルを生成する。
      */
     public static HumanoidModel<?> getModel() {

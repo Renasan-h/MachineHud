@@ -1,5 +1,7 @@
 package com.rsdvlp.machinehud.hud.data;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.fluids.tank.BoilerData;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 
@@ -31,8 +33,15 @@ public record CreateBoilerHudData(
         // Createが計測している現在の水供給量。
         float waterSupply,
 
+        // 水供給不足により、Steam Outputではなく
+        // Water Inputを案内すべき状態か。
+        boolean requiresWaterInput,
+
         // 接続されているSteam Engine数。
         int attachedEngines,
+
+        // 現在のBoilerがSteam Engine経由で供給できる総Stress Capacity。
+        double stressCapacity,
 
         // 接続されているSteam Whistle数。
         int attachedWhistles
@@ -87,6 +96,11 @@ public record CreateBoilerHudData(
 
         int boilerLevel = Math.min(boilerData.activeHeat, Math.min(waterLevel, sizeLevel));
 
+        double stressCapacity =
+                boilerData.getEngineEfficiency(boilerSize)
+                * 16 * Math.max(boilerLevel, boilerData.attachedEngines)
+                * BlockStressValues.getCapacity(AllBlocks.STEAM_ENGINE.get());
+
         /*
          * Size / Water / Heatの中で最も低い値を取得する。
          * これがボイラー性能を制限している値になる。
@@ -100,6 +114,17 @@ public record CreateBoilerHudData(
          */
         int maxLevel = Math.max(heatLevel, Math.max(waterLevel, sizeLevel));
 
+        /*
+         * Create標準ゴーグルがWater Input表示へ切り替える条件。
+         * EngineとHeatは存在するが、水供給によるLevelが0の場合、
+         * Steam Outputよりも水供給不足を案内する。
+         */
+        boolean requiresWaterInput =
+                boilerData.attachedEngines > 0
+                        && sizeLevel > 0
+                        && waterLevel == 0
+                        && heatLevel > 0;
+
         return new CreateBoilerHudData(
                 boilerLevel,
                 sizeLevel,
@@ -108,7 +133,9 @@ public record CreateBoilerHudData(
                 minLevel,
                 maxLevel,
                 boilerData.waterSupply,
+                requiresWaterInput,
                 boilerData.attachedEngines,
+                stressCapacity,
                 boilerData.attachedWhistles
         );
     }
