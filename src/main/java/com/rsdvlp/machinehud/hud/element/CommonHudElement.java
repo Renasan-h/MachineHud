@@ -12,7 +12,7 @@ public enum CommonHudElement implements HudElement {
     // 照準先ブロックのワールド座標。
     POSITION(
             "position",
-            "Position",
+            "machinehud.create.machine_position",
             HudGroup.INFORMATION
     );
 

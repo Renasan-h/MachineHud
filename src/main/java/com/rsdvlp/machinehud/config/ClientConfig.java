@@ -38,6 +38,24 @@ public class ClientConfig {
                     .comment("Show theoretical Create rotation speed.")
                     .define("showTheoreticalSpeed", false);
 
+    // Createの加工モードをHUDへ表示するかどうか。
+    public static final ModConfigSpec.BooleanValue SHOW_PROCESSING_MODE =
+            BUILDER
+                    .comment("Show Create processing mode.")
+                    .define("showProcessingMode", true);
+
+    // Createの加工状態をHUDへ表示するかどうか。
+    public static final ModConfigSpec.BooleanValue SHOW_PROCESSING_STATE =
+            BUILDER
+                    .comment("Show Create processing state.")
+                    .define("showProcessingState", true);
+
+    // Createの加工進捗をHUDへ表示するかどうか。
+    public static final ModConfigSpec.BooleanValue SHOW_PROCESSING_PROGRESS =
+            BUILDER
+                    .comment("Show Create processing progress.")
+                    .define("showProcessingProgress", true);
+
     // Create BoilerのWater LevelをHUDへ表示するかどうか。
     public static final ModConfigSpec.BooleanValue SHOW_BOILER_WATER =
             BUILDER
@@ -101,9 +119,7 @@ public class ClientConfig {
 
     /*
      * HUDの表示順。
-     *
      * HudElementのIDをStringとして保存する。
-     *
      * 例:
      * ["blockName", "modName", "speed", "impact", "stress", "state", "position"]
      */

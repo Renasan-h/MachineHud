@@ -441,6 +441,7 @@ public final class MachineHudRenderer {
         // 各行のValue開始位置を揃えるために使用する。
         int maxLevelBlocksWidth = getMaxLevelBlocksWidth(minecraft, lines);
         int maxLevelCompareWidth = getMaxLevelCompareWidth(minecraft, lines);
+        int maxProgressWidth = getMaxProgressWidth(minecraft, lines);
 
         for (HudLine line : lines) {
             // 2つ目以降のグループヘッダーでは、前のグループとの間に少し余白を追加する。
@@ -609,6 +610,94 @@ public final class MachineHudRenderer {
                 // Value
                 if (line.value() != null) {
 
+                    drawScaledString(
+                            guiGraphics,
+                            minecraft,
+                            line.value(),
+                            valueX,
+                            textY,
+                            line.color(),
+                            DRAW_VALUE_SCALE
+                    );
+                }
+
+                textY += LINE_HEIGHT;
+
+                continue;
+            }
+
+            if (line.type() == HudLineType.PROGRESS) {
+
+                // Progress情報が存在しない場合は描画できないため、
+                // この行をスキップする。
+                if (line.level() == null) {
+                    textY += LINE_HEIGHT;
+                    continue;
+                }
+
+                // HudLevelから加工進捗用のバーを生成する。
+                Component bar = createProgressBar(line.level());
+
+                /*
+                 * [indent][label][gap][visual][gap][value]
+                 */
+                int labelX = HUD_X + PANEL_PADDING + line.indent() * INDENT_WIDTH;
+
+                int visualX = HUD_X + PANEL_PADDING + INDENT_WIDTH + maxLabelWidth + COLUMN_GAP;
+
+                /*
+                 * ProgressのValue領域は常に "100%" の幅を確保する。
+                 *
+                 * 5%
+                 * 23%
+                 * 100%
+                 *
+                 * のように桁数が変化しても、
+                 * 右端が揃うように右寄せして描画する。
+                 */
+                int maxProgressValueWidth =
+                        minecraft.font.width(
+                                Component.literal("100%")
+                        );
+
+                int currentValueWidth =
+                        line.value() != null
+                                ? minecraft.font.width(line.value())
+                                : 0;
+
+                int valueX =
+                        visualX
+                                + (int) (maxProgressWidth * DRAW_VALUE_SCALE)
+                                + VISUAL_VALUE_GAP
+                                + (int) (
+                                (maxProgressValueWidth - currentValueWidth)
+                                        * DRAW_VALUE_SCALE
+                        );
+
+                // Label
+                drawScaledString(
+                        guiGraphics,
+                        minecraft,
+                        line.label(),
+                        labelX,
+                        textY,
+                        TEXT_PRIMARY,
+                        DRAW_VALUE_SCALE
+                );
+
+                // Progress Visual
+                drawScaledString(
+                        guiGraphics,
+                        minecraft,
+                        bar,
+                        visualX,
+                        textY,
+                        TEXT_PRIMARY,
+                        DRAW_VALUE_SCALE
+                );
+
+                // Value
+                if (line.value() != null) {
                     drawScaledString(
                             guiGraphics,
                             minecraft,
@@ -917,9 +1006,17 @@ public final class MachineHudRenderer {
         // グループヘッダーで必要になる最大横幅。
         int groupHeaderWidth = getMaxGroupHeaderWidth(minecraft, lines);
 
+        int progressRowWidth = getProgressRowWidth(minecraft, lines);
+
         // 現在存在する表示形式の中で、
         // 最も横幅の大きいものを本文幅として使用する。
-        return Math.max(Math.max(valueRowWidth, levelCompareRowWidth), groupHeaderWidth);
+        return Math.max(
+                Math.max(
+                        Math.max(valueRowWidth, levelBlocksRowWidth),
+                        Math.max(levelCompareRowWidth, progressRowWidth)
+                ),
+                groupHeaderWidth
+        );
     }
 
     /**
@@ -1008,6 +1105,90 @@ public final class MachineHudRenderer {
         }
 
         return maxWidth;
+    }
+
+    /**
+     * PROGRESS行のVisual部分で必要になる最大幅を取得する。
+     */
+    private static int getMaxProgressWidth(
+            Minecraft minecraft,
+            List<HudLine> lines
+    ) {
+
+        int maxWidth = 0;
+
+        for (HudLine line : lines) {
+
+            // PROGRESS以外の行は対象外。
+            if (line.type() != HudLineType.PROGRESS) {
+                continue;
+            }
+
+            // Progress情報が存在しない場合はVisualを生成できない。
+            if (line.level() == null) {
+                continue;
+            }
+
+            Component visual =
+                    createProgressBar(line.level());
+
+            maxWidth = Math.max(
+                    maxWidth,
+                    minecraft.font.width(visual)
+            );
+        }
+
+        return maxWidth;
+    }
+
+    /**
+     * PROGRESS行全体で必要になる最大横幅を取得する。
+     * <p>
+     * [indent][label][COLUMN_GAP][visual][VISUAL_VALUE_GAP][value]
+     */
+    private static int getProgressRowWidth(
+            Minecraft minecraft,
+            List<HudLine> lines
+    ) {
+
+        // 本文で共通使用する最大Label幅。
+        int maxLabelWidth = getMaxLabelWidth(minecraft, lines);
+
+        // Progress Visual部分の最大幅。
+        int maxVisualWidth = getMaxProgressWidth(minecraft, lines);
+
+        int maxRowWidth = 0;
+
+        for (HudLine line : lines) {
+
+            if (line.type() != HudLineType.PROGRESS) {
+                continue;
+            }
+
+            int indentWidth = line.indent() * INDENT_WIDTH;
+
+            /*
+             * Progressの値表示は、
+             * 1桁・2桁・3桁でHUD幅が変動しないように
+             * 最大表示である "100%" を基準に幅を確保する。
+             */
+            int valueWidth =
+                    minecraft.font.width(
+                            Component.literal("100%")
+                    );
+
+            int rowWidth =
+                    indentWidth
+                            + maxLabelWidth
+                            + COLUMN_GAP
+                            + maxVisualWidth
+                            + VISUAL_VALUE_GAP
+                            + valueWidth;
+
+            maxRowWidth = Math.max(maxRowWidth, rowWidth);
+        }
+
+        return maxRowWidth;
     }
 
     /**
@@ -1146,5 +1327,60 @@ public final class MachineHudRenderer {
         }
 
         return Component.literal("|".repeat(count)).withStyle(color);
+    }
+
+    /**
+     * HudLevelから加工進捗用のバーを生成する。
+     * current / max から進捗率を計算するため、Progressの最大値が100以外でも使用できる。
+     * 例:
+     * current = 50, max = 100 → ■■■■■□□□□□
+     */
+    private static Component createProgressBar(HudLevel level) {
+
+        // Progress情報が存在しない、
+        // または最大値が0以下の場合は何も表示しない。
+        if (level == null || level.max() <= 0) {
+            return Component.empty();
+        }
+
+        /*
+         * current / max から0.0～1.0の進捗率を計算する。
+         *
+         * 想定外の値が渡された場合でもバーが壊れないよう、
+         * 0.0～1.0へ制限する。
+         */
+        double progress = Math.clamp(
+                level.current() / level.max(),
+                0.0,
+                1.0
+        );
+
+        // Progressバーは10段階で表示する。
+        final int barCount = 10;
+
+        // 進捗率を表示するブロック数へ変換する。
+        int filled = (int) Math.round(
+                progress * barCount
+        );
+
+        MutableComponent bar = Component.empty();
+
+        // 完了している部分。
+        if (filled > 0) {
+            bar.append(
+                    Component.literal("■".repeat(filled))
+                            .withStyle(ChatFormatting.GREEN)
+            );
+        }
+
+        // まだ完了していない部分。
+        if (filled < barCount) {
+            bar.append(
+                    Component.literal("□".repeat(barCount - filled))
+                            .withStyle(ChatFormatting.DARK_GRAY)
+            );
+        }
+
+        return bar;
     }
 }

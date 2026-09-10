@@ -24,6 +24,14 @@ public enum HudGroup {
             )
     ),
 
+    CREATE_PROCESSING(
+            "machinehud.header.create_processing",
+            ResourceLocation.fromNamespaceAndPath(
+                    MachineHUD.MODID,
+                    "textures/gui/icon/kinetic.png"
+            )
+    ),
+
     CREATE_BOILER(
             "machinehud.header.create_boiler",
             ResourceLocation.fromNamespaceAndPath(

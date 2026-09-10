@@ -13,11 +13,13 @@
   "item.machinehud.machine_hud_goggles": "Machine HUD Goggles",
   "machinehud.header.information": "Information",
   "machinehud.header.create_kinetic": "Kinetic Stats",
+  "machinehud.header.create_processing": "Processing",
   "machinehud.header.create_boiler": "Boiler Stats",
   "machinehud.header.create_network": "Network",
   "machinehud.status.run": "RUNNING",
   "machinehud.status.stop": "STOPPED",
   "machinehud.status.over_stressed": "OVERSTRESSED",
+  "machinehud.unit.position": "Position",
   "machinehud.unit.speed": "Speed",
   "machinehud.unit.stress_impact": "Stress Impact",
   "machinehud.unit.stress": "Stress",
@@ -30,5 +32,12 @@
   "machinehud.create.network.capacity": "Capacity",
   "machinehud.create.network.usage": "Usage",
   "machinehud.create.network.size": "Size",
-  "machinehud.create.network.status": "Status"
+  "machinehud.create.network.status": "Status",
+  "machinehud.processing.mode": "Mode",
+  "machinehud.processing.state": "State",
+  "machinehud.processing.mode.pressing": "Pressing",
+  "machinehud.processing.mode.compacting": "Compacting",
+  "machinehud.processing.state.running": "Running",
+  "machinehud.processing.state.idle": "Idle",
+  "machinehud.processing.progress": "Progress"
 }

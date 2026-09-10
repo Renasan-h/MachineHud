@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * CreateのKineticBlockEntityから、
  * MachineHUDで使用する情報を取得するクラス。
- *
  * Renderer側でCreate内部のAPIやMixinを直接扱わず、
  * Createに関するデータ取得処理をこのクラスへ集約する。
  */
@@ -25,7 +24,6 @@ public final class CreateHudData {
 
     // Create内部のNetwork情報へアクセスするためのMixin Accessor。
     private final KineticBlockEntityAccessor accessor;
-
 
     /**
      * CreateのHUD情報取得オブジェクトを作成する。
@@ -71,7 +69,6 @@ public final class CreateHudData {
 
     /**
      * 対象機械のStress Impact係数を取得する。
-     *
      * この値は1 RPMあたりのStress消費量を表す。
      */
     public double getImpact() {
@@ -84,7 +81,6 @@ public final class CreateHudData {
 
     /**
      * 対象機械単体の現在のStress消費量を計算する。
-     *
      * Stress = Impact × |RPM|
      */
     public double getStress() {
@@ -127,11 +123,9 @@ public final class CreateHudData {
 
     /**
      * ネットワークのStress使用率を百分率で取得する。
-     *
      * 例:
      * Stress   = 384 SU
      * Capacity = 512 SU
-     *
      * 384 / 512 * 100 = 75%
      */
     public double getNetworkUsage() {

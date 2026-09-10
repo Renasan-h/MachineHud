@@ -1,5 +1,6 @@
 package com.rsdvlp.machinehud.hud.provider;
 
+import com.rsdvlp.machinehud.hud.HudGroup;
 import com.rsdvlp.machinehud.hud.HudLine;
 import com.rsdvlp.machinehud.hud.HudLineType;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
@@ -28,7 +29,17 @@ public final class CreateHudProvider implements HudProvider {
 
     @Override
     public boolean supports(HudElement element) {
-        return element instanceof CreateHudElement;
+
+        if (!(element instanceof CreateHudElement)) {
+            return false;
+        }
+
+        /*
+         * Create共通Providerは、Kinetic情報とNetwork情報のみ担当する。
+         * ProcessingやBoilerなどの機械固有情報は、それぞれ専用Providerへ任せる。
+         */
+        return element.getHudGroup() == HudGroup.CREATE_KINETIC
+                || element.getHudGroup() == HudGroup.CREATE_NETWORK;
     }
 
     @Override
@@ -165,8 +176,11 @@ public final class CreateHudProvider implements HudProvider {
                 );
             }
 
-            // Boiler情報はCreateBoilerHudProviderが担当する。
-            case BOILER_LEVEL,
+            // 機械固有情報は専用Providerが担当する。
+            case PROCESSING_MODE,
+                 PROCESSING_STATE,
+                 PROCESSING_PROGRESS,
+                 BOILER_LEVEL,
                  BOILER_SIZE,
                  BOILER_WATER,
                  BOILER_HEAT,

@@ -42,6 +42,30 @@ public enum CreateHudElement implements HudElement {
 
     /*
      * =========================
+     * 加工情報
+     * =========================
+     *
+     * Press / Mixerなど、
+     * Createの加工機械で共通して使用する情報。
+     */
+    PROCESSING_MODE(
+            "processingMode",
+            "machinehud.processing.mode",
+            HudGroup.CREATE_PROCESSING
+    ),
+    PROCESSING_STATE(
+            "processingState",
+            "machinehud.processing.state",
+            HudGroup.CREATE_PROCESSING
+    ),
+    PROCESSING_PROGRESS(
+            "processingProgress",
+            "machinehud.processing.progress",
+            HudGroup.CREATE_PROCESSING
+    ),
+
+    /*
+     * =========================
      * ボイラー情報
      * =========================
      */

@@ -82,7 +82,13 @@ public class MachineHudConfigScreen extends Screen {
 
                 // 文字は20pxのボタンの中央付近に合わせるため、
                 // rowYから少し下へずらして描画する。
-                guiGraphics.drawString(this.font, element.getDisplayName(), this.width / 2 - 100, rowY + 6, 0xFFFFFF);
+                guiGraphics.drawString(
+                        this.font,
+                        Component.translatable(element.getDisplayName()),
+                        this.width / 2 - 100,
+                        rowY + 6,
+                        0xFFFFFF
+                );
             }
 
             y += ROW_HEIGHT;

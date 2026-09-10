@@ -62,6 +62,26 @@ public final class HudElementConfig {
 
         /*
          * =========================
+         * Create - Dedicated
+         * =========================
+         */
+        register(
+                CreateHudElement.PROCESSING_MODE,
+                ClientConfig.SHOW_PROCESSING_MODE
+        );
+
+        register(
+                CreateHudElement.PROCESSING_STATE,
+                ClientConfig.SHOW_PROCESSING_STATE
+        );
+
+        register(
+                CreateHudElement.PROCESSING_PROGRESS,
+                ClientConfig.SHOW_PROCESSING_PROGRESS
+        );
+
+        /*
+         * =========================
          * Create - Boiler
          * =========================
          */
@@ -152,8 +172,7 @@ public final class HudElementConfig {
             HudElement element
     ) {
 
-        ModConfigSpec.BooleanValue config =
-                getConfig(element);
+        ModConfigSpec.BooleanValue config = getConfig(element);
 
         // Configが登録されていないHudElementは、
         // 安全のため非表示として扱う。

@@ -35,8 +35,7 @@ public final class HudElements {
                 CreateHudElement.values()
         );
 
-        ALL_ELEMENTS =
-                Collections.unmodifiableList(elements);
+        ALL_ELEMENTS = Collections.unmodifiableList(elements);
     }
 
     private HudElements() {
@@ -84,30 +83,53 @@ public final class HudElements {
          */
         for (String id : ClientConfig.DISPLAY_ORDER.get()) {
 
-            HudElement element =
-                    fromId(id);
+            HudElement element = fromId(id);
 
             // 不正なIDを無視する。
             // 同じIDがConfigに複数存在しても重複させない。
-            if (element != null
-                    && !elements.contains(element)) {
-
+            if (element != null && !elements.contains(element)) {
                 elements.add(element);
             }
         }
 
         /*
          * 新しく追加されたHudElementを補完する。
-         *
-         * MODアップデート前のConfigには
-         * 新しい項目が存在しないため、
-         * 登録済みElementの中から不足分を追加する。
+         * 既存Configに保存されている項目の順番は変更しない。
+         * 新しい項目についてはALL_ELEMENTSの標準順を基準に、
+         * 直前に存在する既存項目の後ろへ挿入する。
+         * これにより、MOD更新で新しいHUD項目が追加されても
+         * すべて末尾へ移動してしまうことを防ぐ。
          */
-        for (HudElement element : ALL_ELEMENTS) {
+        for (int standardIndex = 0; standardIndex < ALL_ELEMENTS.size(); standardIndex++) {
 
-            if (!elements.contains(element)) {
-                elements.add(element);
+            HudElement newElement = ALL_ELEMENTS.get(standardIndex);
+
+            // すでにConfigから追加されている項目は
+            // その位置をそのまま維持する。
+            if (elements.contains(newElement)) {
+                continue;
             }
+
+            /*
+             * 標準順でnewElementより前にある要素のうち、
+             * 現在の表示リストにも存在する一番近い要素を探す。
+             */
+            int insertIndex = 0;
+
+            for (int previousIndex = standardIndex - 1; previousIndex >= 0; previousIndex--) {
+
+                HudElement previousElement = ALL_ELEMENTS.get(previousIndex);
+
+                int currentIndex = elements.indexOf(previousElement);
+
+                if (currentIndex >= 0) {
+                    // 見つけた直前要素の後ろへ挿入する。
+                    insertIndex = currentIndex + 1;
+                    break;
+                }
+            }
+
+            elements.add(insertIndex, newElement);
         }
 
         return elements;

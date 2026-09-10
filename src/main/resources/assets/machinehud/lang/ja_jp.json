@@ -1,12 +1,14 @@
 {
   "item.machinehud.machine_hud_goggles": "マシンHUDゴーグル",
   "machinehud.header.information": "Information",
-  "machinehud.header.create_kinetic": "Kinetic Stats",
-  "machinehud.header.create_boiler": "Boiler Stats",
-  "machinehud.header.create_network": "Network",
+  "machinehud.header.create_kinetic": "動力情報",
+  "machinehud.header.create_processing": "加工情報",
+  "machinehud.header.create_boiler": "ボイラー情報",
+  "machinehud.header.create_network": "ネットワーク",
   "machinehud.status.run": "起動中",
   "machinehud.status.stop": "停止中",
   "machinehud.status.over_stressed": "応力超過",
+  "machinehud.unit.position": "配置位置",
   "machinehud.unit.speed": "回転速度",
   "machinehud.unit.stress_impact": "応力影響",
   "machinehud.unit.stress": "応力",
@@ -19,5 +21,12 @@
   "machinehud.create.network.capacity": "残許容応力",
   "machinehud.create.network.usage": "使用率",
   "machinehud.create.network.size": "容量",
-  "machinehud.create.network.status": "状態"
+  "machinehud.create.network.status": "状態",
+  "machinehud.processing.mode": "モード",
+  "machinehud.processing.state": "状態",
+  "machinehud.processing.mode.pressing": "プレス",
+  "machinehud.processing.mode.compacting": "圧縮",
+  "machinehud.processing.state.running": "稼働中",
+  "machinehud.processing.state.idle": "待機中",
+  "machinehud.processing.progress": "進捗"
 }
