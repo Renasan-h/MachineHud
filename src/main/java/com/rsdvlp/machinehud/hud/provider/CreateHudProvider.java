@@ -179,7 +179,6 @@ public final class CreateHudProvider implements HudProvider {
             // 機械固有情報は専用Providerが担当する。
             case PROCESSING_MODE,
                  PROCESSING_STATE,
-                 PROCESSING_PROGRESS,
                  BOILER_LEVEL,
                  BOILER_SIZE,
                  BOILER_WATER,

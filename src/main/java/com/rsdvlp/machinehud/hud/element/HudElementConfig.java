@@ -75,11 +75,6 @@ public final class HudElementConfig {
                 ClientConfig.SHOW_PROCESSING_STATE
         );
 
-        register(
-                CreateHudElement.PROCESSING_PROGRESS,
-                ClientConfig.SHOW_PROCESSING_PROGRESS
-        );
-
         /*
          * =========================
          * Create - Boiler

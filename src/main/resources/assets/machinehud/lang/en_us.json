@@ -39,5 +39,5 @@
   "machinehud.processing.mode.compacting": "Compacting",
   "machinehud.processing.state.running": "Running",
   "machinehud.processing.state.idle": "Idle",
-  "machinehud.processing.progress": "Progress"
+  "machinehud.processing.mode.mixing": "Mixing"
 }

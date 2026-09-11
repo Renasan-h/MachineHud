@@ -4,6 +4,7 @@ import com.rsdvlp.machinehud.hud.data.CreateBoilerHudData;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -54,11 +55,9 @@ public final class HudProviders {
          * Mechanical Pressなど、加工機械固有の情報を提供する。
          * Kinetic情報とは別Providerにすることで、回転情報と加工情報の責務を分離する。
          */
-        if (blockEntity instanceof MechanicalPressBlockEntity) {
-
-            providers.add(
-                    new CreateProcessingHudProvider(blockEntity)
-            );
+        if (blockEntity instanceof MechanicalPressBlockEntity
+                || blockEntity instanceof MechanicalMixerBlockEntity) {
+            providers.add(new CreateProcessingHudProvider(blockEntity));
         }
 
         /*

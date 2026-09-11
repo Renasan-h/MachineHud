@@ -47,6 +47,4 @@ public enum HudLineType {
      * 各要素の相対関係をバーとして可視化する。
      */
     LEVEL_COMPARE,
-
-    PROGRESS,
 }

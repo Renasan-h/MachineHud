@@ -58,11 +58,6 @@ public enum CreateHudElement implements HudElement {
             "machinehud.processing.state",
             HudGroup.CREATE_PROCESSING
     ),
-    PROCESSING_PROGRESS(
-            "processingProgress",
-            "machinehud.processing.progress",
-            HudGroup.CREATE_PROCESSING
-    ),
 
     /*
      * =========================

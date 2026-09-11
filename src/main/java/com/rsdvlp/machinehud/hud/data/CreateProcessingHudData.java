@@ -1,5 +1,6 @@
 package com.rsdvlp.machinehud.hud.data;
 
+import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.press.PressingBehaviour;
 
@@ -10,8 +11,7 @@ import com.simibubi.create.content.kinetics.press.PressingBehaviour;
  */
 public record CreateProcessingHudData(
         Mode mode,
-        boolean running,
-        double progress
+        boolean running
 ) {
 
     /**
@@ -21,7 +21,8 @@ public record CreateProcessingHudData(
      */
     public enum Mode {
         PRESSING,
-        COMPACTING
+        COMPACTING,
+        MIXING
     }
 
     /**
@@ -42,8 +43,7 @@ public record CreateProcessingHudData(
         if (behaviour == null) {
             return new CreateProcessingHudData(
                     Mode.PRESSING,
-                    false,
-                    0.0
+                    false
             );
         }
 
@@ -55,22 +55,23 @@ public record CreateProcessingHudData(
                 ? Mode.COMPACTING
                 : Mode.PRESSING;
 
-        /*
-         * Mechanical Pressの1サイクルを0.0～1.0へ正規化する。
-         * Create側ではクライアント同期の都合でrunningTicksが
-         * 一時的に負数になるため、描画処理と同様に絶対値を使用する。
-         */
-        double progress = behaviour.running
-                ? Math.min(
-                Math.abs(behaviour.runningTicks)
-                / (double) PressingBehaviour.CYCLE,
-                1.0
-        ) : 0.0;
-
         return new CreateProcessingHudData(
                 mode,
-                behaviour.running,
-                progress
+                behaviour.running
+        );
+    }
+
+    /**
+     * Mechanical Mixerから加工情報を取得する。
+     * MixerのProgressについては、
+     * 正しい総加工時間の取得方法を確定するまで0.0とする。
+     */
+    public static CreateProcessingHudData create(
+            MechanicalMixerBlockEntity mixer
+    ) {
+        return new CreateProcessingHudData(
+                Mode.MIXING,
+                mixer.running
         );
     }
 }

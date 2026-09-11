@@ -18,7 +18,7 @@
   "machinehud.boiler.steam_output": "蒸気出力",
   "machinehud.boiler.water_input": "水入力",
   "machinehud.create.network.stress": "応力",
-  "machinehud.create.network.capacity": "残許容応力",
+  "machinehud.create.network.capacity": "許容応力",
   "machinehud.create.network.usage": "使用率",
   "machinehud.create.network.size": "容量",
   "machinehud.create.network.status": "状態",
@@ -28,5 +28,5 @@
   "machinehud.processing.mode.compacting": "圧縮",
   "machinehud.processing.state.running": "稼働中",
   "machinehud.processing.state.idle": "待機中",
-  "machinehud.processing.progress": "進捗"
+  "machinehud.processing.mode.mixing": "混合"
 }
