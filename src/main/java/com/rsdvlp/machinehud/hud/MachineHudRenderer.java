@@ -54,6 +54,9 @@ public final class MachineHudRenderer {
     // 子項目を右へずらす量。
     private static final int INDENT_WIDTH = 10;
 
+    // 値項目を右へずらす量。
+    private static final int VALUE_INDENT = 1;
+
     // HUDパネルの半透明背景色。
     // 先頭のCCが透明度、残りの000000が黒色。
     private static final int PANEL_BACKGROUND = 0x55000000;
@@ -624,9 +627,9 @@ public final class MachineHudRenderer {
 
             if (line.type() == HudLineType.VALUE) {
 
-                // インデントを考慮した
-                // 左側カラムの開始位置。
-                int labelX = HUD_X + PANEL_PADDING + line.indent() * INDENT_WIDTH;
+                // インデントを考慮した、左側カラムの開始位置。
+                // 値に対しては必ず適用する
+                int labelX = HUD_X + PANEL_PADDING + VALUE_INDENT * INDENT_WIDTH;
 
                 // 項目名を描画する。
                 drawScaledString(

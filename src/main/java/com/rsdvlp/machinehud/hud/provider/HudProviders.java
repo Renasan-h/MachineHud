@@ -4,8 +4,12 @@ import com.rsdvlp.machinehud.hud.data.CreateBoilerHudData;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.crusher.CrushingWheelBlockEntity;
+import com.simibubi.create.content.kinetics.drill.DrillBlockEntity;
+import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
+import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -56,7 +60,12 @@ public final class HudProviders {
          * Kinetic情報とは別Providerにすることで、回転情報と加工情報の責務を分離する。
          */
         if (blockEntity instanceof MechanicalPressBlockEntity
-                || blockEntity instanceof MechanicalMixerBlockEntity) {
+                || blockEntity instanceof MechanicalMixerBlockEntity
+                || blockEntity instanceof SawBlockEntity
+                || blockEntity instanceof DrillBlockEntity
+                || blockEntity instanceof CrushingWheelBlockEntity
+                || blockEntity instanceof MillstoneBlockEntity) {
+
             providers.add(new CreateProcessingHudProvider(blockEntity));
         }
 

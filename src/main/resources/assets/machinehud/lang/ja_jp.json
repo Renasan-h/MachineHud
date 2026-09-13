@@ -1,5 +1,5 @@
 {
-  "item.machinehud.machine_hud_goggles": "マシンHUDゴーグル",
+  "item.machinehud.machine_hud_goggles": "マシン HUD ゴーグル",
   "machinehud.header.information": "Information",
   "machinehud.header.create_kinetic": "動力情報",
   "machinehud.header.create_processing": "加工情報",
@@ -28,5 +28,11 @@
   "machinehud.processing.mode.compacting": "圧縮",
   "machinehud.processing.state.running": "稼働中",
   "machinehud.processing.state.idle": "待機中",
-  "machinehud.processing.mode.mixing": "混合"
+  "machinehud.processing.state.output_blocked": "出力詰まり",
+  "machinehud.processing.mode.mixing": "混合",
+  "machinehud.processing.mode.cutting": "切断",
+  "machinehud.processing.mode.sawing": "製材",
+  "machinehud.processing.mode.drilling": "掘削",
+  "machinehud.processing.mode.crushing": "粉砕",
+  "machinehud.processing.mode.milling": "製粉"
 }

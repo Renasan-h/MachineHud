@@ -39,5 +39,11 @@
   "machinehud.processing.mode.compacting": "Compacting",
   "machinehud.processing.state.running": "Running",
   "machinehud.processing.state.idle": "Idle",
-  "machinehud.processing.mode.mixing": "Mixing"
+  "machinehud.processing.state.output_blocked": "Output Blocked",
+  "machinehud.processing.mode.mixing": "Mixing",
+  "machinehud.processing.mode.cutting": "Cutting",
+  "machinehud.processing.mode.sawing": "Sawing",
+  "machinehud.processing.mode.drilling": "Drilling",
+  "machinehud.processing.mode.crushing": "Crushing",
+  "machinehud.processing.mode.milling": "Milling"
 }

@@ -6,8 +6,12 @@ import com.rsdvlp.machinehud.hud.HudLineType;
 import com.rsdvlp.machinehud.hud.data.CreateProcessingHudData;
 import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
+import com.simibubi.create.content.kinetics.crusher.CrushingWheelBlockEntity;
+import com.simibubi.create.content.kinetics.drill.DrillBlockEntity;
+import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
+import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -36,6 +40,14 @@ public class CreateProcessingHudProvider implements HudProvider {
             this.data = CreateProcessingHudData.create(press);
         } else if (blockEntity instanceof MechanicalMixerBlockEntity mixer) {
             this.data = CreateProcessingHudData.create(mixer);
+        } else if (blockEntity instanceof SawBlockEntity saw) {
+            this.data = CreateProcessingHudData.create(saw);
+        } else if (blockEntity instanceof DrillBlockEntity drill) {
+            this.data = CreateProcessingHudData.create(drill);
+        } else if (blockEntity instanceof CrushingWheelBlockEntity crushingWheel) {
+            this.data = CreateProcessingHudData.create(crushingWheel);
+        } else if (blockEntity instanceof MillstoneBlockEntity millstone) {
+            this.data = CreateProcessingHudData.create(millstone);
         } else {
             this.data = null;
         }
@@ -85,6 +97,21 @@ public class CreateProcessingHudProvider implements HudProvider {
             case MIXING -> Component.translatable(
                     "machinehud.processing.mode.mixing"
             );
+            case CUTTING -> Component.translatable(
+                    "machinehud.processing.mode.cutting"
+            );
+            case SAWING -> Component.translatable(
+                    "machinehud.processing.mode.sawing"
+            );
+            case DRILLING -> Component.translatable(
+                    "machinehud.processing.mode.drilling"
+            );
+            case CRUSHING -> Component.translatable(
+                    "machinehud.processing.mode.crushing"
+            );
+            case MILLING -> Component.translatable(
+                    "machinehud.processing.mode.milling"
+            );
         };
 
         return new HudLine(
@@ -92,7 +119,7 @@ public class CreateProcessingHudProvider implements HudProvider {
                         CreateHudElement.PROCESSING_MODE.getDisplayName()
                 ),
                 value,
-                0,
+                1,
                 ChatFormatting.GRAY.getColor(),
                 HudLineType.VALUE,
                 HudGroup.CREATE_PROCESSING,
@@ -105,21 +132,31 @@ public class CreateProcessingHudProvider implements HudProvider {
      */
     private HudLine createStateLine() {
 
-        Component value = Component.translatable(
-                data.running()
-                        ? "machinehud.processing.state.running"
-                        : "machinehud.processing.state.idle"
-        );
+        Component value = switch (data.state()) {
+            case IDLE -> Component.translatable(
+                    "machinehud.processing.state.idle"
+            );
+            case RUNNING -> Component.translatable(
+                    "machinehud.processing.state.running"
+            );
+            case OUTPUT_BLOCKED -> Component.translatable(
+                    "machinehud.processing.state.output_blocked"
+            );
+        };
+
+        int color = switch(data.state()){
+            case IDLE -> ChatFormatting.GRAY.getColor();
+            case RUNNING -> ChatFormatting.GREEN.getColor();
+            case OUTPUT_BLOCKED -> ChatFormatting.YELLOW.getColor();
+        };
 
         return new HudLine(
                 Component.translatable(
                         CreateHudElement.PROCESSING_STATE.getDisplayName()
                 ),
                 value,
-                0,
-                data.running()
-                        ? ChatFormatting.GREEN.getColor()
-                        : ChatFormatting.GRAY.getColor(),
+                1,
+                color,
                 HudLineType.VALUE,
                 HudGroup.CREATE_PROCESSING,
                 null
