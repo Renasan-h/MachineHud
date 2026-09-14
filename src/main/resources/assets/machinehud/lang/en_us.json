@@ -51,5 +51,7 @@
   "machinehud.power.state.connected": "Connected",
   "machinehud.power.state.disconnected": "Disconnected",
   "machinehud.power.state.normal": "Normal",
-  "machinehud.power.state.reversed": "Reversed"
+  "machinehud.power.state.reversed": "Reversed",
+  "machinehud.status.no_input": "No Power Input",
+  "machinehud.power.target_speed": "Target Speed"
 }

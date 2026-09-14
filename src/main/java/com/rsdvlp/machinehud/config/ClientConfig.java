@@ -114,6 +114,11 @@ public class ClientConfig {
             BUILDER
                     .comment("Show power control state")
                     .define("showPowerState", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_POWER_TARGET_SPEED =
+            BUILDER
+                    .comment("Show power target speed")
+                    .define("showPowerTargetSpeed", true);
     /*
      * HUDの表示順。
      * HudElementのIDをStringとして保存する。

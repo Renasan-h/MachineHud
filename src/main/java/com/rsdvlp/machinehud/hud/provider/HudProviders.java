@@ -10,6 +10,7 @@ import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
+import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.ClutchBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.GearshiftBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -76,7 +77,9 @@ public final class HudProviders {
          * Mechanical Clutchなどの動力固有の情報を表示する。
          */
         if (blockEntity instanceof ClutchBlockEntity
-                || blockEntity instanceof GearshiftBlockEntity) {
+                || blockEntity instanceof GearshiftBlockEntity
+                || blockEntity instanceof SpeedControllerBlockEntity) {
+
             providers.add(new CreatePowerHudProvider(blockEntity));
         }
 

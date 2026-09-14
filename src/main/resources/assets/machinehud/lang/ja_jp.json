@@ -40,5 +40,7 @@
   "machinehud.power.state.connected": "接続中",
   "machinehud.power.state.disconnected": "切断中",
   "machinehud.power.state.normal": "通常",
-  "machinehud.power.state.reversed": "反転"
+  "machinehud.power.state.reversed": "反転",
+  "machinehud.status.no_input": "動力入力なし",
+  "machinehud.power.target_speed": "設定速度"
 }

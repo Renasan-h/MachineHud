@@ -168,19 +168,25 @@ public final class CreateHudData {
      */
     public KineticStatus getKineticStatus() {
 
-        // Stress Capacityを超過している場合は、
-        // Speedが0でもStoppedではなくOverstressedとして扱う。
+        /*
+         * 入力そのものが存在しない場合。
+         * Stress超過や単なる停止とは意味が違うため、専用状態として扱う。
+         */
+        if (!hasPowerInput()) {
+            return KineticStatus.NO_INPUT;
+        }
+
+        // 動力入力は存在するがStress Capacityを超過している。
         if (isOverstressed()) {
             return KineticStatus.OVERSTRESSED;
         }
 
-        // 実際の回転速度が0以外なら、
-        // この機械へ回転が伝わっている。
+        // 正常に回転が伝わっている。
         if (isRunning()) {
             return KineticStatus.RUNNING;
         }
 
-        // Stress超過でもなく回転速度も0なら停止状態。
+        // 入力はあるが現在回転していない。
         return KineticStatus.STOPPED;
     }
 
@@ -212,5 +218,15 @@ public final class CreateHudData {
     public boolean hasNetwork() {
 
         return kinetic.hasNetwork();
+    }
+
+    /**
+     * 対象へCreateの動力入力が存在するか確認する。
+     * 通常の機械はhasSource()によって、回転ネットワーク上の入力元を持っているか確認する。
+     * 動力源自身は他のBlockEntityをSourceとして持たないため、
+     * isSource()の場合も正常な動力状態として扱う。
+     */
+    public boolean hasPowerInput() {
+        return kinetic.hasSource() || kinetic.isSource();
     }
 }

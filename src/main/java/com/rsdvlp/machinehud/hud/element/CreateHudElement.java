@@ -70,6 +70,12 @@ public enum CreateHudElement implements HudElement {
             HudGroup.CREATE_POWER
     ),
 
+    POWER_TARGET_SPEED(
+            "powerTargetSpeed",
+            "machinehud.power.target_speed",
+            HudGroup.CREATE_POWER
+    ),
+
     /*
      * =========================
      * ボイラー情報

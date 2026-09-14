@@ -135,6 +135,11 @@ public final class HudElementConfig {
                 CreateHudElement.POWER_STATE,
                 ClientConfig.SHOW_POWER_STATE
         );
+
+        register(
+                CreateHudElement.POWER_TARGET_SPEED,
+                ClientConfig.SHOW_POWER_TARGET_SPEED
+        );
     }
 
     private HudElementConfig() {

@@ -1,6 +1,6 @@
 package com.rsdvlp.machinehud.hud.data;
 
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.ClutchBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.GearshiftBlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -12,32 +12,28 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  */
 public record CreatePowerHudData(
         Type type,
-        State state
+        State state,
+        float targetSpeed
 ) {
 
     /**
      * 動力系ブロックの種類。
-     * 今後、動力源や速度制御装置などを追加していく。
      */
     public enum Type {
         CLUTCH,
-        GEARSHIFT
+        GEARSHIFT,
+        SPEED_CONTROLLER
     }
 
     /**
      * 動力系ブロックの状態。
-     * 現在はClutchの接続状態のみ。
      */
     public enum State {
         CONNECTED,
         DISCONNECTED,
         NORMAL,
-        REVERSED
-    }
-
-    public enum PowerInputState {
-        NO_INPUT,
-        RECEIVING
+        REVERSED,
+        NONE
     }
 
     /**
@@ -62,7 +58,8 @@ public record CreatePowerHudData(
 
         return new CreatePowerHudData(
                 Type.CLUTCH,
-                state
+                state,
+                0
         );
     }
 
@@ -81,20 +78,19 @@ public record CreatePowerHudData(
 
         return new CreatePowerHudData(
                 Type.GEARSHIFT,
-                state
+                state,
+                0
         );
     }
 
-    private static PowerInputState getPowerInputState(
-            KineticBlockEntity kinetic
+    public static CreatePowerHudData create(
+            SpeedControllerBlockEntity controller
     ) {
 
-        if (kinetic.isSource()) {
-            return PowerInputState.RECEIVING;
-        }
-
-        return kinetic.hasSource()
-                ? PowerInputState.RECEIVING
-                : PowerInputState.NO_INPUT;
+        return new CreatePowerHudData(
+                Type.SPEED_CONTROLLER,
+                State.NONE,
+                controller.targetSpeed.getValue()
+        );
     }
 }

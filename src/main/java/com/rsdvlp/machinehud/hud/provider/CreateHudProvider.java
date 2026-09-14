@@ -30,13 +30,22 @@ public final class CreateHudProvider implements HudProvider {
     @Override
     public boolean supports(HudElement element) {
 
-        if (!(element instanceof CreateHudElement)) {
+        if (!(element instanceof CreateHudElement createElement)) {
             return false;
         }
 
         /*
-         * Create共通Providerは、Kinetic情報とNetwork情報のみ担当する。
-         * ProcessingやBoilerなどの機械固有情報は、それぞれ専用Providerへ任せる。
+         * 動力入力が存在しない場合は、
+         * 詳細なKinetic / Network情報を表示せず、
+         * STATUSだけを表示する。
+         */
+        if (!data.hasPowerInput()) {
+            return createElement == CreateHudElement.STATUS;
+        }
+
+        /*
+         * 動力入力が存在する場合は、
+         * これまで通りKinetic / Network情報を担当する。
          */
         return element.getHudGroup() == HudGroup.CREATE_KINETIC
                 || element.getHudGroup() == HudGroup.CREATE_NETWORK;
@@ -184,7 +193,8 @@ public final class CreateHudProvider implements HudProvider {
                  BOILER_WATER,
                  BOILER_HEAT,
                  BOILER_OUTPUT,
-                 POWER_STATE -> null;
+                 POWER_STATE,
+                 POWER_TARGET_SPEED -> null;
         };
     }
 }
