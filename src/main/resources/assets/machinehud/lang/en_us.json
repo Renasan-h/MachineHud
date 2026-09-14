@@ -45,5 +45,11 @@
   "machinehud.processing.mode.sawing": "Sawing",
   "machinehud.processing.mode.drilling": "Drilling",
   "machinehud.processing.mode.crushing": "Crushing",
-  "machinehud.processing.mode.milling": "Milling"
+  "machinehud.processing.mode.milling": "Milling",
+  "machinehud.header.create_power": "Power Control",
+  "machinehud.power.state": "State",
+  "machinehud.power.state.connected": "Connected",
+  "machinehud.power.state.disconnected": "Disconnected",
+  "machinehud.power.state.normal": "Normal",
+  "machinehud.power.state.reversed": "Reversed"
 }

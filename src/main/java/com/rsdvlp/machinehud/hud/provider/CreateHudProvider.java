@@ -183,7 +183,8 @@ public final class CreateHudProvider implements HudProvider {
                  BOILER_SIZE,
                  BOILER_WATER,
                  BOILER_HEAT,
-                 BOILER_OUTPUT -> null;
+                 BOILER_OUTPUT,
+                 POWER_STATE -> null;
         };
     }
 }

@@ -46,6 +46,14 @@ public enum HudGroup {
                     MachineHUD.MODID,
                     "textures/gui/icon/network.png"
             )
+    ),
+
+    CREATE_POWER(
+            "machinehud.header.create_power",
+            ResourceLocation.fromNamespaceAndPath(
+                    MachineHUD.MODID,
+                    "textures/gui/icon/kinetic.png"
+            )
     ),;
 
     // HUDへ表示するグループ名。

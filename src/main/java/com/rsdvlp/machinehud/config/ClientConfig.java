@@ -50,12 +50,6 @@ public class ClientConfig {
                     .comment("Show Create processing state.")
                     .define("showProcessingState", true);
 
-    // Createの加工進捗をHUDへ表示するかどうか。
-    public static final ModConfigSpec.BooleanValue SHOW_PROCESSING_PROGRESS =
-            BUILDER
-                    .comment("Show Create processing progress.")
-                    .define("showProcessingProgress", true);
-
     // Create BoilerのWater LevelをHUDへ表示するかどうか。
     public static final ModConfigSpec.BooleanValue SHOW_BOILER_WATER =
             BUILDER
@@ -116,7 +110,10 @@ public class ClientConfig {
                     .comment("Show Create kinetic network Status.")
                     .define("showNetworkStatus", false);
 
-
+    public static final ModConfigSpec.BooleanValue SHOW_POWER_STATE =
+            BUILDER
+                    .comment("Show power control state")
+                    .define("showPowerState", true);
     /*
      * HUDの表示順。
      * HudElementのIDをStringとして保存する。

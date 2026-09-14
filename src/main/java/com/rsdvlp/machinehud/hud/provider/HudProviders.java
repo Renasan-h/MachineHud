@@ -10,6 +10,8 @@ import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
+import com.simibubi.create.content.kinetics.transmission.ClutchBlockEntity;
+import com.simibubi.create.content.kinetics.transmission.GearshiftBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -67,6 +69,15 @@ public final class HudProviders {
                 || blockEntity instanceof MillstoneBlockEntity) {
 
             providers.add(new CreateProcessingHudProvider(blockEntity));
+        }
+
+        /*
+         * Create Power
+         * Mechanical Clutchなどの動力固有の情報を表示する。
+         */
+        if (blockEntity instanceof ClutchBlockEntity
+                || blockEntity instanceof GearshiftBlockEntity) {
+            providers.add(new CreatePowerHudProvider(blockEntity));
         }
 
         /*

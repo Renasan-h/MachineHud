@@ -34,5 +34,11 @@
   "machinehud.processing.mode.sawing": "製材",
   "machinehud.processing.mode.drilling": "掘削",
   "machinehud.processing.mode.crushing": "粉砕",
-  "machinehud.processing.mode.milling": "製粉"
+  "machinehud.processing.mode.milling": "製粉",
+  "machinehud.header.create_power": "動力制御",
+  "machinehud.power.state": "状態",
+  "machinehud.power.state.connected": "接続中",
+  "machinehud.power.state.disconnected": "切断中",
+  "machinehud.power.state.normal": "通常",
+  "machinehud.power.state.reversed": "反転"
 }

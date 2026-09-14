@@ -130,6 +130,11 @@ public final class HudElementConfig {
                 CreateHudElement.NETWORK_STATUS,
                 ClientConfig.SHOW_NETWORK_STATUS
         );
+
+        register(
+                CreateHudElement.POWER_STATE,
+                ClientConfig.SHOW_POWER_STATE
+        );
     }
 
     private HudElementConfig() {

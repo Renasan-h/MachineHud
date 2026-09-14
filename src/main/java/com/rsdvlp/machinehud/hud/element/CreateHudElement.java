@@ -61,6 +61,17 @@ public enum CreateHudElement implements HudElement {
 
     /*
      * =========================
+     * 動力情報
+     * =========================
+     */
+    POWER_STATE(
+            "powerState",
+            "machinehud.power.state",
+            HudGroup.CREATE_POWER
+    ),
+
+    /*
+     * =========================
      * ボイラー情報
      * =========================
      */
