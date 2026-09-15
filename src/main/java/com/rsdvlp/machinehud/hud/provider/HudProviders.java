@@ -11,6 +11,8 @@ import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
 import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
+import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
+import com.simibubi.create.content.kinetics.steamEngine.SteamEngineBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.ClutchBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.GearshiftBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -55,6 +57,23 @@ public final class HudProviders {
             providers.add(
                     new CreateHudProvider(createHudData)
             );
+        }
+
+        /*
+         * Powered ShaftのKinetic情報を、Steam Engineの動力情報として表示する。
+         */
+        if (blockEntity instanceof SteamEngineBlockEntity steamEngine) {
+
+            PoweredShaftBlockEntity shaft = steamEngine.getShaft();
+
+            if (shaft != null) {
+
+                CreateHudData createHudData = new CreateHudData(shaft, shaft.getBlockState());
+
+                providers.add(
+                        new CreateHudProvider(createHudData)
+                );
+            }
         }
 
         /*
