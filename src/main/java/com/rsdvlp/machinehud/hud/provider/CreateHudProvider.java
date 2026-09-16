@@ -194,7 +194,11 @@ public final class CreateHudProvider implements HudProvider {
                  BOILER_HEAT,
                  BOILER_OUTPUT,
                  POWER_STATE,
-                 POWER_TARGET_SPEED -> null;
+                 POWER_TARGET_SPEED,
+                 POWER_SPEED_MODIFIER,
+                 POWER_REDSTONE_SIGNAL,
+                 FLUID_INPUT_DIRECTION,
+                 FLUID_OUTPUT_DIRECTION -> null;
         };
     }
 }

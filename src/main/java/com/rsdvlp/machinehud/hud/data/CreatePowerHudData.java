@@ -1,5 +1,7 @@
 package com.rsdvlp.machinehud.hud.data;
 
+import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.ClutchBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.GearshiftBlockEntity;
@@ -13,7 +15,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 public record CreatePowerHudData(
         Type type,
         State state,
-        float targetSpeed
+        float targetSpeed,
+        float speedModifier,
+        int redstoneSignal
 ) {
 
     /**
@@ -22,7 +26,9 @@ public record CreatePowerHudData(
     public enum Type {
         CLUTCH,
         GEARSHIFT,
-        SPEED_CONTROLLER
+        SPEED_CONTROLLER,
+        CREATIVE_MOTOR,
+        ADJUSTABLE_CHAIN_GEARSHIFT
     }
 
     /**
@@ -59,6 +65,8 @@ public record CreatePowerHudData(
         return new CreatePowerHudData(
                 Type.CLUTCH,
                 state,
+                0,
+                1,
                 0
         );
     }
@@ -79,6 +87,8 @@ public record CreatePowerHudData(
         return new CreatePowerHudData(
                 Type.GEARSHIFT,
                 state,
+                0,
+                1,
                 0
         );
     }
@@ -90,7 +100,50 @@ public record CreatePowerHudData(
         return new CreatePowerHudData(
                 Type.SPEED_CONTROLLER,
                 State.NONE,
-                controller.targetSpeed.getValue()
+                controller.targetSpeed.getValue(),
+                1,
+                0
+        );
+    }
+
+    public static CreatePowerHudData create(
+            CreativeMotorBlockEntity motor
+    ) {
+
+        return new CreatePowerHudData(
+                Type.CREATIVE_MOTOR,
+                State.NONE,
+                motor.generatedSpeed.getValue(),
+                1,
+                0
+        );
+    }
+
+    /**
+     * Adjustable Chain Gearshiftから
+     * 現在の回転速度倍率を取得する。
+     * Redstone信号強度に応じて
+     * 1.0 ～ 2.0倍の倍率を持つ。
+     */
+    public static CreatePowerHudData create(
+            ChainGearshiftBlockEntity gearshift
+    ) {
+
+        int signal = 0;
+
+        if (gearshift.getLevel() != null) {
+            signal = gearshift.getLevel()
+                    .getBestNeighborSignal(
+                            gearshift.getBlockPos()
+                    );
+        }
+
+        return new CreatePowerHudData(
+                Type.ADJUSTABLE_CHAIN_GEARSHIFT,
+                State.NONE,
+                0,
+                gearshift.getModifier(),
+                signal
         );
     }
 }

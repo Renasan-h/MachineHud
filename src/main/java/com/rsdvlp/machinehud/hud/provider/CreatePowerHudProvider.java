@@ -6,12 +6,17 @@ import com.rsdvlp.machinehud.hud.HudLineType;
 import com.rsdvlp.machinehud.hud.data.CreatePowerHudData;
 import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
+import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.ClutchBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.GearshiftBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
+
+import static com.rsdvlp.machinehud.hud.element.CreateHudElement.POWER_REDSTONE_SIGNAL;
+import static com.rsdvlp.machinehud.hud.element.CreateHudElement.POWER_SPEED_MODIFIER;
 
 /**
  * Createの動力系ブロック専用HUD Provider。
@@ -33,6 +38,10 @@ public final class CreatePowerHudProvider implements HudProvider {
             this.data = CreatePowerHudData.create(gearshift);
         } else if (data instanceof SpeedControllerBlockEntity speedController) {
             this.data = CreatePowerHudData.create(speedController);
+        } else if (data instanceof CreativeMotorBlockEntity motor) {
+            this.data = CreatePowerHudData.create(motor);
+        } else if (data instanceof ChainGearshiftBlockEntity chainGearshift) {
+            this.data = CreatePowerHudData.create(chainGearshift);
         } else {
             this.data = null;
         }
@@ -55,8 +64,10 @@ public final class CreatePowerHudProvider implements HudProvider {
 
             case CLUTCH,
                  GEARSHIFT -> createElement == CreateHudElement.POWER_STATE;
-
-            case SPEED_CONTROLLER -> createElement == CreateHudElement.POWER_TARGET_SPEED;
+            case SPEED_CONTROLLER,
+                 CREATIVE_MOTOR -> createElement == CreateHudElement.POWER_TARGET_SPEED;
+            case ADJUSTABLE_CHAIN_GEARSHIFT -> createElement == POWER_SPEED_MODIFIER
+            || createElement == POWER_REDSTONE_SIGNAL;
         };
     }
 
@@ -72,6 +83,8 @@ public final class CreatePowerHudProvider implements HudProvider {
         return switch (createElement) {
             case POWER_STATE -> createStateLine();
             case POWER_TARGET_SPEED -> createTargetSpeedLine();
+            case POWER_SPEED_MODIFIER -> createSpeedModifierLine();
+            case POWER_REDSTONE_SIGNAL -> createRedstoneSignalLine();
             default -> null;
         };
     }
@@ -131,6 +144,43 @@ public final class CreatePowerHudProvider implements HudProvider {
                                 "%.1f RPM",
                                 data.targetSpeed()
                         )
+                ),
+                0,
+                ChatFormatting.WHITE.getColor(),
+                HudLineType.VALUE,
+                HudGroup.CREATE_POWER,
+                null
+        );
+    }
+
+    private HudLine createSpeedModifierLine() {
+
+        return new HudLine(
+                Component.translatable(
+                        CreateHudElement.POWER_SPEED_MODIFIER.getDisplayName()
+                ),
+                Component.literal(
+                        String.format(
+                                "×%.2f",
+                                data.speedModifier()
+                        )
+                ),
+                0,
+                ChatFormatting.WHITE.getColor(),
+                HudLineType.VALUE,
+                HudGroup.CREATE_POWER,
+                null
+        );
+    }
+
+    private HudLine createRedstoneSignalLine() {
+
+        return new HudLine(
+                Component.translatable(
+                        CreateHudElement.POWER_REDSTONE_SIGNAL.getDisplayName()
+                ),
+                Component.literal(
+                        Integer.toString(data.redstoneSignal())
                 ),
                 0,
                 ChatFormatting.WHITE.getColor(),

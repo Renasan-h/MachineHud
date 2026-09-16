@@ -54,7 +54,14 @@ public enum HudGroup {
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
             )
-    ),;
+    ),
+    CREATE_FLUID(
+            "machinehud.header.create_fluid",
+            ResourceLocation.fromNamespaceAndPath(
+                    MachineHUD.MODID,
+                    "textures/gui/icon/kinetic.png"
+            )
+    );
 
     // HUDへ表示するグループ名。
     private final String displayName;

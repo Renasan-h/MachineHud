@@ -76,6 +76,35 @@ public enum CreateHudElement implements HudElement {
             HudGroup.CREATE_POWER
     ),
 
+    POWER_SPEED_MODIFIER(
+            "powerSpeedModifier",
+            "machinehud.power.speed_modifier",
+            HudGroup.CREATE_POWER
+    ),
+
+    POWER_REDSTONE_SIGNAL(
+            "powerRedstoneSignal",
+            "machinehud.power.redstone_signal",
+            HudGroup.CREATE_POWER
+    ),
+
+    /*
+     * =========================
+     * 流体情報
+     * =========================
+     */
+    FLUID_INPUT_DIRECTION(
+            "fluidInputDirection",
+            "machinehud.fluid.input_direction",
+            HudGroup.CREATE_FLUID
+    ),
+
+    FLUID_OUTPUT_DIRECTION(
+            "fluidOutputDirection",
+            "machinehud.fluid.output_direction",
+            HudGroup.CREATE_FLUID
+    ),
+
     /*
      * =========================
      * ボイラー情報

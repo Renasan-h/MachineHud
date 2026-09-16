@@ -131,6 +131,11 @@ public final class HudElementConfig {
                 ClientConfig.SHOW_NETWORK_STATUS
         );
 
+        /*
+         * =========================
+         * Create - Power
+         * =========================
+         */
         register(
                 CreateHudElement.POWER_STATE,
                 ClientConfig.SHOW_POWER_STATE
@@ -139,6 +144,31 @@ public final class HudElementConfig {
         register(
                 CreateHudElement.POWER_TARGET_SPEED,
                 ClientConfig.SHOW_POWER_TARGET_SPEED
+        );
+
+        register(
+                CreateHudElement.POWER_SPEED_MODIFIER,
+                ClientConfig.SHOW_POWER_TARGET_SPEED_MODIFIER
+        );
+
+        register(
+                CreateHudElement.POWER_REDSTONE_SIGNAL,
+                ClientConfig.SHOW_POWER_REDSTONE_SIGNAL
+        );
+
+        /*
+         * =========================
+         * Create - Fluid
+         * =========================
+         */
+        register(
+                CreateHudElement.FLUID_INPUT_DIRECTION,
+                ClientConfig.SHOW_FLUID_INPUT_DIRECTION
+        );
+
+        register(
+                CreateHudElement.FLUID_OUTPUT_DIRECTION,
+                ClientConfig.SHOW_FLUID_OUTPUT_DIRECTION
         );
     }
 

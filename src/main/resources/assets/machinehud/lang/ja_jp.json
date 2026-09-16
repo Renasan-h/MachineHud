@@ -42,5 +42,10 @@
   "machinehud.power.state.normal": "通常",
   "machinehud.power.state.reversed": "反転",
   "machinehud.status.no_input": "動力入力なし",
-  "machinehud.power.target_speed": "設定速度"
+  "machinehud.power.target_speed": "設定速度",
+  "machinehud.power.speed_modifier": "速度倍率",
+  "machinehud.power.redstone_signal": "RS信号強度",
+  "machinehud.fluid.input_direction": "吸入方向",
+  "machinehud.fluid.output_direction": "排出方向",
+  "machinehud.header.create_fluid": "流体情報"
 }

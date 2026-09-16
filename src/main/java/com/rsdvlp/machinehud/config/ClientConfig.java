@@ -119,6 +119,27 @@ public class ClientConfig {
             BUILDER
                     .comment("Show power target speed")
                     .define("showPowerTargetSpeed", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_POWER_TARGET_SPEED_MODIFIER =
+            BUILDER
+                    .comment("Show power target speed modifier")
+                    .define("showPowerTargetSpeedModifier", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_POWER_REDSTONE_SIGNAL =
+            BUILDER
+                    .comment("Show power redstone signal")
+                    .define("showPowerRedstoneSignal", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_INPUT_DIRECTION =
+            BUILDER
+                    .comment("Show Create fluid input direction.")
+                    .define("showFluidInputDirection", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_OUTPUT_DIRECTION =
+            BUILDER
+                    .comment("Show Create fluid output direction.")
+                    .define("showFluidOutputDirection", true);
+
     /*
      * HUDの表示順。
      * HudElementのIDをStringとして保存する。

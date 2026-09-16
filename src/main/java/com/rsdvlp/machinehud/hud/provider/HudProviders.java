@@ -2,12 +2,15 @@ package com.rsdvlp.machinehud.hud.provider;
 
 import com.rsdvlp.machinehud.hud.data.CreateBoilerHudData;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
+import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.chainDrive.ChainGearshiftBlockEntity;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelBlockEntity;
 import com.simibubi.create.content.kinetics.drill.DrillBlockEntity;
 import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.simibubi.create.content.kinetics.mixer.MechanicalMixerBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.kinetics.press.MechanicalPressBlockEntity;
 import com.simibubi.create.content.kinetics.saw.SawBlockEntity;
 import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
@@ -97,7 +100,9 @@ public final class HudProviders {
          */
         if (blockEntity instanceof ClutchBlockEntity
                 || blockEntity instanceof GearshiftBlockEntity
-                || blockEntity instanceof SpeedControllerBlockEntity) {
+                || blockEntity instanceof SpeedControllerBlockEntity
+                || blockEntity instanceof CreativeMotorBlockEntity
+                || blockEntity instanceof ChainGearshiftBlockEntity) {
 
             providers.add(new CreatePowerHudProvider(blockEntity));
         }
@@ -114,6 +119,18 @@ public final class HudProviders {
             if (boilerHudData != null) {
                 providers.add(new CreateBoilerHudProvider(boilerHudData));
             }
+        }
+
+        /*
+         * Create Fluid
+         * Mechanical Pumpなど、
+         * Createの流体ネットワーク固有情報を表示する。
+         */
+        if (blockEntity instanceof PumpBlockEntity) {
+
+            providers.add(
+                    new CreateFluidHudProvider(blockEntity)
+            );
         }
 
         /*
