@@ -197,8 +197,13 @@ public final class CreateHudProvider implements HudProvider {
                  POWER_TARGET_SPEED,
                  POWER_SPEED_MODIFIER,
                  POWER_REDSTONE_SIGNAL,
-                 FLUID_INPUT_DIRECTION,
-                 FLUID_OUTPUT_DIRECTION -> null;
+                 FLUID_INPUT_CONNECTION,
+                 FLUID_OUTPUT_CONNECTION,
+                 FLUID_MAX_FLOW_RATE,
+                 FLUID_VALVE_STATE,
+                 FLUID_FILTER,
+                 FLUID_AMOUNT,
+                 FLUID_CONTENT-> null;
         };
     }
 }

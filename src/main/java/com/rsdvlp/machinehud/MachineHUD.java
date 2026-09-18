@@ -3,6 +3,7 @@ package com.rsdvlp.machinehud;
 import com.rsdvlp.machinehud.config.ClientConfig;
 import com.rsdvlp.machinehud.item.ModItems;
 import com.rsdvlp.machinehud.model.MachineHudGogglesModel;
+import com.rsdvlp.machinehud.network.MachineHudPayloads;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -78,6 +79,8 @@ public class MachineHUD {
         );
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        // MachineHUDで使用するネットワークPayloadを登録する。
+        modEventBus.addListener(MachineHudPayloads::register);
 
         // MachineHUDで追加するItemをNeoForgeへ登録する。
         ModItems.ITEMS.register(modEventBus);

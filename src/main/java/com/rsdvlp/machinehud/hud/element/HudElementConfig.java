@@ -162,13 +162,38 @@ public final class HudElementConfig {
          * =========================
          */
         register(
-                CreateHudElement.FLUID_INPUT_DIRECTION,
-                ClientConfig.SHOW_FLUID_INPUT_DIRECTION
+                CreateHudElement.FLUID_INPUT_CONNECTION,
+                ClientConfig.SHOW_FLUID_INPUT_CONNECTION
         );
 
         register(
-                CreateHudElement.FLUID_OUTPUT_DIRECTION,
-                ClientConfig.SHOW_FLUID_OUTPUT_DIRECTION
+                CreateHudElement.FLUID_OUTPUT_CONNECTION,
+                ClientConfig.SHOW_FLUID_OUTPUT_CONNECTION
+        );
+
+        register(
+                CreateHudElement.FLUID_MAX_FLOW_RATE,
+                ClientConfig.SHOW_FLUID_MAX_FLOW_RATE
+        );
+
+        register(
+                CreateHudElement.FLUID_VALVE_STATE,
+                ClientConfig.SHOW_FLUID_VALVE_STATE
+        );
+
+        register(
+                CreateHudElement.FLUID_FILTER,
+                ClientConfig.SHOW_FLUID_FILTER
+        );
+
+        register(
+                CreateHudElement.FLUID_CONTENT,
+                ClientConfig.SHOW_FLUID_CONTENT
+        );
+
+        register(
+                CreateHudElement.FLUID_AMOUNT,
+                ClientConfig.SHOW_FLUID_AMOUNT
         );
     }
 

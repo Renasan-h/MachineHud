@@ -6,6 +6,8 @@ import com.rsdvlp.machinehud.hud.element.HudElements;
 import com.rsdvlp.machinehud.hud.provider.HudProvider;
 import com.rsdvlp.machinehud.hud.provider.HudProviders;
 import com.rsdvlp.machinehud.item.ModItems;
+import com.rsdvlp.machinehud.network.WatchStartPayload;
+import com.rsdvlp.machinehud.network.WatchStopPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +107,13 @@ public final class MachineHudRenderer {
     // 項目名と値の文字サイズ倍率
     private static final float DRAW_VALUE_SCALE = 0.9F;
 
+    /**
+     * 前回MachineHUDがServerへ通知した監視対象。
+     * render()は毎フレーム呼ばれるため、
+     * 同じBlockPosを毎フレーム送信しないために保持する。
+     */
+    private static BlockPos lastWatchPos;
+
 
     // このクラスはstaticメソッドのみを使用するため、
     // 外部からインスタンスを作成できないようにする。
@@ -133,12 +143,14 @@ public final class MachineHudRenderer {
         // Machine HUD Gogglesを装備していない場合は、
         // HUDを一切表示しない。
         if (!headStack.is(ModItems.MACHINE_HUD_GOGGLES.get())) {
+            stopWatching();
             return;
         }
 
         // ショートカットキーによるHUD全体のON/OFFを
         // HudStateで実装済みの場合はここで判定する。
         if (!HudState.isEnabled()) {
+            stopWatching();
             return;
         }
 
@@ -155,11 +167,27 @@ public final class MachineHudRenderer {
         // 最大距離内に対象ブロックが存在しない場合は
         // HUDを表示する必要がないため終了する。
         if (target == null) {
+            stopWatching();
             return;
         }
 
         // レイキャストで命中したブロックの座標を取得する。
         BlockPos blockPos = target.getBlockPos();
+
+        /*
+         * render()は毎フレーム実行されるため、
+         * 同じBlockPosを見続けている間はPayloadを再送しない。
+         *
+         * 前回とは異なるブロックを見始めた場合だけ、
+         * Serverへ新しい監視対象を通知する。
+         */
+        if (!blockPos.equals(lastWatchPos)) {
+            PacketDistributor.sendToServer(
+                    new WatchStartPayload(blockPos)
+            );
+
+            lastWatchPos = blockPos;
+        }
 
         // 対象座標に存在するブロックの現在状態を取得する。
         BlockState blockState = minecraft.level.getBlockState(blockPos);
@@ -1277,5 +1305,26 @@ public final class MachineHudRenderer {
         }
 
         return bar;
+    }
+
+    /**
+     * 現在のMachineHUD監視を終了する。
+     * 監視対象が存在するときだけSTOPを送ることで、
+     * 毎フレーム同じSTOP Payloadを送信することを防ぐ。
+     */
+    private static void stopWatching() {
+
+        // そもそも監視していなければ何もしない。
+        if (lastWatchPos == null) {
+            return;
+        }
+
+        // Serverへ監視終了を通知する。
+        PacketDistributor.sendToServer(
+                new WatchStopPayload()
+        );
+
+        // Client側でも監視対象を解除する。
+        lastWatchPos = null;
     }
 }

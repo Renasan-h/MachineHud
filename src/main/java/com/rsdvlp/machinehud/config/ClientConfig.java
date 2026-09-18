@@ -130,15 +130,40 @@ public class ClientConfig {
                     .comment("Show power redstone signal")
                     .define("showPowerRedstoneSignal", true);
 
-    public static final ModConfigSpec.BooleanValue SHOW_FLUID_INPUT_DIRECTION =
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_INPUT_CONNECTION =
             BUILDER
                     .comment("Show Create fluid input direction.")
                     .define("showFluidInputDirection", true);
 
-    public static final ModConfigSpec.BooleanValue SHOW_FLUID_OUTPUT_DIRECTION =
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_OUTPUT_CONNECTION =
             BUILDER
                     .comment("Show Create fluid output direction.")
                     .define("showFluidOutputDirection", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_VALVE_STATE =
+            BUILDER
+                    .comment("Show Create fluid valve state.")
+                    .define("showFluidValveState", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_FILTER =
+            BUILDER
+                    .comment("Show Create fluid filter.")
+                    .define("showFluidFilter", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_CONTENT =
+            BUILDER
+                    .comment("Show Create fluid content.")
+                    .define("showFluidContent", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_MAX_FLOW_RATE =
+            BUILDER
+                    .comment("Show Create fluid Max Flow Rate.")
+                    .define("showFluidMaxFlowRate", true);
+
+    public static final ModConfigSpec.BooleanValue SHOW_FLUID_AMOUNT =
+            BUILDER
+                    .comment("Show Create fluid amount.")
+                    .define("showFluidAmount", true);
 
     /*
      * HUDの表示順。

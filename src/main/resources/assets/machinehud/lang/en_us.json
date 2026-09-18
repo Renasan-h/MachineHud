@@ -58,5 +58,19 @@
   "machinehud.power.redstone_signal": "Redstone Signal",
   "machinehud.fluid.input_direction": "Input Direction",
   "machinehud.fluid.output_direction": "Output Direction",
-  "machinehud.header.create_fluid": "Fluid Information"
+  "machinehud.header.create_fluid": "Fluid Information",
+  "machinehud.fluid.valve_state": "Valve State",
+  "machinehud.fluid.valve_state.open": "Open",
+  "machinehud.fluid.valve_state.closed": "Closed",
+  "machinehud.fluid.filter": "Filter",
+  "machinehud.fluid.filter.empty": "Not Set",
+  "machinehud.fluid.content": "Contents",
+  "machinehud.fluid.amount": "Stored",
+  "machinehud.fluid.empty": "Empty",
+  "machinehud.fluid.input_side": "Input Side",
+  "machinehud.fluid.output_side": "Output Side",
+  "machinehud.fluid.connection.pipe": "Pipe",
+  "machinehud.fluid.connection.machine": "Machine",
+  "machinehud.fluid.connection.open": "Open",
+  "machinehud.fluid.max_flow_rate": "Max Flow Rate"
 }

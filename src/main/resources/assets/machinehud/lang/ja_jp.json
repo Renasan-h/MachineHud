@@ -47,5 +47,19 @@
   "machinehud.power.redstone_signal": "RS信号強度",
   "machinehud.fluid.input_direction": "吸入方向",
   "machinehud.fluid.output_direction": "排出方向",
-  "machinehud.header.create_fluid": "流体情報"
+  "machinehud.header.create_fluid": "流体情報",
+  "machinehud.fluid.valve_state": "バルブ状態",
+  "machinehud.fluid.valve_state.open": "開放",
+  "machinehud.fluid.valve_state.closed": "閉鎖",
+  "machinehud.fluid.filter": "フィルター",
+  "machinehud.fluid.filter.empty": "未設定",
+  "machinehud.fluid.content": "内容物",
+  "machinehud.fluid.amount": "貯蔵量",
+  "machinehud.fluid.empty": "空",
+  "machinehud.fluid.input_side": "吸入側",
+  "machinehud.fluid.output_side": "排出側",
+  "machinehud.fluid.connection.pipe": "パイプ",
+  "machinehud.fluid.connection.machine": "機械",
+  "machinehud.fluid.connection.open": "開放",
+  "machinehud.fluid.max_flow_rate": "最大流量"
 }

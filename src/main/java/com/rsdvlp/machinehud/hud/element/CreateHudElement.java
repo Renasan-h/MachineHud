@@ -93,15 +93,45 @@ public enum CreateHudElement implements HudElement {
      * 流体情報
      * =========================
      */
-    FLUID_INPUT_DIRECTION(
+    FLUID_INPUT_CONNECTION(
             "fluidInputDirection",
             "machinehud.fluid.input_direction",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_OUTPUT_DIRECTION(
+    FLUID_OUTPUT_CONNECTION(
             "fluidOutputDirection",
             "machinehud.fluid.output_direction",
+            HudGroup.CREATE_FLUID
+    ),
+
+    FLUID_MAX_FLOW_RATE(
+            "fluidMaxFlowRate",
+            "machinehud.fluid.max_flow_rate",
+            HudGroup.CREATE_FLUID
+    ),
+
+    FLUID_VALVE_STATE(
+            "fluidValveState",
+            "machinehud.fluid.valve_state",
+            HudGroup.CREATE_FLUID
+    ),
+
+    FLUID_FILTER(
+            "fluidFilter",
+            "machinehud.fluid.filter",
+            HudGroup.CREATE_FLUID
+    ),
+
+    FLUID_CONTENT(
+            "fluidContent",
+            "machinehud.fluid.content",
+            HudGroup.CREATE_FLUID
+    ),
+
+    FLUID_AMOUNT(
+            "fluidAmount",
+            "machinehud.fluid.amount",
             HudGroup.CREATE_FLUID
     ),
 

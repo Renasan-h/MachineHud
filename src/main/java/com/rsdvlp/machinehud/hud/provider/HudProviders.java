@@ -2,6 +2,8 @@ package com.rsdvlp.machinehud.hud.provider;
 
 import com.rsdvlp.machinehud.hud.data.CreateBoilerHudData;
 import com.rsdvlp.machinehud.hud.data.CreateHudData;
+import com.simibubi.create.content.fluids.pipes.SmartFluidPipeBlockEntity;
+import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlockEntity;
 import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -112,12 +114,26 @@ public final class HudProviders {
          */
         if (blockEntity instanceof FluidTankBlockEntity fluidTankBlockEntity) {
 
-            CreateBoilerHudData boilerHudData = CreateBoilerHudData.create(fluidTankBlockEntity);
+            CreateBoilerHudData boilerHudData =
+                    CreateBoilerHudData.create(fluidTankBlockEntity);
 
-            // 通常のFluid Tankなど、
-            // Boilerとして動作していない場合は追加しない。
             if (boilerHudData != null) {
-                providers.add(new CreateBoilerHudProvider(boilerHudData));
+
+                /*
+                 * Boilerとして稼働しているTank。
+                 */
+                providers.add(
+                        new CreateBoilerHudProvider(boilerHudData)
+                );
+
+            } else {
+
+                /*
+                 * Boilerではない通常のFluid Tank。
+                 */
+                providers.add(
+                        new CreateFluidHudProvider(fluidTankBlockEntity)
+                );
             }
         }
 
@@ -126,7 +142,9 @@ public final class HudProviders {
          * Mechanical Pumpなど、
          * Createの流体ネットワーク固有情報を表示する。
          */
-        if (blockEntity instanceof PumpBlockEntity) {
+        if (blockEntity instanceof PumpBlockEntity
+                || blockEntity instanceof FluidValveBlockEntity
+                || blockEntity instanceof SmartFluidPipeBlockEntity) {
 
             providers.add(
                     new CreateFluidHudProvider(blockEntity)

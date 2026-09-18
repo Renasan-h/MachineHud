@@ -3,17 +3,22 @@ package com.rsdvlp.machinehud.hud.provider;
 import com.rsdvlp.machinehud.hud.HudGroup;
 import com.rsdvlp.machinehud.hud.HudLine;
 import com.rsdvlp.machinehud.hud.HudLineType;
-import com.rsdvlp.machinehud.hud.data.fluid.CreatePumpHudData;
+import com.rsdvlp.machinehud.hud.data.fluid.*;
 import com.rsdvlp.machinehud.hud.element.CreateHudElement;
 import com.rsdvlp.machinehud.hud.element.HudElement;
+import com.simibubi.create.content.fluids.pipes.SmartFluidPipeBlockEntity;
+import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlockEntity;
 import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public final class CreateFluidHudProvider implements HudProvider {
 
-    private final CreatePumpHudData data;
+    private final CreateFluidHudData data;
 
     public CreateFluidHudProvider(
             BlockEntity blockEntity
@@ -21,6 +26,12 @@ public final class CreateFluidHudProvider implements HudProvider {
 
         if (blockEntity instanceof PumpBlockEntity pump) {
             this.data = CreatePumpHudData.create(pump);
+        } else if (blockEntity instanceof FluidValveBlockEntity valve) {
+            this.data = CreateFluidValveHudData.create(valve);
+        } else if (blockEntity instanceof SmartFluidPipeBlockEntity pipe) {
+            this.data = CreateSmartFluidPipeHudData.create(pipe);
+        } else if (blockEntity instanceof FluidTankBlockEntity tank) {
+            this.data = CreateFluidTankHudData.create(tank);
         } else {
             this.data = null;
         }
@@ -31,9 +42,34 @@ public final class CreateFluidHudProvider implements HudProvider {
             HudElement element
     ) {
 
-        return data != null
-                && element instanceof CreateHudElement
-                && element.getHudGroup() == HudGroup.CREATE_FLUID;
+        if (data == null) {
+            return false;
+        }
+
+        if (!(element instanceof CreateHudElement createElement)) {
+            return false;
+        }
+
+        if (data instanceof CreatePumpHudData) {
+            return createElement == CreateHudElement.FLUID_INPUT_CONNECTION
+                    || createElement == CreateHudElement.FLUID_OUTPUT_CONNECTION
+                    || createElement == CreateHudElement.FLUID_MAX_FLOW_RATE;
+        }
+
+        if (data instanceof CreateFluidValveHudData) {
+            return createElement == CreateHudElement.FLUID_VALVE_STATE;
+        }
+
+        if (data instanceof CreateSmartFluidPipeHudData) {
+            return createElement == CreateHudElement.FLUID_FILTER;
+        }
+
+        if (data instanceof CreateFluidTankHudData) {
+            return createElement == CreateHudElement.FLUID_CONTENT
+                    || createElement == CreateHudElement.FLUID_AMOUNT;
+        }
+
+        return false;
     }
 
     @Override
@@ -47,26 +83,184 @@ public final class CreateFluidHudProvider implements HudProvider {
 
         return switch (createElement) {
 
-            case FLUID_INPUT_DIRECTION ->
-                    createInputDirectionLine();
+            case FLUID_INPUT_CONNECTION -> createInputConnectionLine();
 
-            case FLUID_OUTPUT_DIRECTION ->
-                    createOutputDirectionLine();
+            case FLUID_OUTPUT_CONNECTION -> createOutputConnectionLine();
+
+            case FLUID_MAX_FLOW_RATE -> createMaxFlowRateLine();
+
+            case FLUID_VALVE_STATE -> createValveStateLine();
+
+            case FLUID_FILTER -> createFilterLine();
+
+            case FLUID_CONTENT -> createFluidContentLine();
+
+            case FLUID_AMOUNT -> createFluidAmountLine();
 
             default -> null;
         };
     }
 
-    private HudLine createInputDirectionLine() {
+    private HudLine createInputConnectionLine() {
+
+        if (!(data instanceof CreatePumpHudData pumpData)) {
+            return null;
+        }
+
+        return new HudLine(
+                Component.translatable("machinehud.fluid.input_side"),
+                getConnectionName(pumpData.inputConnection()),
+                1,
+                0xFFFFFF,
+                HudLineType.VALUE,
+                HudGroup.CREATE_FLUID,
+                null
+        );
+    }
+
+    private HudLine createOutputConnectionLine() {
+
+        if (!(data instanceof CreatePumpHudData pumpData)) {
+            return null;
+        }
+
+        return new HudLine(
+                Component.translatable("machinehud.fluid.output_side"),
+                getConnectionName(pumpData.outputConnection()),
+                1,
+                0xFFFFFF,
+                HudLineType.VALUE,
+                HudGroup.CREATE_FLUID,
+                null
+        );
+    }
+
+    /**
+     * Mechanical Pumpが現在の回転速度から出せる最大流量を表示する。
+     * 実際に移動した流量ではなく、CreateのFluidNetworkが
+     * Pumpのpressureから算出する転送能力を表す。
+     */
+    private HudLine createMaxFlowRateLine() {
+
+        if (!(data instanceof CreatePumpHudData pumpData)) {
+            return null;
+        }
+
+        return new HudLine(
+                Component.translatable("machinehud.fluid.max_flow_rate"),
+                Component.literal(
+                        String.format("%,d mB/t", pumpData.maxFlowRate())
+                ),
+                1,
+                0xFFFFFF,
+                HudLineType.VALUE,
+                HudGroup.CREATE_FLUID,
+                null
+        );
+    }
+
+    private HudLine createValveStateLine() {
+
+        if (!(data instanceof CreateFluidValveHudData(CreateFluidValveHudData.State state))) {
+            return null;
+        }
+
+        String key =
+                state == CreateFluidValveHudData.State.OPEN
+                        ? "machinehud.fluid.valve_state.open"
+                        : "machinehud.fluid.valve_state.closed";
 
         return new HudLine(
                 Component.translatable(
-                        CreateHudElement.FLUID_INPUT_DIRECTION.getDisplayName()
+                        CreateHudElement.FLUID_VALVE_STATE.getDisplayName()
+                ),
+                Component.translatable(key),
+                1,
+                ChatFormatting.WHITE.getColor(),
+                HudLineType.VALUE,
+                HudGroup.CREATE_FLUID,
+                null
+        );
+    }
+
+    private HudLine createFilterLine() {
+
+        if (!(data instanceof CreateSmartFluidPipeHudData(
+                ItemStack filter
+        ))) {
+            return null;
+        }
+
+        Component value =
+                filter.isEmpty()
+                        ? Component.translatable(
+                        "machinehud.fluid.filter.empty"
+                )
+                        : filter.getHoverName();
+
+        return new HudLine(
+                Component.translatable(
+                        CreateHudElement.FLUID_FILTER.getDisplayName()
+                ),
+                value,
+                1,
+                ChatFormatting.WHITE.getColor(),
+                HudLineType.VALUE,
+                HudGroup.CREATE_FLUID,
+                null
+        );
+    }
+
+    private HudLine createFluidContentLine() {
+
+        if (!(data instanceof CreateFluidTankHudData(
+                FluidStack fluid,
+                int ignoredAmount,
+                int ignoredCapacity
+        ))) {
+            return null;
+        }
+
+        Component value =
+                fluid.isEmpty()
+                        ? Component.translatable(
+                        "machinehud.fluid.empty"
+                )
+                        : fluid.getHoverName();
+
+        return new HudLine(
+                Component.translatable(
+                        CreateHudElement.FLUID_CONTENT.getDisplayName()
+                ),
+                value,
+                1,
+                ChatFormatting.WHITE.getColor(),
+                HudLineType.VALUE,
+                HudGroup.CREATE_FLUID,
+                null
+        );
+    }
+
+    private HudLine createFluidAmountLine() {
+
+        if (!(data instanceof CreateFluidTankHudData(
+                FluidStack ignoredFluid,
+                int amount,
+                int capacity
+        ))) {
+            return null;
+        }
+
+        return new HudLine(
+                Component.translatable(
+                        CreateHudElement.FLUID_AMOUNT.getDisplayName()
                 ),
                 Component.literal(
-                        data.inputDirection()
-                                .getName()
-                                .toUpperCase()
+                        String.format(
+                                "%,d / %,d mB",
+                                amount,
+                                capacity
+                        )
                 ),
                 1,
                 ChatFormatting.WHITE.getColor(),
@@ -76,22 +270,21 @@ public final class CreateFluidHudProvider implements HudProvider {
         );
     }
 
-    private HudLine createOutputDirectionLine() {
+    /**
+     * Pumpの接続種別をHUD表示用Componentへ変換する。
+     */
+    private Component getConnectionName(
+            CreatePumpHudData.ConnectionType type
+    ) {
+        return switch (type) {
+            case PIPE ->
+                    Component.translatable("machinehud.fluid.connection.pipe");
 
-        return new HudLine(
-                Component.translatable(
-                        CreateHudElement.FLUID_OUTPUT_DIRECTION.getDisplayName()
-                ),
-                Component.literal(
-                        data.outputDirection()
-                                .getName()
-                                .toUpperCase()
-                ),
-                1,
-                ChatFormatting.WHITE.getColor(),
-                HudLineType.VALUE,
-                HudGroup.CREATE_FLUID,
-                null
-        );
+            case MACHINE ->
+                    Component.translatable("machinehud.fluid.connection.machine");
+
+            case OPEN ->
+                    Component.translatable("machinehud.fluid.connection.open");
+        };
     }
 }
