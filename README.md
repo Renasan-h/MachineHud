@@ -20,25 +20,4 @@ create modのエンジニアのゴーグルだけでは情報が足りない！�
 表示したい項目はmod - MachineHud選択時の設定ボタンから変更できます。
 
 ## 表示項目について
-- Speed
-  - 機械の回転力（RPM）
-- Stress Impact
-  - 回転力（RPM）ごとにかかる応力（SU/RPM）
-- Stress
-  - 機械の応力
-- Status
-  - 機械の動作状態
-- Theoritical
-  - 理論上の回転力
-- Position
-  - 機械の配置座標
-- Network Stress
-  - ネットワーク全体の応力
-- Network Capacity
-  - ネットワーク全体の許容応力
-- Network Usage
-  - ネットワーク全体の応力使用量
-- Network Size
-  - ネットワーク全体のサイズ
-- Network Status
-  - ネットワーク全体の動作状態
+- Createに関する動力を必要とする大まかなブロックに対して情報を表示する
