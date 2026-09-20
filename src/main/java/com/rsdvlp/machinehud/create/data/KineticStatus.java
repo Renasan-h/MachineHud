@@ -1,0 +1,24 @@
+package com.rsdvlp.machinehud.create.data;
+
+/**
+ * Createの回転機構の状態を表す。
+ * 表示文字列そのものではなく「状態」を保持することで、
+ * Renderer側で表示方法を自由に変更できるようにする。
+ */
+public enum KineticStatus {
+
+    RUNNING("machinehud.status.run", 0x36c136),
+    STOPPED("machinehud.status.stop", 0xc5c0c3),
+    NO_INPUT("machinehud.status.no_input", 0xd9a441),
+    OVERSTRESSED("machinehud.status.over_stressed", 0xd03c41);
+
+    private final String status;
+    private final int color;
+    KineticStatus(String status, int color) {
+        this.status = status;
+        this.color = color;
+    }
+
+    public String getStatus(){return this.status;}
+    public int getColor(){return this.color;}
+}

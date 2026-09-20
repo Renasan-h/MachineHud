@@ -1,8 +1,8 @@
 package com.rsdvlp.machinehud.screen;
 
-import com.rsdvlp.machinehud.hud.element.HudElement;
-import com.rsdvlp.machinehud.hud.element.HudElementConfig;
-import com.rsdvlp.machinehud.hud.element.HudElements;
+import com.rsdvlp.machinehud.common.hud.element.HudElement;
+import com.rsdvlp.machinehud.common.hud.element.HudElementConfig;
+import com.rsdvlp.machinehud.common.hud.element.HudElements;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;

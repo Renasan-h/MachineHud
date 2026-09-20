@@ -1,0 +1,210 @@
+package com.rsdvlp.machinehud.create.provider;
+
+import com.rsdvlp.machinehud.common.hud.HudGroup;
+import com.rsdvlp.machinehud.common.hud.HudLine;
+import com.rsdvlp.machinehud.common.hud.HudLineType;
+import com.rsdvlp.machinehud.create.data.CreateHudData;
+import com.rsdvlp.machinehud.create.data.KineticStatus;
+import com.rsdvlp.machinehud.create.data.NetworkStatus;
+import com.rsdvlp.machinehud.create.element.CreateHudElement;
+import com.rsdvlp.machinehud.common.hud.element.HudElement;
+import com.rsdvlp.machinehud.common.hud.provider.HudProvider;
+import net.minecraft.network.chat.Component;
+
+import static com.rsdvlp.machinehud.create.element.CreateHudElement.*;
+
+/**
+ * Create専用のHUD情報生成Provider。
+ * Create固有のデータ取得・表示変換をRendererから分離する。
+ */
+public final class CreateHudProvider implements HudProvider {
+
+    // 通常文字。
+    private static final int TEXT_PRIMARY = 0xFFFFFF;
+
+    private final CreateHudData data;
+
+    public CreateHudProvider(CreateHudData data) {
+        this.data = data;
+    }
+
+    @Override
+    public boolean supports(HudElement element) {
+
+        if (!(element instanceof CreateHudElement createElement)) {
+            return false;
+        }
+
+        /*
+         * 動力入力が存在しない場合は、
+         * 詳細なKinetic / Network情報を表示せず、
+         * STATUSだけを表示する。
+         */
+        if (!data.hasPowerInput()) {
+            return createElement == CreateHudElement.STATUS;
+        }
+
+        /*
+         * 動力入力が存在する場合は、
+         * これまで通りKinetic / Network情報を担当する。
+         */
+        return element.getHudGroup() == HudGroup.CREATE_KINETIC
+                || element.getHudGroup() == HudGroup.CREATE_NETWORK;
+    }
+
+    @Override
+    public HudLine createLine(HudElement element) {
+
+        if (!(element instanceof CreateHudElement createHudElement)) {
+            return null;
+        }
+
+        return switch (createHudElement) {
+            case SPEED -> new HudLine(
+                    Component.translatable(SPEED.getDisplayName()),
+                    Component.literal(String.format("%.1f RPM", data.getSpeed())),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case IMPACT -> new HudLine(
+                    Component.translatable(IMPACT.getDisplayName()),
+                    Component.literal(String.format("%.2f SU/RPM", data.getImpact())),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case STRESS -> new HudLine(
+                    Component.translatable(STRESS.getDisplayName()),
+                    Component.literal(String.format("%.1f SU", data.getStress())),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case STATUS -> {
+
+                KineticStatus status =
+                        data.getKineticStatus();
+
+                yield new HudLine(
+                        Component.translatable(STATUS.getDisplayName()),
+                        Component.translatable(status.getStatus()),
+                        1,
+                        status.getColor(),
+                        HudLineType.VALUE,
+                        null,
+                        null
+                );
+            }
+
+            case THEORETICAL_SPEED -> new HudLine(
+                    Component.translatable(THEORETICAL_SPEED.getDisplayName()),
+                    Component.literal(String.format(
+                            "%.1f RPM",
+                            data.getTheoreticalSpeed())
+                    ),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case NETWORK_STRESS -> new HudLine(
+                    Component.translatable(NETWORK_STRESS.getDisplayName()),
+                    Component.literal(String.format(
+                            "%.1f SU",
+                            data.getNetworkStress())
+                    ),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case NETWORK_CAPACITY -> new HudLine(
+                    Component.translatable(NETWORK_CAPACITY.getDisplayName()),
+                    Component.literal(String.format(
+                            "%.1f SU",
+                            data.getNetworkCapacity()
+                    )),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case NETWORK_USAGE -> new HudLine(
+                    Component.translatable(NETWORK_USAGE.getDisplayName()),
+                    Component.literal(String.format(
+                            "%.1f%%",
+                            data.getNetworkUsage()
+                    )),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case NETWORK_SIZE -> new HudLine(
+                    Component.translatable(NETWORK_SIZE.getDisplayName()),
+                    Component.literal(Integer.toString(
+                            data.getNetworkSize()
+                    )),
+                    1,
+                    TEXT_PRIMARY,
+                    HudLineType.VALUE,
+                    null,
+                    null
+            );
+
+            case NETWORK_STATUS -> {
+
+                NetworkStatus status =
+                        data.getNetworkStatus();
+
+                yield new HudLine(
+                        Component.translatable(NETWORK_STATUS.getDisplayName()),
+                        Component.literal(status.getStatus()),
+                        1,
+                        status.getColor(),
+                        HudLineType.VALUE,
+                        null,
+                        null
+                );
+            }
+
+            // 機械固有情報は専用Providerが担当する。
+            case PROCESSING_MODE,
+                 PROCESSING_STATE,
+                 BOILER_LEVEL,
+                 BOILER_SIZE,
+                 BOILER_WATER,
+                 BOILER_HEAT,
+                 BOILER_OUTPUT,
+                 POWER_STATE,
+                 POWER_TARGET_SPEED,
+                 POWER_SPEED_MODIFIER,
+                 POWER_REDSTONE_SIGNAL,
+                 FLUID_INPUT_CONNECTION,
+                 FLUID_OUTPUT_CONNECTION,
+                 FLUID_MAX_FLOW_RATE,
+                 FLUID_VALVE_STATE,
+                 FLUID_FILTER,
+                 FLUID_AMOUNT,
+                 FLUID_CONTENT-> null;
+        };
+    }
+}

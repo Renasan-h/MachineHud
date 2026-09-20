@@ -1,21 +1,18 @@
 package com.rsdvlp.machinehud;
 
-import com.rsdvlp.machinehud.hud.HudState;
-import com.rsdvlp.machinehud.hud.MachineHudRenderer;
+import com.rsdvlp.machinehud.common.hud.HudState;
+import com.rsdvlp.machinehud.common.hud.MachineHudRenderer;
 import com.rsdvlp.machinehud.key.ModKeyMappings;
-import com.rsdvlp.machinehud.model.MachineHudGogglesModel;
 import com.rsdvlp.machinehud.screen.MachineHudConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;

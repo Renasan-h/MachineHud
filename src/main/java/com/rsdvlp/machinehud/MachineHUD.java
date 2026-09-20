@@ -1,9 +1,11 @@
 package com.rsdvlp.machinehud;
 
-import com.rsdvlp.machinehud.config.ClientConfig;
+import com.rsdvlp.machinehud.common.config.ClientConfig;
+import com.rsdvlp.machinehud.common.network.WatchTargetHandlers;
+import com.rsdvlp.machinehud.create.network.CreateWatchTargetHandler;
 import com.rsdvlp.machinehud.item.ModItems;
 import com.rsdvlp.machinehud.model.MachineHudGogglesModel;
-import com.rsdvlp.machinehud.network.MachineHudPayloads;
+import com.rsdvlp.machinehud.common.network.MachineHudPayloads;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -108,6 +110,18 @@ public class MachineHUD {
         modContainer.registerConfig(
                 ModConfig.Type.CLIENT,
                 ClientConfig.SPEC
+        );
+
+        /*
+         * Create固有のServer監視Handlerを
+         * MachineHUD共通のHandlerレジストリへ登録する。
+         *
+         * common側からCreateを参照するのではなく、
+         * Create側の実装を外側からcommonへ登録することで、
+         * 共通監視処理をMOD固有クラスから分離する。
+         */
+        WatchTargetHandlers.register(
+                new CreateWatchTargetHandler()
         );
     }
 
