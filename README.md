@@ -8,6 +8,7 @@ create modのエンジニアのゴーグルだけでは情報が足りない！�
 ## 使い方
 - create modに存在するエンジニアのゴーグルを使用したレシピから作成
 <img width="346" height="160" alt="image" src="https://github.com/user-attachments/assets/829be22e-0276-47cc-b3f8-188d14e99f29" />
+（CreateとMekanismでは異なるレシピを採用しどちらかのmodが入っていれば機能する予定）
 
 - 初期のキーバインドはEndキーになっています。押すことでHUDの表示/非表示を切り替えられます。
 
