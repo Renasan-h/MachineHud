@@ -79,12 +79,6 @@ public final class MachineWatchManager {
             return false;
         }
 
-        /*
-         * 現在Server同期が必要なのはMechanical Pumpの実流量だけなので、
-         * Pump以外は監視対象として登録しない。
-         * 将来ほかの機械でもServer専用データが必要になった時点で、
-         * この判定を専用の同期対象判定へ拡張する。
-         */
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         WatchTargetHandler handler =

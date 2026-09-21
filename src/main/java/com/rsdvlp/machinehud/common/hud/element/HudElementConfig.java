@@ -1,7 +1,6 @@
 package com.rsdvlp.machinehud.common.hud.element;
 
 import com.rsdvlp.machinehud.common.config.ClientConfig;
-import com.rsdvlp.machinehud.create.element.CreateHudElement;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
@@ -30,172 +29,6 @@ public final class HudElementConfig {
                 CommonHudElement.POSITION,
                 ClientConfig.SHOW_POSITION
         );
-
-        /*
-         * =========================
-         * Create - Machine
-         * =========================
-         */
-        register(
-                CreateHudElement.SPEED,
-                ClientConfig.SHOW_SPEED
-        );
-
-        register(
-                CreateHudElement.IMPACT,
-                ClientConfig.SHOW_IMPACT
-        );
-
-        register(
-                CreateHudElement.STRESS,
-                ClientConfig.SHOW_STRESS
-        );
-
-        register(
-                CreateHudElement.STATUS,
-                ClientConfig.SHOW_STATUS
-        );
-
-        register(
-                CreateHudElement.THEORETICAL_SPEED,
-                ClientConfig.SHOW_THEORETICAL_SPEED
-        );
-
-        /*
-         * =========================
-         * Create - Dedicated
-         * =========================
-         */
-        register(
-                CreateHudElement.PROCESSING_MODE,
-                ClientConfig.SHOW_PROCESSING_MODE
-        );
-
-        register(
-                CreateHudElement.PROCESSING_STATE,
-                ClientConfig.SHOW_PROCESSING_STATE
-        );
-
-        /*
-         * =========================
-         * Create - Boiler
-         * =========================
-         */
-        register(
-                CreateHudElement.BOILER_SIZE,
-                ClientConfig.SHOW_BOILER_SIZE
-        );
-        register(
-                CreateHudElement.BOILER_WATER,
-                ClientConfig.SHOW_BOILER_WATER
-        );
-        register(
-                CreateHudElement.BOILER_HEAT,
-                ClientConfig.SHOW_BOILER_HEAT
-        );
-        register(
-                CreateHudElement.BOILER_LEVEL,
-                ClientConfig.SHOW_BOILER_LEVEL
-        );
-        register(
-                CreateHudElement.BOILER_OUTPUT,
-                ClientConfig.SHOW_BOILER_OUTPUT
-        );
-
-        /*
-         * =========================
-         * Create - Network
-         * =========================
-         */
-        register(
-                CreateHudElement.NETWORK_STRESS,
-                ClientConfig.SHOW_NETWORK_STRESS
-        );
-
-        register(
-                CreateHudElement.NETWORK_CAPACITY,
-                ClientConfig.SHOW_NETWORK_CAPACITY
-        );
-
-        register(
-                CreateHudElement.NETWORK_USAGE,
-                ClientConfig.SHOW_NETWORK_USAGE
-        );
-
-        register(
-                CreateHudElement.NETWORK_SIZE,
-                ClientConfig.SHOW_NETWORK_SIZE
-        );
-
-        register(
-                CreateHudElement.NETWORK_STATUS,
-                ClientConfig.SHOW_NETWORK_STATUS
-        );
-
-        /*
-         * =========================
-         * Create - Power
-         * =========================
-         */
-        register(
-                CreateHudElement.POWER_STATE,
-                ClientConfig.SHOW_POWER_STATE
-        );
-
-        register(
-                CreateHudElement.POWER_TARGET_SPEED,
-                ClientConfig.SHOW_POWER_TARGET_SPEED
-        );
-
-        register(
-                CreateHudElement.POWER_SPEED_MODIFIER,
-                ClientConfig.SHOW_POWER_TARGET_SPEED_MODIFIER
-        );
-
-        register(
-                CreateHudElement.POWER_REDSTONE_SIGNAL,
-                ClientConfig.SHOW_POWER_REDSTONE_SIGNAL
-        );
-
-        /*
-         * =========================
-         * Create - Fluid
-         * =========================
-         */
-        register(
-                CreateHudElement.FLUID_INPUT_CONNECTION,
-                ClientConfig.SHOW_FLUID_INPUT_CONNECTION
-        );
-
-        register(
-                CreateHudElement.FLUID_OUTPUT_CONNECTION,
-                ClientConfig.SHOW_FLUID_OUTPUT_CONNECTION
-        );
-
-        register(
-                CreateHudElement.FLUID_MAX_FLOW_RATE,
-                ClientConfig.SHOW_FLUID_MAX_FLOW_RATE
-        );
-
-        register(
-                CreateHudElement.FLUID_VALVE_STATE,
-                ClientConfig.SHOW_FLUID_VALVE_STATE
-        );
-
-        register(
-                CreateHudElement.FLUID_FILTER,
-                ClientConfig.SHOW_FLUID_FILTER
-        );
-
-        register(
-                CreateHudElement.FLUID_CONTENT,
-                ClientConfig.SHOW_FLUID_CONTENT
-        );
-
-        register(
-                CreateHudElement.FLUID_AMOUNT,
-                ClientConfig.SHOW_FLUID_AMOUNT
-        );
     }
 
     private HudElementConfig() {
@@ -203,8 +36,10 @@ public final class HudElementConfig {
 
     /**
      * HudElementとBoolean Configの対応を登録する。
+     * common自身の設定だけでなく、CreateやMekanismなどのMOD固有設定も
+     * 各側の初期化処理から登録できるようにする。
      */
-    private static void register(
+    public static void register(
             HudElement element,
             ModConfigSpec.BooleanValue config
     ) {
@@ -219,7 +54,6 @@ public final class HudElementConfig {
     public static ModConfigSpec.BooleanValue getConfig(
             HudElement element
     ) {
-
         return CONFIGS.get(
                 element.getId()
         );

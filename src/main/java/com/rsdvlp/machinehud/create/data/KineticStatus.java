@@ -7,10 +7,10 @@ package com.rsdvlp.machinehud.create.data;
  */
 public enum KineticStatus {
 
-    RUNNING("machinehud.status.run", 0x36c136),
-    STOPPED("machinehud.status.stop", 0xc5c0c3),
-    NO_INPUT("machinehud.status.no_input", 0xd9a441),
-    OVERSTRESSED("machinehud.status.over_stressed", 0xd03c41);
+    RUNNING("machinehud.create.status.run", 0x36c136),
+    STOPPED("machinehud.create.status.stop", 0xc5c0c3),
+    NO_INPUT("machinehud.create.status.no_input", 0xd9a441),
+    OVERSTRESSED("machinehud.create.status.over_stressed", 0xd03c41);
 
     private final String status;
     private final int color;

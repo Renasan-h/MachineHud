@@ -17,27 +17,27 @@ public enum CreateHudElement implements HudElement {
      */
     SPEED(
             "create.speed",
-            "machinehud.unit.speed",
+            "machinehud.create.unit.speed",
             HudGroup.CREATE_KINETIC
     ),
     IMPACT(
             "impact",
-            "machinehud.unit.stress_impact",
+            "machinehud.create.unit.stress_impact",
             HudGroup.CREATE_KINETIC
     ),
     STRESS(
             "stress",
-            "machinehud.unit.stress",
+            "machinehud.create.unit.stress",
             HudGroup.CREATE_KINETIC
     ),
     STATUS(
             "status",
-            "machinehud.unit.status",
+            "machinehud.create.unit.status",
             HudGroup.CREATE_KINETIC
     ),
     THEORETICAL_SPEED(
             "theoreticalSpeed",
-            "machinehud.unit.theoretical_speed",
+            "machinehud.create.unit.theoretical_speed",
             HudGroup.CREATE_KINETIC
     ),
 
@@ -51,12 +51,12 @@ public enum CreateHudElement implements HudElement {
      */
     PROCESSING_MODE(
             "processingMode",
-            "machinehud.processing.mode",
+            "machinehud.create.processing.mode",
             HudGroup.CREATE_PROCESSING
     ),
     PROCESSING_STATE(
             "processingState",
-            "machinehud.processing.state",
+            "machinehud.create.processing.state",
             HudGroup.CREATE_PROCESSING
     ),
 
@@ -67,25 +67,25 @@ public enum CreateHudElement implements HudElement {
      */
     POWER_STATE(
             "powerState",
-            "machinehud.power.state",
+            "machinehud.create.power.state",
             HudGroup.CREATE_POWER
     ),
 
     POWER_TARGET_SPEED(
             "powerTargetSpeed",
-            "machinehud.power.target_speed",
+            "machinehud.create.power.target_speed",
             HudGroup.CREATE_POWER
     ),
 
     POWER_SPEED_MODIFIER(
             "powerSpeedModifier",
-            "machinehud.power.speed_modifier",
+            "machinehud.create.power.speed_modifier",
             HudGroup.CREATE_POWER
     ),
 
     POWER_REDSTONE_SIGNAL(
             "powerRedstoneSignal",
-            "machinehud.power.redstone_signal",
+            "machinehud.create.power.redstone_signal",
             HudGroup.CREATE_POWER
     ),
 
@@ -96,43 +96,43 @@ public enum CreateHudElement implements HudElement {
      */
     FLUID_INPUT_CONNECTION(
             "fluidInputDirection",
-            "machinehud.fluid.input_direction",
+            "machinehud.create.fluid.input_direction",
             HudGroup.CREATE_FLUID
     ),
 
     FLUID_OUTPUT_CONNECTION(
             "fluidOutputDirection",
-            "machinehud.fluid.output_direction",
+            "machinehud.create.fluid.output_direction",
             HudGroup.CREATE_FLUID
     ),
 
     FLUID_MAX_FLOW_RATE(
             "fluidMaxFlowRate",
-            "machinehud.fluid.max_flow_rate",
+            "machinehud.create.fluid.max_flow_rate",
             HudGroup.CREATE_FLUID
     ),
 
     FLUID_VALVE_STATE(
             "fluidValveState",
-            "machinehud.fluid.valve_state",
+            "machinehud.create.fluid.valve_state",
             HudGroup.CREATE_FLUID
     ),
 
     FLUID_FILTER(
             "fluidFilter",
-            "machinehud.fluid.filter",
+            "machinehud.create.fluid.filter",
             HudGroup.CREATE_FLUID
     ),
 
     FLUID_CONTENT(
             "fluidContent",
-            "machinehud.fluid.content",
+            "machinehud.create.fluid.content",
             HudGroup.CREATE_FLUID
     ),
 
     FLUID_AMOUNT(
             "fluidAmount",
-            "machinehud.fluid.amount",
+            "machinehud.create.fluid.amount",
             HudGroup.CREATE_FLUID
     ),
 
@@ -143,27 +143,27 @@ public enum CreateHudElement implements HudElement {
      */
     BOILER_LEVEL(
             "boilerLevel",
-            "machinehud.boiler.level",
+            "machinehud.create.boiler.level",
             HudGroup.CREATE_BOILER
     ),
     BOILER_SIZE(
             "boilerSize",
-            "create.boiler.size",
+            "machinehud.create.boiler.size",
             HudGroup.CREATE_BOILER
     ),
     BOILER_WATER(
             "boilerWater",
-            "create.boiler.water",
+            "machinehud.create.boiler.water",
             HudGroup.CREATE_BOILER
     ),
     BOILER_HEAT(
             "boilerHeat",
-            "create.boiler.heat",
+            "machinehud.create.boiler.heat",
             HudGroup.CREATE_BOILER
     ),
     BOILER_OUTPUT(
             "boilerStreamOutput",
-            "machinehud.boiler.steam_output",
+            "machinehud.create.boiler.steam_output",
             HudGroup.CREATE_BOILER
     ),
 

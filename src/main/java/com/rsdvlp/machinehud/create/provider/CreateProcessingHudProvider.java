@@ -90,28 +90,28 @@ public class CreateProcessingHudProvider implements HudProvider {
         Component value = switch (data.mode()) {
 
             case PRESSING -> Component.translatable(
-                    "machinehud.processing.mode.pressing"
+                    "machinehud.create.processing.mode.pressing"
             );
             case COMPACTING -> Component.translatable(
-                    "machinehud.processing.mode.compacting"
+                    "machinehud.create.processing.mode.compacting"
             );
             case MIXING -> Component.translatable(
-                    "machinehud.processing.mode.mixing"
+                    "machinehud.create.processing.mode.mixing"
             );
             case CUTTING -> Component.translatable(
-                    "machinehud.processing.mode.cutting"
+                    "machinehud.create.processing.mode.cutting"
             );
             case SAWING -> Component.translatable(
-                    "machinehud.processing.mode.sawing"
+                    "machinehud.create.processing.mode.sawing"
             );
             case DRILLING -> Component.translatable(
-                    "machinehud.processing.mode.drilling"
+                    "machinehud.create.processing.mode.drilling"
             );
             case CRUSHING -> Component.translatable(
-                    "machinehud.processing.mode.crushing"
+                    "machinehud.create.processing.mode.crushing"
             );
             case MILLING -> Component.translatable(
-                    "machinehud.processing.mode.milling"
+                    "machinehud.create.processing.mode.milling"
             );
         };
 
@@ -135,13 +135,13 @@ public class CreateProcessingHudProvider implements HudProvider {
 
         Component value = switch (data.state()) {
             case IDLE -> Component.translatable(
-                    "machinehud.processing.state.idle"
+                    "machinehud.create.processing.state.idle"
             );
             case RUNNING -> Component.translatable(
-                    "machinehud.processing.state.running"
+                    "machinehud.create.processing.state.running"
             );
             case OUTPUT_BLOCKED -> Component.translatable(
-                    "machinehud.processing.state.output_blocked"
+                    "machinehud.create.processing.state.output_blocked"
             );
         };
 

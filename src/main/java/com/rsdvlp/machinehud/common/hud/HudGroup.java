@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public enum HudGroup {
     INFORMATION(
-            "machinehud.header.information",
+            "machinehud.create.header.information",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/information.png"
@@ -17,7 +17,7 @@ public enum HudGroup {
     ),
 
     CREATE_KINETIC(
-            "machinehud.header.create_kinetic",
+            "machinehud.create.header.create_kinetic",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
@@ -25,7 +25,7 @@ public enum HudGroup {
     ),
 
     CREATE_PROCESSING(
-            "machinehud.header.create_processing",
+            "machinehud.create.header.create_processing",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
@@ -33,7 +33,7 @@ public enum HudGroup {
     ),
 
     CREATE_BOILER(
-            "machinehud.header.create_boiler",
+            "machinehud.create.header.create_boiler",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
@@ -41,7 +41,7 @@ public enum HudGroup {
     ),
 
     CREATE_NETWORK(
-            "machinehud.header.create_network",
+            "machinehud.create.header.create_network",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/network.png"
@@ -49,14 +49,14 @@ public enum HudGroup {
     ),
 
     CREATE_POWER(
-            "machinehud.header.create_power",
+            "machinehud.create.header.create_power",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
             )
     ),
     CREATE_FLUID(
-            "machinehud.header.create_fluid",
+            "machinehud.create.header.create_fluid",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"

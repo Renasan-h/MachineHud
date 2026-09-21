@@ -1,42 +1,42 @@
 package com.rsdvlp.machinehud;
 
+import com.mojang.logging.LogUtils;
 import com.rsdvlp.machinehud.common.config.ClientConfig;
+import com.rsdvlp.machinehud.common.hud.element.HudElements;
+import com.rsdvlp.machinehud.common.network.MachineHudPayloads;
 import com.rsdvlp.machinehud.common.network.WatchTargetHandlers;
+import com.rsdvlp.machinehud.create.config.CreateHudElementConfig;
+import com.rsdvlp.machinehud.create.element.CreateHudElement;
 import com.rsdvlp.machinehud.create.network.CreateWatchTargetHandler;
 import com.rsdvlp.machinehud.item.ModItems;
 import com.rsdvlp.machinehud.model.MachineHudGogglesModel;
-import com.rsdvlp.machinehud.common.network.MachineHudPayloads;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(MachineHUD.MODID)
@@ -57,20 +57,11 @@ public class MachineHUD {
     // Creates a new BlockItem with the id "machinehud:example_block", combining the namespace and path
     public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
 
-    // Creates a new food item with the id "machinehud:example_id", nutrition 1 and saturation 2
-    public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder()
-            .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
-
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public MachineHUD(IEventBus modEventBus, ModContainer modContainer) {
-        /*
-         * Machine HUD Gogglesのモデルレイヤー登録イベントを、
-         * MOD専用Event Busへ登録する。
-         *
-         * @EventBusSubscriber(bus = Bus.MOD)を使用せず、
-         * NeoForge 1.21.1以降の方式としてEvent Busへ直接登録する。
-         */
+        // Machine HUD Gogglesのモデルレイヤー登録イベントを、MOD専用Event Busへ登録する。
+        // @EventBusSubscriber(bus = Bus.MOD)を使用せず、NeoForge 1.21.1以降の方式としてEvent Busへ直接登録する。
         modEventBus.addListener(
                 MachineHUD::registerLayerDefinitions
         );
@@ -112,17 +103,22 @@ public class MachineHUD {
                 ClientConfig.SPEC
         );
 
-        /*
-         * Create固有のServer監視Handlerを
-         * MachineHUD共通のHandlerレジストリへ登録する。
-         *
-         * common側からCreateを参照するのではなく、
-         * Create側の実装を外側からcommonへ登録することで、
-         * 共通監視処理をMOD固有クラスから分離する。
-         */
+        // Create固有のServer監視HandlerをMachineHUD共通のHandlerレジストリへ登録する。
+        // common側からCreateを参照するのではなく、Create側の実装を外側からcommonへ登録することで、
+        // 共通監視処理をMOD固有クラスから分離する。
         WatchTargetHandlers.register(
                 new CreateWatchTargetHandler()
         );
+
+        // Create固有のHudElementをMachineHUD共通のHudElementレジストリへ登録する。
+        // common側からCreateHudElementを直接参照しないことで、
+        // Create / Mekanismの追加に依存しない構造にする。
+        HudElements.register(
+                CreateHudElement.values()
+        );
+
+        // Create固有HudElementとClientConfigの対応を登録する。
+        CreateHudElementConfig.register();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -202,8 +198,7 @@ public class MachineHUD {
                         return MachineHudGogglesClient.getModel();
                     }
                 },
-                new Item[] {// このClient Extensionを適用するItem。
-                        ModItems.MACHINE_HUD_GOGGLES.get()
-                });
+                // このClient Extensionを適用するItem。
+                ModItems.MACHINE_HUD_GOGGLES.get());
     }
 }

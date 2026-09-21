@@ -109,7 +109,7 @@ public final class CreateFluidHudProvider implements HudProvider {
         }
 
         return new HudLine(
-                Component.translatable("machinehud.fluid.input_side"),
+                Component.translatable("machinehud.create.fluid.input_side"),
                 getConnectionName(pumpData.inputConnection()),
                 1,
                 0xFFFFFF,
@@ -126,7 +126,7 @@ public final class CreateFluidHudProvider implements HudProvider {
         }
 
         return new HudLine(
-                Component.translatable("machinehud.fluid.output_side"),
+                Component.translatable("machinehud.create.fluid.output_side"),
                 getConnectionName(pumpData.outputConnection()),
                 1,
                 0xFFFFFF,
@@ -148,7 +148,7 @@ public final class CreateFluidHudProvider implements HudProvider {
         }
 
         return new HudLine(
-                Component.translatable("machinehud.fluid.max_flow_rate"),
+                Component.translatable("machinehud.create.fluid.max_flow_rate"),
                 Component.literal(
                         String.format("%,d mB/t", pumpData.maxFlowRate())
                 ),
@@ -168,8 +168,8 @@ public final class CreateFluidHudProvider implements HudProvider {
 
         String key =
                 state == CreateFluidValveHudData.State.OPEN
-                        ? "machinehud.fluid.valve_state.open"
-                        : "machinehud.fluid.valve_state.closed";
+                        ? "machinehud.create.fluid.valve_state.open"
+                        : "machinehud.create.fluid.valve_state.closed";
 
         return new HudLine(
                 Component.translatable(
@@ -195,7 +195,7 @@ public final class CreateFluidHudProvider implements HudProvider {
         Component value =
                 filter.isEmpty()
                         ? Component.translatable(
-                        "machinehud.fluid.filter.empty"
+                        "machinehud.create.fluid.filter.empty"
                 )
                         : filter.getHoverName();
 
@@ -225,7 +225,7 @@ public final class CreateFluidHudProvider implements HudProvider {
         Component value =
                 fluid.isEmpty()
                         ? Component.translatable(
-                        "machinehud.fluid.empty"
+                        "machinehud.create.fluid.empty"
                 )
                         : fluid.getHoverName();
 
@@ -279,13 +279,13 @@ public final class CreateFluidHudProvider implements HudProvider {
     ) {
         return switch (type) {
             case PIPE ->
-                    Component.translatable("machinehud.fluid.connection.pipe");
+                    Component.translatable("machinehud.create.fluid.connection.pipe");
 
             case MACHINE ->
-                    Component.translatable("machinehud.fluid.connection.machine");
+                    Component.translatable("machinehud.create.fluid.connection.machine");
 
             case OPEN ->
-                    Component.translatable("machinehud.fluid.connection.open");
+                    Component.translatable("machinehud.create.fluid.connection.open");
         };
     }
 }

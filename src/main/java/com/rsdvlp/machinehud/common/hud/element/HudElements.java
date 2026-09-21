@@ -1,10 +1,8 @@
 package com.rsdvlp.machinehud.common.hud.element;
 
 import com.rsdvlp.machinehud.common.config.ClientConfig;
-import com.rsdvlp.machinehud.create.element.CreateHudElement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,30 +14,32 @@ import java.util.List;
 public final class HudElements {
 
     /**
-     * 登録されているすべてのHUD項目。
+     * MachineHUDに登録されているすべてのHudElement。
+     * common側ではCreateやMekanismの具体的なHudElementを知らず、
+     * 各MOD側から登録された要素をここへ追加する。
      */
-    private static final List<HudElement> ALL_ELEMENTS;
+    private static final List<HudElement> ALL_ELEMENTS =
+            new ArrayList<>();
 
     static {
-
-        List<HudElement> elements = new ArrayList<>();
-
-        // MachineHUD共通
-        Collections.addAll(
-                elements,
-                CommonHudElement.values()
-        );
-
-        // Create
-        Collections.addAll(
-                elements,
-                CreateHudElement.values()
-        );
-
-        ALL_ELEMENTS = Collections.unmodifiableList(elements);
+        // MachineHUD自身が持つ共通要素は、common側で直接登録する。
+        register(CommonHudElement.values());
     }
 
-    private HudElements() {
+    /**
+     * HudElementをMachineHUDへ登録する。
+     * CreateやMekanismなどのMOD固有要素は、
+     * それぞれの初期化処理からこのメソッドを呼び出す。
+     */
+    public static void register(HudElement... elements) {
+
+        for (HudElement element : elements) {
+
+            // 同じHudElementが重複登録されないようにする。
+            if (!ALL_ELEMENTS.contains(element)) {
+                ALL_ELEMENTS.add(element);
+            }
+        }
     }
 
     /**
@@ -48,7 +48,7 @@ public final class HudElements {
      */
     public static List<HudElement> getAll() {
 
-        return ALL_ELEMENTS;
+        return List.copyOf(ALL_ELEMENTS);
     }
 
     /**
@@ -93,14 +93,10 @@ public final class HudElements {
             }
         }
 
-        /*
-         * 新しく追加されたHudElementを補完する。
-         * 既存Configに保存されている項目の順番は変更しない。
-         * 新しい項目についてはALL_ELEMENTSの標準順を基準に、
-         * 直前に存在する既存項目の後ろへ挿入する。
-         * これにより、MOD更新で新しいHUD項目が追加されても
-         * すべて末尾へ移動してしまうことを防ぐ。
-         */
+        // 新しく追加されたHudElementを補完する。
+        // 既存Configに保存されている項目の順番は変更しない。
+        // 新しい項目についてはALL_ELEMENTSの標準順を基準に、直前に存在する既存項目の後ろへ挿入する。
+        // これにより、MOD更新で新しいHUD項目が追加されてもすべて末尾へ移動してしまうことを防ぐ。
         for (int standardIndex = 0; standardIndex < ALL_ELEMENTS.size(); standardIndex++) {
 
             HudElement newElement = ALL_ELEMENTS.get(standardIndex);
@@ -111,10 +107,8 @@ public final class HudElements {
                 continue;
             }
 
-            /*
-             * 標準順でnewElementより前にある要素のうち、
-             * 現在の表示リストにも存在する一番近い要素を探す。
-             */
+            // 標準順でnewElementより前にある要素のうち、
+            // 現在の表示リストにも存在する一番近い要素を探す。
             int insertIndex = 0;
 
             for (int previousIndex = standardIndex - 1; previousIndex >= 0; previousIndex--) {

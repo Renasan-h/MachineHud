@@ -162,7 +162,7 @@ public final class CreateBoilerHudProvider implements HudProvider {
     private HudLine createWaterInputLine() {
 
         return new HudLine(
-                Component.translatable("machinehud.boiler.water_input"),
+                Component.translatable("machinehud.create.boiler.water_input"),
                 Component.literal(
                         String.format("%.1f mB/t / 10 mB/t", data.waterSupply())
                 ),

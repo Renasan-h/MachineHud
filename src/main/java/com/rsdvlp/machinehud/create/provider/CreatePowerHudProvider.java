@@ -97,16 +97,16 @@ public final class CreatePowerHudProvider implements HudProvider {
 
         Component value = switch (data.state()) {
             case CONNECTED -> Component.translatable(
-                    "machinehud.power.state.connected"
+                    "machinehud.create.power.state.connected"
             );
             case DISCONNECTED -> Component.translatable(
-                    "machinehud.power.state.disconnected"
+                    "machinehud.create.power.state.disconnected"
             );
             case NORMAL -> Component.translatable(
-                    "machinehud.power.state.normal"
+                    "machinehud.create.power.state.normal"
             );
             case REVERSED -> Component.translatable(
-                    "machinehud.power.state.reversed"
+                    "machinehud.create.power.state.reversed"
             );
             // POWER_STATEを使用しない機械
             case NONE -> Component.empty();
