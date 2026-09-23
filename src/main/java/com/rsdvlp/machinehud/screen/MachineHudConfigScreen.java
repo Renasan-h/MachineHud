@@ -15,25 +15,18 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MachineHudConfigScreen extends Screen {
 
-    // この設定画面を開く前に表示されていた画面。
-    //
-    // Mods画面などからMachineHUD設定画面を開いた場合、
     // Doneを押したときに元の画面へ戻るために保持しておく。
     private final Screen parent;
-    // 設定一覧の現在のスクロール量。
-    // 0が一番上で、値が大きいほど下へスクロールする。
+    // 設定一覧の現在のスクロール位置。
     private int scrollOffset = 0;
 
     // 画面上部のタブ。
     private static final int TAB_TOP = 38;
-
+    // 画面上部のタブ幅。
     private static final int TAB_HEIGHT = 20;
 
     // タブの下に余白を設けて設定一覧を開始する。
@@ -44,21 +37,11 @@ public class MachineHudConfigScreen extends Screen {
     // 現在選択されている設定タブ。
     private ConfigTab selectedTab = ConfigTab.MACHINEHUD;
 
-    // Mekanism導入時だけ、エネルギー単位の設定行を追加する。
-    private static final boolean MEKANISM_LOADED =
-            ModList.get().isLoaded("mekanism");
-
-    // エネルギー単位の設定行数。
-    private int getExtraRowCount() {
-        return MEKANISM_LOADED ? 1 : 0;
-    }
-
     // Doneボタンと重ならないようにするため、
     // 設定一覧を描画できる下端位置を保持する。
     private int getListBottom() {
         return this.height - 50;
     }
-
 
     public MachineHudConfigScreen(Screen parent) {
 
@@ -105,24 +88,7 @@ public class MachineHudConfigScreen extends Screen {
 
             switch (row.type()) {
                 case HEADER -> {
-                    // カテゴリ見出しを強調表示する。
-                    guiGraphics.fill(
-                            this.width / 2 - 105,
-                            rowY,
-                            this.width / 2 + 95,
-                            rowY + 20,
-                            0x66333333
-                    );
-
-                    guiGraphics.drawString(
-                            this.font,
-                            Component.translatable(
-                                    row.group().getDisplayName()
-                            ),
-                            this.width / 2 - 100,
-                            rowY + 6,
-                            0xFFFFAA
-                    );
+                    // 見出しはrebuildWidgets()で生成したボタンが描画する。
                 }
 
                 case HUD_ELEMENT -> guiGraphics.drawString(
@@ -217,7 +183,29 @@ public class MachineHudConfigScreen extends Screen {
 
             switch (row.type()) {
                 case HEADER -> {
-                    // 見出しには操作ボタンを設けない。
+                    HudGroup group = row.group();
+
+                    String marker = ConfigScreenState.isCollapsed(group)
+                            ? "▶ "
+                            : "▼ ";
+
+                    addRenderableWidget(
+                            Button.builder(
+                                            Component.literal(marker).append(
+                                                    Component.translatable(
+                                                            group.getDisplayName()
+                                                    )
+                                            ),
+                                            button -> toggleGroup(group)
+                                    )
+                                    .bounds(
+                                            this.width / 2 - 105,
+                                            rowY,
+                                            200,
+                                            20
+                                    )
+                                    .build()
+                    );
                 }
 
                 case HUD_ELEMENT -> {
@@ -467,15 +455,19 @@ public class MachineHudConfigScreen extends Screen {
 
             HudGroup group = entry.getKey();
 
-            // カテゴリ見出し。
+            // 見出しは折りたたみ中も表示する。
             rows.add(ConfigScreenRow.header(group));
 
-            // カテゴリ内のHUD項目。
+            // 折りたたまれている場合は、設定項目を追加しない。
+            if (ConfigScreenState.isCollapsed(group)) {
+                continue;
+            }
+
             for (HudElement element : entry.getValue()) {
                 rows.add(ConfigScreenRow.hudElement(element));
             }
 
-            // Energy UnitはMekanismのEnergyカテゴリ内に配置する。
+            // エネルギー単位もEnergyカテゴリと一緒に折りたたむ。
             if (selectedTab == ConfigTab.MEKANISM
                     && group == HudGroup.MEKANISM_ENERGY) {
                 rows.add(ConfigScreenRow.energyUnit());
@@ -483,5 +475,17 @@ public class MachineHudConfigScreen extends Screen {
         }
 
         return rows;
+    }
+
+    /**
+     * カテゴリの開閉状態を切り替える。
+     */
+    private void toggleGroup(HudGroup group) {
+        ConfigScreenState.toggle(group);
+
+        // 折りたたみによる行数の変化に合わせて補正する。
+        scrollOffset = Math.min(scrollOffset, getMaxScroll());
+
+        rebuildWidgets();
     }
 }
