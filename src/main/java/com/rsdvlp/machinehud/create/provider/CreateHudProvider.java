@@ -3,15 +3,13 @@ package com.rsdvlp.machinehud.create.provider;
 import com.rsdvlp.machinehud.common.hud.HudGroup;
 import com.rsdvlp.machinehud.common.hud.HudLine;
 import com.rsdvlp.machinehud.common.hud.HudLineType;
+import com.rsdvlp.machinehud.common.hud.element.HudElement;
+import com.rsdvlp.machinehud.common.hud.provider.HudProvider;
 import com.rsdvlp.machinehud.create.data.CreateHudData;
 import com.rsdvlp.machinehud.create.data.KineticStatus;
 import com.rsdvlp.machinehud.create.data.NetworkStatus;
 import com.rsdvlp.machinehud.create.element.CreateHudElement;
-import com.rsdvlp.machinehud.common.hud.element.HudElement;
-import com.rsdvlp.machinehud.common.hud.provider.HudProvider;
 import net.minecraft.network.chat.Component;
-
-import static com.rsdvlp.machinehud.create.element.CreateHudElement.*;
 
 /**
  * Create専用のHUD情報生成Provider。
@@ -41,7 +39,7 @@ public final class CreateHudProvider implements HudProvider {
          * STATUSだけを表示する。
          */
         if (!data.hasPowerInput()) {
-            return createElement == CreateHudElement.STATUS;
+            return createElement == CreateHudElement.CREATE_STATUS;
         }
 
         /*
@@ -60,8 +58,8 @@ public final class CreateHudProvider implements HudProvider {
         }
 
         return switch (createHudElement) {
-            case SPEED -> new HudLine(
-                    Component.translatable(SPEED.getDisplayName()),
+            case CREATE_SPEED -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format("%.1f RPM", data.getSpeed())),
                     1,
                     TEXT_PRIMARY,
@@ -70,8 +68,8 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case IMPACT -> new HudLine(
-                    Component.translatable(IMPACT.getDisplayName()),
+            case CREATE_IMPACT -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format("%.2f SU/RPM", data.getImpact())),
                     1,
                     TEXT_PRIMARY,
@@ -80,8 +78,8 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case STRESS -> new HudLine(
-                    Component.translatable(STRESS.getDisplayName()),
+            case CREATE_STRESS -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format("%.1f SU", data.getStress())),
                     1,
                     TEXT_PRIMARY,
@@ -90,13 +88,13 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case STATUS -> {
+            case CREATE_STATUS -> {
 
                 KineticStatus status =
                         data.getKineticStatus();
 
                 yield new HudLine(
-                        Component.translatable(STATUS.getDisplayName()),
+                        Component.translatable(createHudElement.getDisplayName()),
                         Component.translatable(status.getStatus()),
                         1,
                         status.getColor(),
@@ -106,8 +104,8 @@ public final class CreateHudProvider implements HudProvider {
                 );
             }
 
-            case THEORETICAL_SPEED -> new HudLine(
-                    Component.translatable(THEORETICAL_SPEED.getDisplayName()),
+            case CREATE_THEORETICAL_SPEED -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f RPM",
                             data.getTheoreticalSpeed())
@@ -119,8 +117,8 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case NETWORK_STRESS -> new HudLine(
-                    Component.translatable(NETWORK_STRESS.getDisplayName()),
+            case CREATE_NETWORK_STRESS -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f SU",
                             data.getNetworkStress())
@@ -132,8 +130,8 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case NETWORK_CAPACITY -> new HudLine(
-                    Component.translatable(NETWORK_CAPACITY.getDisplayName()),
+            case CREATE_NETWORK_CAPACITY -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f SU",
                             data.getNetworkCapacity()
@@ -145,8 +143,8 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case NETWORK_USAGE -> new HudLine(
-                    Component.translatable(NETWORK_USAGE.getDisplayName()),
+            case CREATE_NETWORK_USAGE -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(String.format(
                             "%.1f%%",
                             data.getNetworkUsage()
@@ -158,8 +156,8 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case NETWORK_SIZE -> new HudLine(
-                    Component.translatable(NETWORK_SIZE.getDisplayName()),
+            case CREATE_NETWORK_SIZE -> new HudLine(
+                    Component.translatable(createHudElement.getDisplayName()),
                     Component.literal(Integer.toString(
                             data.getNetworkSize()
                     )),
@@ -170,13 +168,13 @@ public final class CreateHudProvider implements HudProvider {
                     null
             );
 
-            case NETWORK_STATUS -> {
+            case CREATE_NETWORK_STATUS -> {
 
                 NetworkStatus status =
                         data.getNetworkStatus();
 
                 yield new HudLine(
-                        Component.translatable(NETWORK_STATUS.getDisplayName()),
+                        Component.translatable(createHudElement.getDisplayName()),
                         Component.literal(status.getStatus()),
                         1,
                         status.getColor(),
@@ -187,24 +185,24 @@ public final class CreateHudProvider implements HudProvider {
             }
 
             // 機械固有情報は専用Providerが担当する。
-            case PROCESSING_MODE,
-                 PROCESSING_STATE,
-                 BOILER_LEVEL,
-                 BOILER_SIZE,
-                 BOILER_WATER,
-                 BOILER_HEAT,
-                 BOILER_OUTPUT,
-                 POWER_STATE,
-                 POWER_TARGET_SPEED,
-                 POWER_SPEED_MODIFIER,
-                 POWER_REDSTONE_SIGNAL,
-                 FLUID_INPUT_CONNECTION,
-                 FLUID_OUTPUT_CONNECTION,
-                 FLUID_MAX_FLOW_RATE,
-                 FLUID_VALVE_STATE,
-                 FLUID_FILTER,
-                 FLUID_AMOUNT,
-                 FLUID_CONTENT-> null;
+            case CREATE_PROCESSING_MODE,
+                 CREATE_PROCESSING_STATE,
+                 CREATE_BOILER_LEVEL,
+                 CREATE_BOILER_SIZE,
+                 CREATE_BOILER_WATER,
+                 CREATE_BOILER_HEAT,
+                 CREATE_BOILER_OUTPUT,
+                 CREATE_POWER_STATE,
+                 CREATE_POWER_TARGET_SPEED,
+                 CREATE_POWER_SPEED_MODIFIER,
+                 CREATE_POWER_REDSTONE_SIGNAL,
+                 CREATE_FLUID_INPUT_CONNECTION,
+                 CREATE_FLUID_OUTPUT_CONNECTION,
+                 CREATE_FLUID_MAX_FLOW_RATE,
+                 CREATE_FLUID_VALVE_STATE,
+                 CREATE_FLUID_FILTER,
+                 CREATE_FLUID_AMOUNT,
+                 CREATE_FLUID_CONTENT -> null;
         };
     }
 }

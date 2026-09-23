@@ -64,5 +64,14 @@
   "machinehud.create.fluid.connection.pipe": "パイプ",
   "machinehud.create.fluid.connection.machine": "機械",
   "machinehud.create.fluid.connection.open": "開放",
-  "machinehud.create.fluid.max_flow_rate": "最大流量"
+  "machinehud.create.fluid.max_flow_rate": "最大流量",
+  "machinehud.mekanism.header.energy": "エネルギー情報",
+  "machinehud.mekanism.header.processing": "加工情報",
+  "machinehud.mekanism.energy": "蓄積エネルギー",
+  "machinehud.mekanism.energy_usage": "エネルギー消費量",
+  "machinehud.mekanism.progress": "加工進捗",
+  "machinehud.mekanism.status": "動作状態",
+  "machinehud.mekanism.status.running": "稼働中",
+  "machinehud.mekanism.status.idle": "待機中",
+  "machinehud.mekanism.status.output_blocked": "出力先が満杯"
 }

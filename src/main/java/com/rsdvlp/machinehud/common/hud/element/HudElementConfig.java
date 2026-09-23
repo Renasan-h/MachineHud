@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * HudElementとClientConfigの表示設定の対応を管理する。
  * Rendererや設定画面が、
- * SHOW_SPEEDやSHOW_STRESSなどの個別Configを
+ * SHOW_CREATE_SPEEDやSHOW_CREATE_STRESSなどの個別Configを
  * 直接意識しなくて済むようにする。
  */
 public final class HudElementConfig {
@@ -27,7 +27,7 @@ public final class HudElementConfig {
          */
         register(
                 CommonHudElement.POSITION,
-                ClientConfig.SHOW_POSITION
+                ClientConfig.SHOW_CREATE_POSITION
         );
     }
 

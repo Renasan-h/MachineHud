@@ -76,8 +76,8 @@ public class CreateProcessingHudProvider implements HudProvider {
         }
 
         return switch (createElement) {
-            case PROCESSING_MODE -> createModeLine();
-            case PROCESSING_STATE -> createStateLine();
+            case CREATE_PROCESSING_MODE -> createModeLine(createElement);
+            case CREATE_PROCESSING_STATE -> createStateLine(createElement);
             default -> null;
         };
     }
@@ -85,7 +85,9 @@ public class CreateProcessingHudProvider implements HudProvider {
     /**
      * 現在の加工モードを表示する。
      */
-    private HudLine createModeLine() {
+    private HudLine createModeLine(
+            CreateHudElement element
+    ) {
 
         Component value = switch (data.mode()) {
 
@@ -116,9 +118,7 @@ public class CreateProcessingHudProvider implements HudProvider {
         };
 
         return new HudLine(
-                Component.translatable(
-                        CreateHudElement.PROCESSING_MODE.getDisplayName()
-                ),
+                Component.translatable(element.getDisplayName()),
                 value,
                 1,
                 ChatFormatting.GRAY.getColor(),
@@ -131,7 +131,9 @@ public class CreateProcessingHudProvider implements HudProvider {
     /**
      * 現在加工中かどうかを表示する。
      */
-    private HudLine createStateLine() {
+    private HudLine createStateLine(
+            CreateHudElement element
+    ) {
 
         Component value = switch (data.state()) {
             case IDLE -> Component.translatable(
@@ -152,9 +154,7 @@ public class CreateProcessingHudProvider implements HudProvider {
         };
 
         return new HudLine(
-                Component.translatable(
-                        CreateHudElement.PROCESSING_STATE.getDisplayName()
-                ),
+                Component.translatable(element.getDisplayName()),
                 value,
                 1,
                 color,

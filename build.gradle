@@ -36,6 +36,11 @@ repositories {
     maven {
         url = "https://maven.ithundxr.dev/snapshots"
     }
+
+    // Mekanismの開発用Artifactを取得する。
+    maven {
+        url = "https://modmaven.dev/"
+    }
 }
 
 base {
@@ -91,7 +96,7 @@ neoForge {
 
         // applies to all the run configs above
         configureEach {
-            jvmArguments.addAll('-Dfile.encoding=UTF-8', '-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8')
+            jvmArguments.addAll('-Dfile.encoding=UTF-8', '-Dstdout.encoding=UTF-8', '-Dstderr.encoding=UTF-8')
             // Recommended logging data for a userdev environment
             // The markers can be added/remove as needed separated by commas.
             // "SCAN": For mods scan.
@@ -126,26 +131,57 @@ configurations {
 dependencies {
 
     // Create本体。
-    // :slim は開発環境で他MODからCreateのクラスを参照するためのJar。
-    // transitive=false にして、Create自身の依存MODは下で明示的に指定する。
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") {
+    // MachineHUDからCreateのクラスを参照するため、コンパイル時にはslim Jarを使用する。
+    // CreateはMachineHUDの必須依存ではないため、公開依存にはしない。
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") {
         transitive = false
     }
 
-    // CreateのPonderシステム。
-    // Create内のチュートリアル表示などに使用されている。
-    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    // 開発環境でMinecraftを起動するときはCreate本体をロードする。
+    // localRuntimeなので、MachineHUDを利用する側へ依存関係を伝播させない。
+    localRuntime("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") {
+        transitive = false
+    }
 
-    // FlywheelのAPI。
-    // Createの特殊レンダリングなどで使用される。
-    // コンパイル時にはAPIだけを参照する。
-    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    // MachineHUDからPonderを直接使用してはいないが、
+    // Createのクラスシグネチャを解決するためコンパイル時にも必要。
+    compileOnly(
+            "net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}"
+    )
+
+    // 開発環境でCreateを実際に動作させるためにも読み込む。
+    localRuntime(
+            "net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}"
+    )
+
+    // MachineHUD自身はFlywheel APIを直接使用しない。
+    // 開発環境でCreateを動作させるため、Flywheel本体だけを読み込む。
+    localRuntime(
+            "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
+    )
 
     // 実際にMinecraftを起動するときに使用するFlywheel本体。
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
 
-    // Createがブロックやアイテム等の登録に利用しているRegistrate。
-    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+    // Createの公開型にRegistrateのBlockEntry等が含まれているため、
+    // Createのクラスを参照するMachineHUDのコンパイル時にも必要。
+    compileOnly(
+            "com.tterrag.registrate:Registrate:${registrate_version}"
+    )
+
+    // 開発環境でCreateを実際に動作させるためにも読み込む。
+    localRuntime(
+            "com.tterrag.registrate:Registrate:${registrate_version}"
+    )
+
+    // Mekanismの公開APIをコンパイル時に参照する。
+    compileOnly("mekanism:Mekanism:${mekanism_version}:api")
+
+    // Energized Smelterなどの実装クラスを参照するために必要。
+    compileOnly("mekanism:Mekanism:${mekanism_version}:all")
+
+    // 開発環境でMekanism本体を実行する。
+    localRuntime("mekanism:Mekanism:${mekanism_version}:all")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

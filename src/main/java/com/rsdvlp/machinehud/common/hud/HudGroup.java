@@ -55,13 +55,32 @@ public enum HudGroup {
                     "textures/gui/icon/kinetic.png"
             )
     ),
+
     CREATE_FLUID(
             "machinehud.create.header.create_fluid",
             ResourceLocation.fromNamespaceAndPath(
                     MachineHUD.MODID,
                     "textures/gui/icon/kinetic.png"
             )
-    );
+    ),
+
+    // Mekanism系
+    MEKANISM_ENERGY(
+            "machinehud.mekanism.header.energy",
+            ResourceLocation.fromNamespaceAndPath(
+                    MachineHUD.MODID,
+                    "textures/gui/icon/energy.png"
+            )
+    ),
+
+    MEKANISM_PROCESSING(
+            "machinehud.mekanism.header.processing",
+            ResourceLocation.fromNamespaceAndPath(
+                    MachineHUD.MODID,
+                    "textures/gui/icon/processing.png"
+            )
+    ),
+    ;
 
     // HUDへ表示するグループ名。
     private final String displayName;

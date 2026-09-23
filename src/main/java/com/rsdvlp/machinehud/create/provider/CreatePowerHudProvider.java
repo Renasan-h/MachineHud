@@ -16,9 +16,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import static com.rsdvlp.machinehud.create.element.CreateHudElement.POWER_REDSTONE_SIGNAL;
-import static com.rsdvlp.machinehud.create.element.CreateHudElement.POWER_SPEED_MODIFIER;
-
 /**
  * Createの動力系ブロック専用HUD Provider。
  * <p>
@@ -64,11 +61,11 @@ public final class CreatePowerHudProvider implements HudProvider {
         return switch (data.type()) {
 
             case CLUTCH,
-                 GEARSHIFT -> createElement == CreateHudElement.POWER_STATE;
+                 GEARSHIFT -> createElement == CreateHudElement.CREATE_POWER_STATE;
             case SPEED_CONTROLLER,
-                 CREATIVE_MOTOR -> createElement == CreateHudElement.POWER_TARGET_SPEED;
-            case ADJUSTABLE_CHAIN_GEARSHIFT -> createElement == POWER_SPEED_MODIFIER
-            || createElement == POWER_REDSTONE_SIGNAL;
+                 CREATIVE_MOTOR -> createElement == CreateHudElement.CREATE_POWER_TARGET_SPEED;
+            case ADJUSTABLE_CHAIN_GEARSHIFT -> createElement == CreateHudElement.CREATE_POWER_SPEED_MODIFIER
+            || createElement == CreateHudElement.CREATE_POWER_REDSTONE_SIGNAL;
         };
     }
 
@@ -82,10 +79,10 @@ public final class CreatePowerHudProvider implements HudProvider {
         }
 
         return switch (createElement) {
-            case POWER_STATE -> createStateLine();
-            case POWER_TARGET_SPEED -> createTargetSpeedLine();
-            case POWER_SPEED_MODIFIER -> createSpeedModifierLine();
-            case POWER_REDSTONE_SIGNAL -> createRedstoneSignalLine();
+            case CREATE_POWER_STATE -> createStateLine(createElement);
+            case CREATE_POWER_TARGET_SPEED -> createTargetSpeedLine(createElement);
+            case CREATE_POWER_SPEED_MODIFIER -> createSpeedModifierLine(createElement);
+            case CREATE_POWER_REDSTONE_SIGNAL -> createRedstoneSignalLine(createElement);
             default -> null;
         };
     }
@@ -93,7 +90,9 @@ public final class CreatePowerHudProvider implements HudProvider {
     /**
      * 動力系ブロックの現在状態を表示する。
      */
-    private HudLine createStateLine() {
+    private HudLine createStateLine(
+            CreateHudElement element
+    ) {
 
         Component value = switch (data.state()) {
             case CONNECTED -> Component.translatable(
@@ -122,9 +121,7 @@ public final class CreatePowerHudProvider implements HudProvider {
         };
 
         return new HudLine(
-                Component.translatable(
-                        CreateHudElement.POWER_STATE.getDisplayName()
-                ),
+                Component.translatable(element.getDisplayName()),
                 value,
                 0,
                 color,
@@ -134,12 +131,12 @@ public final class CreatePowerHudProvider implements HudProvider {
         );
     }
 
-    private HudLine createTargetSpeedLine() {
+    private HudLine createTargetSpeedLine(
+            CreateHudElement element
+    ) {
 
         return new HudLine(
-                Component.translatable(
-                        CreateHudElement.POWER_TARGET_SPEED.getDisplayName()
-                ),
+                Component.translatable(element.getDisplayName()),
                 Component.literal(
                         String.format(
                                 "%.1f RPM",
@@ -154,12 +151,12 @@ public final class CreatePowerHudProvider implements HudProvider {
         );
     }
 
-    private HudLine createSpeedModifierLine() {
+    private HudLine createSpeedModifierLine(
+            CreateHudElement element
+    ) {
 
         return new HudLine(
-                Component.translatable(
-                        CreateHudElement.POWER_SPEED_MODIFIER.getDisplayName()
-                ),
+                Component.translatable(element.getDisplayName()),
                 Component.literal(
                         String.format(
                                 "×%.2f",
@@ -174,12 +171,12 @@ public final class CreatePowerHudProvider implements HudProvider {
         );
     }
 
-    private HudLine createRedstoneSignalLine() {
+    private HudLine createRedstoneSignalLine(
+            CreateHudElement element
+    ) {
 
         return new HudLine(
-                Component.translatable(
-                        CreateHudElement.POWER_REDSTONE_SIGNAL.getDisplayName()
-                ),
+                Component.translatable(element.getDisplayName()),
                 Component.literal(
                         Integer.toString(data.redstoneSignal())
                 ),

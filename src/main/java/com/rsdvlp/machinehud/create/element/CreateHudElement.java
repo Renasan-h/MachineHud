@@ -15,27 +15,27 @@ public enum CreateHudElement implements HudElement {
      * 機械単体情報
      * =========================
      */
-    SPEED(
+    CREATE_SPEED(
             "create.speed",
             "machinehud.create.unit.speed",
             HudGroup.CREATE_KINETIC
     ),
-    IMPACT(
+    CREATE_IMPACT(
             "impact",
             "machinehud.create.unit.stress_impact",
             HudGroup.CREATE_KINETIC
     ),
-    STRESS(
+    CREATE_STRESS(
             "stress",
             "machinehud.create.unit.stress",
             HudGroup.CREATE_KINETIC
     ),
-    STATUS(
+    CREATE_STATUS(
             "status",
             "machinehud.create.unit.status",
             HudGroup.CREATE_KINETIC
     ),
-    THEORETICAL_SPEED(
+    CREATE_THEORETICAL_SPEED(
             "theoreticalSpeed",
             "machinehud.create.unit.theoretical_speed",
             HudGroup.CREATE_KINETIC
@@ -49,12 +49,12 @@ public enum CreateHudElement implements HudElement {
      * Press / Mixerなど、
      * Createの加工機械で共通して使用する情報。
      */
-    PROCESSING_MODE(
+    CREATE_PROCESSING_MODE(
             "processingMode",
             "machinehud.create.processing.mode",
             HudGroup.CREATE_PROCESSING
     ),
-    PROCESSING_STATE(
+    CREATE_PROCESSING_STATE(
             "processingState",
             "machinehud.create.processing.state",
             HudGroup.CREATE_PROCESSING
@@ -65,25 +65,25 @@ public enum CreateHudElement implements HudElement {
      * 動力情報
      * =========================
      */
-    POWER_STATE(
+    CREATE_POWER_STATE(
             "powerState",
             "machinehud.create.power.state",
             HudGroup.CREATE_POWER
     ),
 
-    POWER_TARGET_SPEED(
+    CREATE_POWER_TARGET_SPEED(
             "powerTargetSpeed",
             "machinehud.create.power.target_speed",
             HudGroup.CREATE_POWER
     ),
 
-    POWER_SPEED_MODIFIER(
+    CREATE_POWER_SPEED_MODIFIER(
             "powerSpeedModifier",
             "machinehud.create.power.speed_modifier",
             HudGroup.CREATE_POWER
     ),
 
-    POWER_REDSTONE_SIGNAL(
+    CREATE_POWER_REDSTONE_SIGNAL(
             "powerRedstoneSignal",
             "machinehud.create.power.redstone_signal",
             HudGroup.CREATE_POWER
@@ -94,43 +94,43 @@ public enum CreateHudElement implements HudElement {
      * 流体情報
      * =========================
      */
-    FLUID_INPUT_CONNECTION(
+    CREATE_FLUID_INPUT_CONNECTION(
             "fluidInputDirection",
             "machinehud.create.fluid.input_direction",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_OUTPUT_CONNECTION(
+    CREATE_FLUID_OUTPUT_CONNECTION(
             "fluidOutputDirection",
             "machinehud.create.fluid.output_direction",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_MAX_FLOW_RATE(
+    CREATE_FLUID_MAX_FLOW_RATE(
             "fluidMaxFlowRate",
             "machinehud.create.fluid.max_flow_rate",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_VALVE_STATE(
+    CREATE_FLUID_VALVE_STATE(
             "fluidValveState",
             "machinehud.create.fluid.valve_state",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_FILTER(
+    CREATE_FLUID_FILTER(
             "fluidFilter",
             "machinehud.create.fluid.filter",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_CONTENT(
+    CREATE_FLUID_CONTENT(
             "fluidContent",
             "machinehud.create.fluid.content",
             HudGroup.CREATE_FLUID
     ),
 
-    FLUID_AMOUNT(
+    CREATE_FLUID_AMOUNT(
             "fluidAmount",
             "machinehud.create.fluid.amount",
             HudGroup.CREATE_FLUID
@@ -141,27 +141,27 @@ public enum CreateHudElement implements HudElement {
      * ボイラー情報
      * =========================
      */
-    BOILER_LEVEL(
+    CREATE_BOILER_LEVEL(
             "boilerLevel",
             "machinehud.create.boiler.level",
             HudGroup.CREATE_BOILER
     ),
-    BOILER_SIZE(
+    CREATE_BOILER_SIZE(
             "boilerSize",
             "machinehud.create.boiler.size",
             HudGroup.CREATE_BOILER
     ),
-    BOILER_WATER(
+    CREATE_BOILER_WATER(
             "boilerWater",
             "machinehud.create.boiler.water",
             HudGroup.CREATE_BOILER
     ),
-    BOILER_HEAT(
+    CREATE_BOILER_HEAT(
             "boilerHeat",
             "machinehud.create.boiler.heat",
             HudGroup.CREATE_BOILER
     ),
-    BOILER_OUTPUT(
+    CREATE_BOILER_OUTPUT(
             "boilerStreamOutput",
             "machinehud.create.boiler.steam_output",
             HudGroup.CREATE_BOILER
@@ -172,27 +172,27 @@ public enum CreateHudElement implements HudElement {
      * 回転ネットワーク情報
      * =========================
      */
-    NETWORK_STRESS(
+    CREATE_NETWORK_STRESS(
             "networkStress",
             "machinehud.create.network.stress",
             HudGroup.CREATE_NETWORK
     ),
-    NETWORK_CAPACITY(
+    CREATE_NETWORK_CAPACITY(
             "networkCapacity",
             "machinehud.create.network.capacity",
             HudGroup.CREATE_NETWORK
     ),
-    NETWORK_USAGE(
+    CREATE_NETWORK_USAGE(
             "networkUsage",
             "machinehud.create.network.usage",
             HudGroup.CREATE_NETWORK
     ),
-    NETWORK_SIZE(
+    CREATE_NETWORK_SIZE(
             "networkSize",
             "machinehud.create.network.size",
             HudGroup.CREATE_NETWORK
     ),
-    NETWORK_STATUS(
+    CREATE_NETWORK_STATUS(
             "networkStatus",
             "machinehud.create.network.status",
             HudGroup.CREATE_NETWORK

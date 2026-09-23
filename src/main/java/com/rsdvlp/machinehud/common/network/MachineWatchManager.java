@@ -196,8 +196,7 @@ public final class MachineWatchManager {
                 continue;
             }
 
-            BlockEntity blockEntity =
-                    level.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
 
             /*
              * このBlockEntityを担当するHandlerを
@@ -215,10 +214,7 @@ public final class MachineWatchManager {
              * MachineWatchManagerはCreate/Mekanismの
              * BlockEntity型を知る必要がない。
              */
-            handler.process(
-                    player,
-                    blockEntity
-            );
+            handler.process(player, blockEntity);
         }
     }
 }

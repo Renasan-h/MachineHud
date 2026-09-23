@@ -17,7 +17,18 @@ import java.util.List;
  * MOD固有BlockEntityを判定せず、このクラスへ任せる。
  */
 public final class HudProviders {
+
+    // MOD固有のHudProvider Factory一覧。
+    private static final List<HudProviderFactory> FACTORIES = new ArrayList<>();
+
     private HudProviders() {
+    }
+
+    /**
+     * MOD固有のHudProvider Factoryを登録する。
+     */
+    public static void register(HudProviderFactory factory) {
+        FACTORIES.add(factory);
     }
 
     /**
@@ -29,13 +40,22 @@ public final class HudProviders {
             BlockState blockState,
             BlockEntity blockEntity
     ) {
-        List<HudProvider> providers =
-                new ArrayList<>(
-                        CreateHudProviders.create(
-                                blockState,
-                                blockEntity
-                        )
-                );
+        List<HudProvider> providers = new ArrayList<>();
+
+        /*
+         * 登録されている各MODのFactoryへ問い合わせる。
+         *
+         * Create/Mekanismなどの具体的な種類は
+         * HudProviders自身では認識しない。
+         */
+        for (HudProviderFactory factory : FACTORIES) {
+            providers.addAll(
+                    factory.create(
+                            blockState,
+                            blockEntity
+                    )
+            );
+        }
 
         /*
          * =========================

@@ -32,11 +32,11 @@ public final class CreateBoilerHudProvider implements HudProvider {
     public boolean supports(
             HudElement element
     ) {
-        return element == BOILER_LEVEL
-                || element == BOILER_SIZE
-                || element == BOILER_WATER
-                || element == BOILER_HEAT
-                || element == BOILER_OUTPUT;
+        return element == CREATE_BOILER_LEVEL
+                || element == CREATE_BOILER_SIZE
+                || element == CREATE_BOILER_WATER
+                || element == CREATE_BOILER_HEAT
+                || element == CREATE_BOILER_OUTPUT;
     }
 
     @Override
@@ -50,8 +50,8 @@ public final class CreateBoilerHudProvider implements HudProvider {
 
         return switch (createElement) {
 
-            case BOILER_LEVEL -> new HudLine(
-                    Component.translatable(BOILER_LEVEL.getDisplayName()),
+            case CREATE_BOILER_LEVEL -> new HudLine(
+                    Component.translatable(element.getDisplayName()),
                     getBoilerLevelDisplay(data.boilerLevel(), data.maxLevel()),
                     1,
                     0xFF55FF55,
@@ -60,22 +60,22 @@ public final class CreateBoilerHudProvider implements HudProvider {
                     null
             );
 
-            case BOILER_SIZE -> createLevelCompareLine(
-                    Component.translatable(BOILER_SIZE.getDisplayName()),
+            case CREATE_BOILER_SIZE -> createLevelCompareLine(
+                    Component.translatable(element.getDisplayName()),
                     data.sizeLevel()
             );
 
-            case BOILER_WATER -> createLevelCompareLine(
-                    Component.translatable(BOILER_WATER.getDisplayName()),
+            case CREATE_BOILER_WATER -> createLevelCompareLine(
+                    Component.translatable(element.getDisplayName()),
                     data.waterLevel()
             );
 
-            case BOILER_HEAT -> createLevelCompareLine(
-                    Component.translatable(BOILER_HEAT.getDisplayName()),
+            case CREATE_BOILER_HEAT -> createLevelCompareLine(
+                    Component.translatable(element.getDisplayName()),
                     data.heatLevel()
             );
 
-            case BOILER_OUTPUT -> {
+            case CREATE_BOILER_OUTPUT -> {
                 // Steam Engineが接続されていない場合は出力先が存在しないためHUDには表示しない。
                 if (data.attachedEngines() <= 0) {
                     yield null;
@@ -88,7 +88,7 @@ public final class CreateBoilerHudProvider implements HudProvider {
                 }
 
                 yield new HudLine(
-                        Component.translatable(BOILER_OUTPUT.getDisplayName()),
+                        Component.translatable(element.getDisplayName()),
                         createSteamOutputDisplay(),
                         1,
                         TEXT_PRIMARY,

@@ -6,12 +6,34 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
  * MachineHUDで使用するPayloadを登録するクラス。
  * 今後WatchStopPayloadやMachineDataPayloadも
  * このクラスから登録する。
  */
 public class MachineHudPayloads {
+
+    /**
+     * オプションMODが追加するPayload登録処理。
+     * 共通クラスからCreateやMekanismのクラスを
+     * 直接参照しないための仕組み。
+     */
+    private static final List<Consumer<PayloadRegistrar>>
+            OPTIONAL_REGISTRATIONS = new ArrayList<>();
+
+    /**
+     * オプションMOD専用のPayload登録処理を追加する。
+     */
+    public static void addRegistration(
+            Consumer<PayloadRegistrar> registration
+    ) {
+        OPTIONAL_REGISTRATIONS.add(registration);
+    }
+
     private MachineHudPayloads() {
     }
 
@@ -44,6 +66,13 @@ public class MachineHudPayloads {
                 WatchStopPayload.STREAM_CODEC,
                 MachineHudPayloads::handleWatchStop
         );
+
+        /*
+         * 導入されているオプションMODのPayloadを登録する。
+         */
+        for (Consumer<PayloadRegistrar> registration : OPTIONAL_REGISTRATIONS) {
+            registration.accept(registrar);
+        }
     }
 
     /*

@@ -1,5 +1,9 @@
 package com.rsdvlp.machinehud.screen;
 
+import com.rsdvlp.machinehud.common.config.ClientConfig;
+import com.rsdvlp.machinehud.common.config.ConfigTab;
+import com.rsdvlp.machinehud.common.config.EnergyDisplayUnit;
+import com.rsdvlp.machinehud.common.hud.HudGroup;
 import com.rsdvlp.machinehud.common.hud.element.HudElement;
 import com.rsdvlp.machinehud.common.hud.element.HudElementConfig;
 import com.rsdvlp.machinehud.common.hud.element.HudElements;
@@ -7,8 +11,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MachineHudConfigScreen extends Screen {
 
@@ -21,11 +31,27 @@ public class MachineHudConfigScreen extends Screen {
     // 0が一番上で、値が大きいほど下へスクロールする。
     private int scrollOffset = 0;
 
-    // 1行あたりの高さ。
+    // 画面上部のタブ。
+    private static final int TAB_TOP = 38;
+
+    private static final int TAB_HEIGHT = 20;
+
+    // タブの下に余白を設けて設定一覧を開始する。
+    private static final int LIST_TOP = 76;
+
     private static final int ROW_HEIGHT = 24;
 
-    // 設定一覧を描画し始めるY座標。
-    private static final int LIST_TOP = 50;
+    // 現在選択されている設定タブ。
+    private ConfigTab selectedTab = ConfigTab.MACHINEHUD;
+
+    // Mekanism導入時だけ、エネルギー単位の設定行を追加する。
+    private static final boolean MEKANISM_LOADED =
+            ModList.get().isLoaded("mekanism");
+
+    // エネルギー単位の設定行数。
+    private int getExtraRowCount() {
+        return MEKANISM_LOADED ? 1 : 0;
+    }
 
     // Doneボタンと重ならないようにするため、
     // 設定一覧を描画できる下端位置を保持する。
@@ -45,7 +71,6 @@ public class MachineHudConfigScreen extends Screen {
         // 設定画面を閉じたときに戻る画面を保存する。
         this.parent = parent;
     }
-
 
     @Override
     protected void init() {
@@ -68,61 +93,96 @@ public class MachineHudConfigScreen extends Screen {
         // 設定画面のタイトルを描画する。
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 0xFFFFFF);
 
-        // スクロール位置を反映した最初の行のY座標。
-        int y = LIST_TOP - scrollOffset;
+        List<ConfigScreenRow> rows = getScreenRows();
 
-        for (HudElement element : HudElements.getOrderedElements()) {
+        for (int i = 0; i < rows.size(); i++) {
+            ConfigScreenRow row = rows.get(i);
+            int rowY = getRowY(i);
 
-            int rowY = y;
+            if (!isRowVisible(rowY)) {
+                continue;
+            }
 
-            // 行全体が表示領域内にある場合だけ描画する。
-            boolean visible = isRowVisible(rowY);
+            switch (row.type()) {
+                case HEADER -> {
+                    // カテゴリ見出しを強調表示する。
+                    guiGraphics.fill(
+                            this.width / 2 - 105,
+                            rowY,
+                            this.width / 2 + 95,
+                            rowY + 20,
+                            0x66333333
+                    );
 
-            if (visible) {
+                    guiGraphics.drawString(
+                            this.font,
+                            Component.translatable(
+                                    row.group().getDisplayName()
+                            ),
+                            this.width / 2 - 100,
+                            rowY + 6,
+                            0xFFFFAA
+                    );
+                }
 
-                // 文字は20pxのボタンの中央付近に合わせるため、
-                // rowYから少し下へずらして描画する。
-                guiGraphics.drawString(
+                case HUD_ELEMENT -> guiGraphics.drawString(
                         this.font,
-                        Component.translatable(element.getDisplayName()),
-                        this.width / 2 - 100,
+                        Component.translatable(
+                                row.element().getDisplayName()
+                        ),
+                        this.width / 2 - 95,
+                        rowY + 6,
+                        0xFFFFFF
+                );
+
+                case ENERGY_UNIT -> guiGraphics.drawString(
+                        this.font,
+                        Component.literal("Energy Unit"),
+                        this.width / 2 - 95,
                         rowY + 6,
                         0xFFFFFF
                 );
             }
-
-            y += ROW_HEIGHT;
         }
+
         // 設定一覧全体の高さを計算する。
-        int contentHeight = HudElements.getOrderedElements().size() * ROW_HEIGHT;
-
+        int contentHeight = rows.size() * ROW_HEIGHT;
         // 画面上で設定一覧を表示できる高さ。
-        int visibleHeight = getListBottom() - LIST_TOP;
+        int visibleHeight = getVisibleRowCount() * ROW_HEIGHT;
 
-        // 実際にスクロールが必要な場合だけ
-        // スクロールバーを表示する。
+        // 実際にスクロールが必要な場合だけスクロールバーを表示する。
         if (contentHeight > visibleHeight) {
-
             int barX = this.width / 2 + 110;
-
-            // スクロール領域全体の高さ。
             int trackHeight = visibleHeight;
 
-            // 表示領域が全体の何割かに応じて
-            // スクロールバー本体の高さを決める。
-            int thumbHeight = Math.max(20, visibleHeight * visibleHeight / contentHeight);
+            int thumbHeight = Math.max(
+                    20,
+                    visibleHeight * visibleHeight / contentHeight
+            );
 
-            int maxScroll = contentHeight - visibleHeight;
+            int maxScroll = getMaxScroll();
 
-            // 現在のスクロール位置を、
-            // スクロールバー上のY位置へ変換する。
-            int thumbY = LIST_TOP + (int) ((double) scrollOffset / maxScroll * (trackHeight - thumbHeight));
+            int thumbY = LIST_TOP
+                    + (int) (
+                    (double) scrollOffset / maxScroll
+                            * (trackHeight - thumbHeight)
+            );
 
-            // スクロールバーの背景。
-            guiGraphics.fill(barX, LIST_TOP, barX + 6, getListBottom(), 0xFF333333);
+            guiGraphics.fill(
+                    barX,
+                    LIST_TOP,
+                    barX + 6,
+                    LIST_TOP + trackHeight,
+                    0xFF333333
+            );
 
-            // 現在位置を表すつまみ部分。
-            guiGraphics.fill(barX, thumbY, barX + 6, thumbY + thumbHeight, 0xFFAAAAAA);
+            guiGraphics.fill(
+                    barX,
+                    thumbY,
+                    barX + 6,
+                    thumbY + thumbHeight,
+                    0xFFAAAAAA
+            );
         }
     }
 
@@ -138,61 +198,85 @@ public class MachineHudConfigScreen extends Screen {
         }
     }
 
-    // 現在のscrollOffsetを使って、設定画面上のWidgetをすべて作り直す。
     @Override
     public void rebuildWidgets() {
-        // スクロール前のWidgetを削除し、
-        // 現在のスクロール位置を基準に再構築する。
         clearWidgets();
 
-        int y = LIST_TOP - scrollOffset;
+        // タブはスクロール対象外として常に表示する。
+        addTabButtons();
 
-        for (HudElement element : HudElements.getOrderedElements()) {
+        List<ConfigScreenRow> rows = getScreenRows();
 
-            int rowY = y;
+        for (int i = 0; i < rows.size(); i++) {
+            ConfigScreenRow row = rows.get(i);
+            int rowY = getRowY(i);
 
-            // 表示領域からはみ出している行は
-            // Widget自体を生成しない。
-            if (isRowVisible(rowY)) {
-
-                // HudElementに対応するConfigを
-                // 共通のHudElementConfigから取得する。
-                ModConfigSpec.BooleanValue enabledConfig =
-                        HudElementConfig.getConfig(element);
-
-                /*
-                 * Configがまだ登録されていないHudElementの場合は、ボタンを生成しない。
-                 * 将来HudElementだけ追加して、Config登録を忘れた場合などでも
-                 * NullPointerExceptionを防げる。
-                 */
-                if (enabledConfig != null) {
-
-                    addRenderableWidget(
-                            Button.builder(
-                                            getToggleText(enabledConfig),
-                                            button -> {
-                                                // 現在のON/OFF状態を反転する。
-                                                enabledConfig.set(
-                                                        !enabledConfig.get()
-                                                );
-                                                // ボタン上の表示も更新する。
-                                                button.setMessage(
-                                                        getToggleText(enabledConfig)
-                                                );
-                                            }
-                                    )
-                                    .bounds(
-                                            this.width / 2 + 40,
-                                            rowY,
-                                            50,
-                                            20
-                                    )
-                                    .build()
-                    );
-                }
+            if (!isRowVisible(rowY)) {
+                continue;
             }
 
-            y += ROW_HEIGHT;
+            switch (row.type()) {
+                case HEADER -> {
+                    // 見出しには操作ボタンを設けない。
+                }
+
+                case HUD_ELEMENT -> {
+                    ModConfigSpec.BooleanValue enabledConfig =
+                            HudElementConfig.getConfig(row.element());
+
+                    if (enabledConfig != null) {
+                        addRenderableWidget(
+                                Button.builder(
+                                                getToggleText(enabledConfig),
+                                                button -> {
+                                                    enabledConfig.set(
+                                                            !enabledConfig.get()
+                                                    );
+
+                                                    button.setMessage(
+                                                            getToggleText(enabledConfig)
+                                                    );
+                                                }
+                                        )
+                                        .bounds(
+                                                this.width / 2 + 40,
+                                                rowY,
+                                                50,
+                                                20
+                                        )
+                                        .build()
+                        );
+                    }
+                }
+
+                case ENERGY_UNIT -> addRenderableWidget(
+                        Button.builder(
+                                        getEnergyUnitText(),
+                                        button -> {
+                                            EnergyDisplayUnit current =
+                                                    ClientConfig.MEKANISM_ENERGY_UNIT.get();
+
+                                            EnergyDisplayUnit next =
+                                                    current == EnergyDisplayUnit.J
+                                                            ? EnergyDisplayUnit.FE
+                                                            : EnergyDisplayUnit.J;
+
+                                            ClientConfig.MEKANISM_ENERGY_UNIT.set(next);
+
+                                            button.setMessage(
+                                                    getEnergyUnitText()
+                                            );
+                                        }
+                                )
+                                .bounds(
+                                        this.width / 2 + 40,
+                                        rowY,
+                                        50,
+                                        20
+                                )
+                                .build()
+                );
+            }
         }
 
         // Doneボタンはスクロール対象ではないため、
@@ -213,39 +297,36 @@ public class MachineHudConfigScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-
-        // HUD項目数から、一覧全体の高さを計算する。
-        int contentHeight = HudElements.getOrderedElements().size() * ROW_HEIGHT;
-
-        // 実際に設定一覧を表示できる高さ。
-        int visibleHeight = getListBottom() - LIST_TOP;
-
-        // 一覧が画面内に収まる場合は
-        // スクロールする必要がない。
-        int maxScroll = Math.max(0, contentHeight - visibleHeight);
-
-        // scrollYが正なら上方向、
-        // 負なら下方向へスクロールされる。
-        //
-        // 1回のホイール操作につき1行分移動させる。
-        scrollOffset -= (int) (scrollY * ROW_HEIGHT);
-
-        // 一番上より上へ行かないようにする。
-        if (scrollOffset < 0) {
-            scrollOffset = 0;
+    public boolean mouseScrolled(
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY
+    ) {
+        if (scrollY == 0) {
+            return false;
         }
 
-        // 一番下を超えてスクロールしないようにする。
-        if (scrollOffset > maxScroll) {
-            scrollOffset = maxScroll;
-        }
+        // 1行単位でスクロールする。
+        int direction = scrollY > 0 ? -1 : 1;
 
-        // Widgetの位置もスクロール後の座標へ更新するため、
-        // 一覧を作り直す。
+        scrollOffset = Math.max(
+                0,
+                Math.min(
+                        getMaxScroll(),
+                        scrollOffset + direction * ROW_HEIGHT
+                )
+        );
+
         rebuildWidgets();
-
         return true;
+    }
+
+    /**
+     * カテゴリ見出しと追加設定を含む総行数。
+     */
+    private int getTotalRowCount() {
+        return getScreenRows().size();
     }
 
     // Boolean Configの現在値から
@@ -256,7 +337,151 @@ public class MachineHudConfigScreen extends Screen {
         return Component.literal(config.get() ? "ON" : "OFF");
     }
 
+    /**
+     * スクロール領域に完全に表示できる行数。
+     */
+    private int getVisibleRowCount() {
+        return Math.max(
+                1,
+                (getListBottom() - LIST_TOP) / ROW_HEIGHT
+        );
+    }
+
+    /**
+     * 最後の行までスクロールできる最大位置。
+     * ROW_HEIGHT単位にすることで、最終行が途中で切れるのを防ぐ。
+     */
+    private int getMaxScroll() {
+        return Math.max(
+                0,
+                getTotalRowCount() - getVisibleRowCount()
+        ) * ROW_HEIGHT;
+    }
+
+    /**
+     * 指定した行番号の画面上のY座標。
+     */
+    private int getRowY(int index) {
+        return LIST_TOP + index * ROW_HEIGHT - scrollOffset;
+    }
+
     private boolean isRowVisible(int rowY) {
-        return rowY >= LIST_TOP && rowY + ROW_HEIGHT <= getListBottom();
+        return rowY >= LIST_TOP
+                && rowY + ROW_HEIGHT <= getListBottom();
+    }
+
+    // 現在選択されているエネルギー単位をボタンに表示する。
+    private Component getEnergyUnitText() {
+        return Component.literal(
+                ClientConfig.MEKANISM_ENERGY_UNIT.get().name()
+        );
+    }
+
+    /**
+     * 導入済みMODに対応するタブボタンを生成する。
+     */
+    private void addTabButtons() {
+        var tabs = ConfigTab.getAvailableTabs();
+
+        int tabWidth = 100;
+        int gap = 4;
+
+        // タブ全体を画面中央に配置する。
+        int totalWidth = tabs.size() * tabWidth
+                + (tabs.size() - 1) * gap;
+
+        int startX = (this.width - totalWidth) / 2;
+
+        for (int i = 0; i < tabs.size(); i++) {
+            ConfigTab tab = tabs.get(i);
+
+            addRenderableWidget(
+                    Button.builder(
+                                    Component.literal(
+                                            tab == selectedTab
+                                                    ? "[" + tab.getDisplayName() + "]"
+                                                    : tab.getDisplayName()
+                                    ),
+                                    button -> {
+                                        // タブ変更時はスクロール位置を先頭に戻す。
+                                        selectedTab = tab;
+                                        scrollOffset = 0;
+
+                                        // 選択状態と設定項目を再描画する。
+                                        rebuildWidgets();
+                                    }
+                            )
+                            .bounds(
+                                    startX + i * (tabWidth + gap),
+                                    TAB_TOP,
+                                    tabWidth,
+                                    TAB_HEIGHT
+                            )
+                            .build()
+            );
+        }
+    }
+
+    /**
+     * 現在選択されているタブに属するHUD項目を取得する。
+     * IDの文字列ではなくHudGroupで判定するため、既存のIDを変更する必要がない。
+     */
+    private List<HudElement> getVisibleElements() {
+        return HudElements.getOrderedElements()
+                .stream()
+                .filter(element -> {
+                    String groupName = element.getHudGroup().name();
+
+                    return switch (selectedTab) {
+                        case MACHINEHUD -> !groupName.startsWith("CREATE_")
+                                && !groupName.startsWith("MEKANISM_");
+
+                        case CREATE -> groupName.startsWith("CREATE_");
+
+                        case MEKANISM -> groupName.startsWith("MEKANISM_");
+                    };
+                })
+                .toList();
+    }
+
+    /**
+     * 選択中のタブに表示する行一覧を生成する。
+     * HUD項目をグループごとにまとめ、各グループの先頭に見出しを追加する。
+     */
+    private List<ConfigScreenRow> getScreenRows() {
+        Map<HudGroup, List<HudElement>> grouped =
+                new LinkedHashMap<>();
+
+        // 現在のHUD表示順を基準にグループ化する。
+        for (HudElement element : getVisibleElements()) {
+            grouped.computeIfAbsent(
+                    element.getHudGroup(),
+                    ignored -> new ArrayList<>()
+            ).add(element);
+        }
+
+        List<ConfigScreenRow> rows = new ArrayList<>();
+
+        for (Map.Entry<HudGroup, List<HudElement>> entry
+                : grouped.entrySet()) {
+
+            HudGroup group = entry.getKey();
+
+            // カテゴリ見出し。
+            rows.add(ConfigScreenRow.header(group));
+
+            // カテゴリ内のHUD項目。
+            for (HudElement element : entry.getValue()) {
+                rows.add(ConfigScreenRow.hudElement(element));
+            }
+
+            // Energy UnitはMekanismのEnergyカテゴリ内に配置する。
+            if (selectedTab == ConfigTab.MEKANISM
+                    && group == HudGroup.MEKANISM_ENERGY) {
+                rows.add(ConfigScreenRow.energyUnit());
+            }
+        }
+
+        return rows;
     }
 }

@@ -2,20 +2,20 @@ package com.rsdvlp.machinehud;
 
 import com.mojang.logging.LogUtils;
 import com.rsdvlp.machinehud.common.config.ClientConfig;
-import com.rsdvlp.machinehud.common.hud.element.HudElements;
 import com.rsdvlp.machinehud.common.network.MachineHudPayloads;
-import com.rsdvlp.machinehud.common.network.WatchTargetHandlers;
-import com.rsdvlp.machinehud.create.config.CreateHudElementConfig;
-import com.rsdvlp.machinehud.create.element.CreateHudElement;
-import com.rsdvlp.machinehud.create.network.CreateWatchTargetHandler;
+import com.rsdvlp.machinehud.create.CreateInitialize;
 import com.rsdvlp.machinehud.item.ModItems;
+import com.rsdvlp.machinehud.mekanism.MekanismInitialize;
 import com.rsdvlp.machinehud.model.MachineHudGogglesModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -95,6 +96,19 @@ public class MachineHUD {
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
+        boolean createLoaded = ModList.get().isLoaded("create");
+        boolean mekanismLoaded = ModList.get().isLoaded("mekanism");
+
+        // Createが導入されている場合のみCreate連携を初期化する。
+        if (ModList.get().isLoaded("create")) {
+            CreateInitialize.initialize();
+        }
+
+        // Mekanismが導入されている場合のみ、Mekanism固有のHUD要素を登録する。
+        if (ModList.get().isLoaded("mekanism")) {
+            MekanismInitialize.initialize();
+        }
+
         // MachineHUDのクライアント専用設定をNeoForgeへ登録する。
         // CLIENTを指定することでHUD表示など、
         // 各プレイヤーのクライアント側だけで使用する設定として扱われる。
@@ -103,22 +117,14 @@ public class MachineHUD {
                 ClientConfig.SPEC
         );
 
-        // Create固有のServer監視HandlerをMachineHUD共通のHandlerレジストリへ登録する。
-        // common側からCreateを参照するのではなく、Create側の実装を外側からcommonへ登録することで、
-        // 共通監視処理をMOD固有クラスから分離する。
-        WatchTargetHandlers.register(
-                new CreateWatchTargetHandler()
-        );
+        // HUD要素とConfigの設定値を対応付ける。
+        if (createLoaded) {
+            CreateInitialize.registerConfig();
+        }
 
-        // Create固有のHudElementをMachineHUD共通のHudElementレジストリへ登録する。
-        // common側からCreateHudElementを直接参照しないことで、
-        // Create / Mekanismの追加に依存しない構造にする。
-        HudElements.register(
-                CreateHudElement.values()
-        );
-
-        // Create固有HudElementとClientConfigの対応を登録する。
-        CreateHudElementConfig.register();
+        if (mekanismLoaded) {
+            MekanismInitialize.registerConfig();
+        }
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

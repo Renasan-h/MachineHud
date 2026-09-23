@@ -18,148 +18,148 @@ public class CreateHudElementConfig {
     public static void register(){
         // Create - Machine
         HudElementConfig.register(
-                CreateHudElement.SPEED,
-                ClientConfig.SHOW_SPEED
+                CreateHudElement.CREATE_SPEED,
+                ClientConfig.SHOW_CREATE_SPEED
         );
 
         HudElementConfig.register(
-                CreateHudElement.IMPACT,
-                ClientConfig.SHOW_IMPACT
+                CreateHudElement.CREATE_IMPACT,
+                ClientConfig.SHOW_CREATE_IMPACT
         );
 
         HudElementConfig.register(
-                CreateHudElement.STRESS,
-                ClientConfig.SHOW_STRESS
+                CreateHudElement.CREATE_STRESS,
+                ClientConfig.SHOW_CREATE_STRESS
         );
 
         HudElementConfig.register(
-                CreateHudElement.STATUS,
-                ClientConfig.SHOW_STATUS
+                CreateHudElement.CREATE_STATUS,
+                ClientConfig.SHOW_CREATE_STATUS
         );
 
         HudElementConfig.register(
-                CreateHudElement.THEORETICAL_SPEED,
-                ClientConfig.SHOW_THEORETICAL_SPEED
+                CreateHudElement.CREATE_THEORETICAL_SPEED,
+                ClientConfig.SHOW_CREATE_THEORETICAL_SPEED
         );
 
         // Create - Processing
         HudElementConfig.register(
-                CreateHudElement.PROCESSING_MODE,
-                ClientConfig.SHOW_PROCESSING_MODE
+                CreateHudElement.CREATE_PROCESSING_MODE,
+                ClientConfig.SHOW_CREATE_PROCESSING_MODE
         );
 
         HudElementConfig.register(
-                CreateHudElement.PROCESSING_STATE,
-                ClientConfig.SHOW_PROCESSING_STATE
+                CreateHudElement.CREATE_PROCESSING_STATE,
+                ClientConfig.SHOW_CREATE_PROCESSING_STATE
         );
 
         // Create - Boiler
         HudElementConfig.register(
-                CreateHudElement.BOILER_SIZE,
-                ClientConfig.SHOW_BOILER_SIZE
+                CreateHudElement.CREATE_BOILER_SIZE,
+                ClientConfig.SHOW_CREATE_BOILER_SIZE
         );
 
         HudElementConfig.register(
-                CreateHudElement.BOILER_WATER,
-                ClientConfig.SHOW_BOILER_WATER
+                CreateHudElement.CREATE_BOILER_WATER,
+                ClientConfig.SHOW_CREATE_BOILER_WATER
         );
 
         HudElementConfig.register(
-                CreateHudElement.BOILER_HEAT,
-                ClientConfig.SHOW_BOILER_HEAT
+                CreateHudElement.CREATE_BOILER_HEAT,
+                ClientConfig.SHOW_CREATE_BOILER_HEAT
         );
 
         HudElementConfig.register(
-                CreateHudElement.BOILER_LEVEL,
-                ClientConfig.SHOW_BOILER_LEVEL
+                CreateHudElement.CREATE_BOILER_LEVEL,
+                ClientConfig.SHOW_CREATE_BOILER_LEVEL
         );
 
         HudElementConfig.register(
-                CreateHudElement.BOILER_OUTPUT,
-                ClientConfig.SHOW_BOILER_OUTPUT
+                CreateHudElement.CREATE_BOILER_OUTPUT,
+                ClientConfig.SHOW_CREATE_BOILER_OUTPUT
         );
 
         // Create - Network
         HudElementConfig.register(
-                CreateHudElement.NETWORK_STRESS,
-                ClientConfig.SHOW_NETWORK_STRESS
+                CreateHudElement.CREATE_NETWORK_STRESS,
+                ClientConfig.SHOW_CREATE_NETWORK_STRESS
         );
 
         HudElementConfig.register(
-                CreateHudElement.NETWORK_CAPACITY,
-                ClientConfig.SHOW_NETWORK_CAPACITY
+                CreateHudElement.CREATE_NETWORK_CAPACITY,
+                ClientConfig.SHOW_CREATE_NETWORK_CAPACITY
         );
 
         HudElementConfig.register(
-                CreateHudElement.NETWORK_USAGE,
-                ClientConfig.SHOW_NETWORK_USAGE
+                CreateHudElement.CREATE_NETWORK_USAGE,
+                ClientConfig.SHOW_CREATE_NETWORK_USAGE
         );
 
         HudElementConfig.register(
-                CreateHudElement.NETWORK_SIZE,
-                ClientConfig.SHOW_NETWORK_SIZE
+                CreateHudElement.CREATE_NETWORK_SIZE,
+                ClientConfig.SHOW_CREATE_NETWORK_SIZE
         );
 
         HudElementConfig.register(
-                CreateHudElement.NETWORK_STATUS,
-                ClientConfig.SHOW_NETWORK_STATUS
+                CreateHudElement.CREATE_NETWORK_STATUS,
+                ClientConfig.SHOW_CREATE_NETWORK_STATUS
         );
 
         // Create - Power
         HudElementConfig.register(
-                CreateHudElement.POWER_STATE,
-                ClientConfig.SHOW_POWER_STATE
+                CreateHudElement.CREATE_POWER_STATE,
+                ClientConfig.SHOW_CREATE_POWER_STATE
         );
 
         HudElementConfig.register(
-                CreateHudElement.POWER_TARGET_SPEED,
-                ClientConfig.SHOW_POWER_TARGET_SPEED
+                CreateHudElement.CREATE_POWER_TARGET_SPEED,
+                ClientConfig.SHOW_CREATE_POWER_TARGET_SPEED
         );
 
         HudElementConfig.register(
-                CreateHudElement.POWER_SPEED_MODIFIER,
-                ClientConfig.SHOW_POWER_TARGET_SPEED_MODIFIER
+                CreateHudElement.CREATE_POWER_SPEED_MODIFIER,
+                ClientConfig.SHOW_CREATE_POWER_TARGET_SPEED_MODIFIER
         );
 
         HudElementConfig.register(
-                CreateHudElement.POWER_REDSTONE_SIGNAL,
-                ClientConfig.SHOW_POWER_REDSTONE_SIGNAL
+                CreateHudElement.CREATE_POWER_REDSTONE_SIGNAL,
+                ClientConfig.SHOW_CREATE_POWER_REDSTONE_SIGNAL
         );
 
         // Create - Fluid
         HudElementConfig.register(
-                CreateHudElement.FLUID_INPUT_CONNECTION,
-                ClientConfig.SHOW_FLUID_INPUT_CONNECTION
+                CreateHudElement.CREATE_FLUID_INPUT_CONNECTION,
+                ClientConfig.SHOW_CREATE_FLUID_INPUT_CONNECTION
         );
 
         HudElementConfig.register(
-                CreateHudElement.FLUID_OUTPUT_CONNECTION,
-                ClientConfig.SHOW_FLUID_OUTPUT_CONNECTION
+                CreateHudElement.CREATE_FLUID_OUTPUT_CONNECTION,
+                ClientConfig.SHOW_CREATE_FLUID_OUTPUT_CONNECTION
         );
 
         HudElementConfig.register(
-                CreateHudElement.FLUID_MAX_FLOW_RATE,
-                ClientConfig.SHOW_FLUID_MAX_FLOW_RATE
+                CreateHudElement.CREATE_FLUID_MAX_FLOW_RATE,
+                ClientConfig.SHOW_CREATE_FLUID_MAX_FLOW_RATE
         );
 
         HudElementConfig.register(
-                CreateHudElement.FLUID_VALVE_STATE,
-                ClientConfig.SHOW_FLUID_VALVE_STATE
+                CreateHudElement.CREATE_FLUID_VALVE_STATE,
+                ClientConfig.SHOW_CREATE_FLUID_VALVE_STATE
         );
 
         HudElementConfig.register(
-                CreateHudElement.FLUID_FILTER,
-                ClientConfig.SHOW_FLUID_FILTER
+                CreateHudElement.CREATE_FLUID_FILTER,
+                ClientConfig.SHOW_CREATE_FLUID_FILTER
         );
 
         HudElementConfig.register(
-                CreateHudElement.FLUID_CONTENT,
-                ClientConfig.SHOW_FLUID_CONTENT
+                CreateHudElement.CREATE_FLUID_CONTENT,
+                ClientConfig.SHOW_CREATE_FLUID_CONTENT
         );
 
         HudElementConfig.register(
-                CreateHudElement.FLUID_AMOUNT,
-                ClientConfig.SHOW_FLUID_AMOUNT
+                CreateHudElement.CREATE_FLUID_AMOUNT,
+                ClientConfig.SHOW_CREATE_FLUID_AMOUNT
         );
     }
 }

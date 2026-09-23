@@ -75,5 +75,14 @@
   "machinehud.create.fluid.connection.pipe": "Pipe",
   "machinehud.create.fluid.connection.machine": "Machine",
   "machinehud.create.fluid.connection.open": "Open",
-  "machinehud.create.fluid.max_flow_rate": "Max Flow Rate"
+  "machinehud.create.fluid.max_flow_rate": "Max Flow Rate",
+  "machinehud.mekanism.header.energy": "Energy Info",
+  "machinehud.mekanism.header.processing": "Processing Info",
+  "machinehud.mekanism.energy": "Stored Energy",
+  "machinehud.mekanism.energy_usage": "Energy Usage",
+  "machinehud.mekanism.progress": "Processing Progress",
+  "machinehud.mekanism.status": "Machine Status",
+  "machinehud.mekanism.status.running": "Running",
+  "machinehud.mekanism.status.idle": "Idle",
+  "machinehud.mekanism.status.output_blocked": "Output Blocked"
 }
