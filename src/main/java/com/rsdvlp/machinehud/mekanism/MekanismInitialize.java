@@ -5,6 +5,10 @@ import com.rsdvlp.machinehud.common.hud.provider.HudProviders;
 import com.rsdvlp.machinehud.common.network.MachineHudPayloads;
 import com.rsdvlp.machinehud.common.network.WatchTargetHandlers;
 import com.rsdvlp.machinehud.mekanism.config.MekanismHudElementConfig;
+import com.rsdvlp.machinehud.mekanism.data.ElectricMachineReader;
+import com.rsdvlp.machinehud.mekanism.data.MekanismMachineHudDataReader;
+import com.rsdvlp.machinehud.mekanism.data.PressurizedReactionMachineReader;
+import com.rsdvlp.machinehud.mekanism.data.ProgressMachineReader;
 import com.rsdvlp.machinehud.mekanism.element.MekanismHudElement;
 import com.rsdvlp.machinehud.mekanism.network.MekanismPayloads;
 import com.rsdvlp.machinehud.mekanism.network.MekanismWatchTargetHandler;
@@ -29,6 +33,21 @@ public final class MekanismInitialize {
 
         // Mekanism固有のHUD要素を登録する。
         HudElements.register(MekanismHudElement.values());
+
+        // 既存の電動加工機械
+        MekanismMachineHudDataReader.register(
+                new ElectricMachineReader()
+        );
+
+        // 冶金注入機と高度電動加工機械
+        MekanismMachineHudDataReader.register(
+                new ProgressMachineReader()
+        );
+
+        // 加圧反応室
+        MekanismMachineHudDataReader.register(
+                new PressurizedReactionMachineReader()
+        );
 
         // MekanismのProvider生成処理を登録する。
         HudProviders.register(MekanismHudProviders::create);

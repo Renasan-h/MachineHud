@@ -84,5 +84,15 @@
   "machinehud.mekanism.status": "Machine Status",
   "machinehud.mekanism.status.running": "Running",
   "machinehud.mekanism.status.idle": "Idle",
-  "machinehud.mekanism.status.output_blocked": "Output Blocked"
+  "machinehud.mekanism.status.output_blocked": "Output Blocked",
+  "machinehud.mekanism.chemical": "Chemical",
+  "machinehud.mekanism.chemical.empty": "Empty",
+  "machinehud.mekanism.chemical_amount": "Stored Amount",
+  "machinehud.mekanism.chemical_input": "Input Chemical",
+  "machinehud.mekanism.chemical_input_amount": "Input Amount",
+  "machinehud.mekanism.chemical_output": "Output Chemical",
+  "machinehud.mekanism.chemical_output_amount": "Output Amount",
+  "machinehud.mekanism.fluid_input": "Input Fluid",
+  "machinehud.mekanism.fluid_input_amount": "Fluid Amount",
+  "machinehud.mekanism.fluid.empty": "Empty"
 }

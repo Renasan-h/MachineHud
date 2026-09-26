@@ -200,6 +200,54 @@ public class ClientConfig {
                             EnergyDisplayUnit.J
                     );
 
+    // Mekanismの化学材料表示
+    public static final ModConfigSpec.BooleanValue SHOW_MEKANISM_CHEMICAL =
+            BUILDER
+                    .comment("Show Mekanism chemical tank information")
+                    .define("showMekanismChemical", true);
+
+    // Mekanismの化学タンク貯蔵量を表示する。
+    public static final ModConfigSpec.BooleanValue SHOW_MEKANISM_CHEMICAL_AMOUNT =
+            BUILDER
+                    .comment("Show Mekanism chemical tank amount.")
+                    .define("showMekanismChemicalAmount", true);
+
+    public static final ModConfigSpec.BooleanValue
+            SHOW_MEKANISM_CHEMICAL_INPUT =
+            BUILDER
+                    .comment("Show Mekanism input chemical.")
+                    .define("showMekanismChemicalInput", true);
+
+    public static final ModConfigSpec.BooleanValue
+            SHOW_MEKANISM_CHEMICAL_INPUT_AMOUNT =
+            BUILDER
+                    .comment("Show Mekanism input chemical amount.")
+                    .define("showMekanismChemicalInputAmount", true);
+
+    public static final ModConfigSpec.BooleanValue
+            SHOW_MEKANISM_CHEMICAL_OUTPUT =
+            BUILDER
+                    .comment("Show Mekanism output chemical.")
+                    .define("showMekanismChemicalOutput", true);
+
+    public static final ModConfigSpec.BooleanValue
+            SHOW_MEKANISM_CHEMICAL_OUTPUT_AMOUNT =
+            BUILDER
+                    .comment("Show Mekanism output chemical amount.")
+                    .define("showMekanismChemicalOutputAmount", true);
+
+    public static final ModConfigSpec.BooleanValue
+            SHOW_MEKANISM_FLUID_INPUT =
+            BUILDER
+                    .comment("Show Mekanism input fluid.")
+                    .define("showMekanismFluidInput", true);
+
+    public static final ModConfigSpec.BooleanValue
+            SHOW_MEKANISM_FLUID_INPUT_AMOUNT =
+            BUILDER
+                    .comment("Show Mekanism input fluid amount.")
+                    .define("showMekanismFluidInputAmount", true);
+
     /*
      * HUDの表示順。
      * HudElementのIDをStringとして保存する。

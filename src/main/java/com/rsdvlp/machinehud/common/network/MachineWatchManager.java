@@ -55,7 +55,6 @@ public final class MachineWatchManager {
 
         /*
          * Chunkがロードされていない座標は監視しない。
-         *
          * ここでBlockEntity取得などを先に行わないことで、
          * HUD通信を理由に遠方Chunkをロードさせることを防ぐ。
          */
@@ -65,7 +64,6 @@ public final class MachineWatchManager {
 
         /*
          * MachineHUDのClient側レイキャストは最大10ブロック。
-         *
          * Server側でもそれを大きく超える座標を拒否する。
          * BlockPosの中心までの距離で判定する。
          */

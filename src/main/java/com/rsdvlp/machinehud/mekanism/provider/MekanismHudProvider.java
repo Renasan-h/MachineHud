@@ -6,11 +6,21 @@ import com.rsdvlp.machinehud.common.hud.HudLine;
 import com.rsdvlp.machinehud.common.hud.HudLineType;
 import com.rsdvlp.machinehud.common.hud.element.HudElement;
 import com.rsdvlp.machinehud.common.hud.provider.HudProvider;
+import com.rsdvlp.machinehud.mekanism.data.MekanismChemicalHudData;
+import com.rsdvlp.machinehud.mekanism.data.MekanismChemicalTankHudData;
+import com.rsdvlp.machinehud.mekanism.data.MekanismFluidHudData;
 import com.rsdvlp.machinehud.mekanism.data.MekanismMachineHudData;
 import com.rsdvlp.machinehud.mekanism.element.MekanismHudElement;
 import com.rsdvlp.machinehud.mekanism.util.MekanismEnergyFormatter;
+import mekanism.api.MekanismAPI;
+import mekanism.api.chemical.Chemical;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.fluids.FluidStack;
+
+import java.util.List;
 
 /**
  * Mekanismの機械データをHUD表示行に変換する。
@@ -19,9 +29,20 @@ import net.minecraft.network.chat.Component;
 public final class MekanismHudProvider implements HudProvider {
 
     private final MekanismMachineHudData data;
+    private final MekanismChemicalHudData chemicalData;
+    private final List<MekanismChemicalTankHudData> chemicalTanks;
+    private final MekanismFluidHudData fluidData;
 
-    public MekanismHudProvider(MekanismMachineHudData data) {
+    public MekanismHudProvider(
+            MekanismMachineHudData data,
+            MekanismChemicalHudData chemicalData,
+            List<MekanismChemicalTankHudData> chemicalTanks,
+            MekanismFluidHudData fluidData
+    ) {
         this.data = data;
+        this.chemicalData = chemicalData;
+        this.chemicalTanks = List.copyOf(chemicalTanks);
+        this.fluidData = fluidData;
     }
 
     @Override
@@ -41,6 +62,14 @@ public final class MekanismHudProvider implements HudProvider {
             case MEKANISM_ENERGY_USAGE -> createEnergyUsageLine(mekanismElement);
             case MEKANISM_PROGRESS -> createProgressLine(mekanismElement);
             case MEKANISM_STATUS -> createStatusLine(mekanismElement);
+            case MEKANISM_CHEMICAL -> createChemicalLine(mekanismElement);
+            case MEKANISM_CHEMICAL_AMOUNT -> createChemicalAmountLine(mekanismElement);
+            case MEKANISM_CHEMICAL_INPUT -> createTankChemicalLine(mekanismElement, "input");
+            case MEKANISM_CHEMICAL_INPUT_AMOUNT -> createTankAmountLine(mekanismElement, "input");
+            case MEKANISM_CHEMICAL_OUTPUT -> createTankChemicalLine(mekanismElement, "output");
+            case MEKANISM_CHEMICAL_OUTPUT_AMOUNT -> createTankAmountLine(mekanismElement, "output");
+            case MEKANISM_FLUID_INPUT -> createFluidInputLine(mekanismElement);
+            case MEKANISM_FLUID_INPUT_AMOUNT -> createFluidAmountLine(mekanismElement);
         };
     }
 
@@ -150,6 +179,233 @@ public final class MekanismHudProvider implements HudProvider {
                 HudLineType.VALUE,
                 group,
                 null
+        );
+    }
+
+    /**
+     * 化学素材名を表示する。
+     */
+    private HudLine createChemicalLine(
+            MekanismHudElement element
+    ) {
+        if (chemicalData == null || chemicalData.capacity() <= 0) {
+            return null;
+        }
+
+        Component chemicalName;
+
+        if (chemicalData.chemicalId().isEmpty()) {
+            chemicalName = Component.translatable(
+                    "machinehud.mekanism.chemical.empty"
+            );
+        } else {
+            ResourceLocation id =
+                    ResourceLocation.tryParse(chemicalData.chemicalId());
+
+            if (id == null) {
+                return null;
+            }
+
+            Chemical chemical =
+                    MekanismAPI.CHEMICAL_REGISTRY.get(id);
+
+            if (chemical == null) {
+                return null;
+            }
+
+            chemicalName = chemical.getTextComponent();
+        }
+
+        return createValueLine(
+                element,
+                chemicalName,
+                HudGroup.MEKANISM_PROCESSING,
+                ChatFormatting.WHITE.getColor()
+        );
+    }
+
+    /**
+     * 化学タンクの現在量と最大容量を表示する。
+     */
+    private HudLine createChemicalAmountLine(
+            MekanismHudElement element
+    ) {
+        if (chemicalData == null || chemicalData.capacity() <= 0) {
+            return null;
+        }
+
+        Component amount = Component.literal(
+                String.format(
+                        java.util.Locale.ROOT,
+                        "%,d / %,d mB",
+                        chemicalData.amount(),
+                        chemicalData.capacity()
+                )
+        );
+
+        return createValueLine(
+                element,
+                amount,
+                HudGroup.MEKANISM_PROCESSING,
+                ChatFormatting.WHITE.getColor()
+        );
+    }
+
+    /**
+     * 識別子から対象の化学タンクを取得する。
+     */
+    private MekanismChemicalTankHudData findTank(String tankId) {
+        for (MekanismChemicalTankHudData tank : chemicalTanks) {
+            if (tank.tankId().equals(tankId)) {
+                return tank;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 入力または出力タンクの化学素材名を表示する。
+     */
+    private HudLine createTankChemicalLine(
+            MekanismHudElement element,
+            String tankId
+    ) {
+        MekanismChemicalTankHudData tank = findTank(tankId);
+
+        if (tank == null || tank.capacity() <= 0) {
+            return null;
+        }
+
+        Component chemicalName;
+
+        if (tank.chemicalId().isEmpty()) {
+            chemicalName = Component.translatable(
+                    "machinehud.mekanism.chemical.empty"
+            );
+        } else {
+            ResourceLocation id =
+                    ResourceLocation.tryParse(tank.chemicalId());
+
+            if (id == null) {
+                return null;
+            }
+
+            Chemical chemical =
+                    MekanismAPI.CHEMICAL_REGISTRY.get(id);
+
+            if (chemical == null) {
+                return null;
+            }
+
+            chemicalName = chemical.getTextComponent();
+        }
+
+        return createValueLine(
+                element,
+                chemicalName,
+                HudGroup.MEKANISM_PROCESSING,
+                ChatFormatting.WHITE.getColor()
+        );
+    }
+
+    /**
+     * 入力または出力タンクの貯蔵量を表示する。
+     */
+    private HudLine createTankAmountLine(
+            MekanismHudElement element,
+            String tankId
+    ) {
+        MekanismChemicalTankHudData tank = findTank(tankId);
+
+        if (tank == null || tank.capacity() <= 0) {
+            return null;
+        }
+
+        Component amount = Component.literal(
+                String.format(
+                        java.util.Locale.ROOT,
+                        "%,d / %,d mB",
+                        tank.amount(),
+                        tank.capacity()
+                )
+        );
+
+        return createValueLine(
+                element,
+                amount,
+                HudGroup.MEKANISM_PROCESSING,
+                ChatFormatting.WHITE.getColor()
+        );
+    }
+
+    /**
+     * 入力液体の名前を表示する。
+     */
+    private HudLine createFluidInputLine(
+            MekanismHudElement element
+    ) {
+        if (fluidData == null) {
+            return null;
+        }
+
+        Component fluidName;
+
+        if (fluidData.fluidId().isEmpty()) {
+            fluidName = Component.translatable(
+                    "machinehud.mekanism.fluid.empty"
+            );
+        } else {
+            ResourceLocation id =
+                    ResourceLocation.tryParse(fluidData.fluidId());
+
+            if (id == null) {
+                return null;
+            }
+
+            var fluid = BuiltInRegistries.FLUID.get(id);
+
+            if (fluid == null) {
+                return null;
+            }
+
+            // FluidStackの表示名を使い、
+            // Minecraftや他MODの翻訳にも対応する。
+            fluidName = new FluidStack(fluid, 1).getHoverName();
+        }
+
+        return createValueLine(
+                element,
+                fluidName,
+                HudGroup.MEKANISM_PROCESSING,
+                ChatFormatting.WHITE.getColor()
+        );
+    }
+
+    /**
+     * 入力液体タンクの現在量と最大容量を表示する。
+     */
+    private HudLine createFluidAmountLine(
+            MekanismHudElement element
+    ) {
+        if (fluidData == null) {
+            return null;
+        }
+
+        Component amount = Component.literal(
+                String.format(
+                        java.util.Locale.ROOT,
+                        "%,d / %,d mB",
+                        fluidData.amount(),
+                        fluidData.capacity()
+                )
+        );
+
+        return createValueLine(
+                element,
+                amount,
+                HudGroup.MEKANISM_PROCESSING,
+                ChatFormatting.WHITE.getColor()
         );
     }
 }

@@ -44,7 +44,65 @@ public enum MekanismHudElement implements HudElement {
             "mekanism_status",
             "machinehud.mekanism.status",
             HudGroup.MEKANISM_PROCESSING
-    );
+    ),
+
+    /**
+     * 化学タンク内の素材名。
+     */
+    MEKANISM_CHEMICAL(
+            "mekanism_chemical",
+            "machinehud.mekanism.chemical",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    /**
+     * 化学タンクの現在量と最大容量。
+     */
+    MEKANISM_CHEMICAL_AMOUNT(
+            "mekanism_chemical_amount",
+            "machinehud.mekanism.chemical_amount",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    // 入力：液体
+    MEKANISM_FLUID_INPUT(
+            "mekanism_fluid_input",
+            "machinehud.mekanism.fluid_input",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    MEKANISM_FLUID_INPUT_AMOUNT(
+            "mekanism_fluid_input_amount",
+            "machinehud.mekanism.fluid_input_amount",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    // 入力：化学素材
+    MEKANISM_CHEMICAL_INPUT(
+            "mekanism_chemical_input",
+            "machinehud.mekanism.chemical_input",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    MEKANISM_CHEMICAL_INPUT_AMOUNT(
+            "mekanism_chemical_input_amount",
+            "machinehud.mekanism.chemical_input_amount",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    // 出力：化学素材
+    MEKANISM_CHEMICAL_OUTPUT(
+            "mekanism_chemical_output",
+            "machinehud.mekanism.chemical_output",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    MEKANISM_CHEMICAL_OUTPUT_AMOUNT(
+            "mekanism_chemical_output_amount",
+            "machinehud.mekanism.chemical_output_amount",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+    ;
 
     private final String id;
     private final String displayName;

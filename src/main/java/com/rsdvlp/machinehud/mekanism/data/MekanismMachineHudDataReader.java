@@ -1,59 +1,61 @@
 
 package com.rsdvlp.machinehud.mekanism.data;
 
-import mekanism.common.capabilities.energy.MachineEnergyContainer;
-import mekanism.common.tile.machine.TileEntityEnergizedSmelter;
-import mekanism.common.tile.prefab.TileEntityElectricMachine;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Mekanismの機械からHUD表示用データを取得する。
- * データ取得処理をProviderから分離することで、
- * 将来的にほかのMekanism機械にも対応しやすくする。
+ * 登録された機械別ReaderからHUDデータを取得する。
  */
 public final class MekanismMachineHudDataReader {
+
+    private static final List<MekanismMachineReader> READERS =
+            new ArrayList<>();
 
     private MekanismMachineHudDataReader() {
     }
 
     /**
-     * Energized SmelterのHUD用データを取得する。
-     *
-     * @param blockEntity 対象のBlockEntity
-     * @return 対応機械の場合はHUDデータ、それ以外はnull
+     * 対応機械のReaderを登録する。
      */
-    public static MekanismMachineHudData read(
-            BlockEntity blockEntity
-    ) {
+    public static void register(MekanismMachineReader reader) {
+        READERS.add(reader);
+    }
 
-        // 今回はEnergized Smelterのみを対象にする。
-        if (!(blockEntity instanceof TileEntityEnergizedSmelter smelter)) {
+    /**
+     * 登録済みReaderが対応している機械か判定する。
+     * データの取得は行わない。
+     */
+    public static boolean supports(BlockEntity blockEntity) {
+        if (blockEntity == null) {
+            return false;
+        }
+
+        for (MekanismMachineReader reader : READERS) {
+            if (reader.supports(blockEntity)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 対応するReaderを探してHUDデータを取得する。
+     */
+    public static MekanismMachineHudData read(BlockEntity blockEntity) {
+        if (blockEntity == null) {
             return null;
         }
 
-        // 親クラスからエネルギーコンテナを取得する。
-        MachineEnergyContainer<TileEntityElectricMachine> energy =
-                smelter.getEnergyContainer();
+        for (MekanismMachineReader reader : READERS) {
+            if (reader.supports(blockEntity)) {
+                return reader.read(blockEntity);
+            }
+        }
 
-        // エネルギー消費量は稼働中のみ表示する。
-        long energyUsage = smelter.getActive()
-                ? energy.getEnergyPerTick()
-                : 0L;
-
-        // 現時点では稼働状態をRUNNING / IDLEの2種類で判定する。
-        // OUTPUT_BLOCKEDは原因を正確に判定できるようになってから使用する。
-        MekanismMachineHudData.State state =
-                smelter.getActive()
-                        ? MekanismMachineHudData.State.RUNNING
-                        : MekanismMachineHudData.State.IDLE;
-
-        return new MekanismMachineHudData(
-                energy.getEnergy(),
-                energy.getMaxEnergy(),
-                energyUsage,
-                smelter.getOperatingTicks(),
-                smelter.getTicksRequired(),
-                state
-        );
+        return null;
     }
 }

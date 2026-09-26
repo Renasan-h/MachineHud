@@ -73,5 +73,15 @@
   "machinehud.mekanism.status": "動作状態",
   "machinehud.mekanism.status.running": "稼働中",
   "machinehud.mekanism.status.idle": "待機中",
-  "machinehud.mekanism.status.output_blocked": "出力先が満杯"
+  "machinehud.mekanism.status.output_blocked": "出力先が満杯",
+  "machinehud.mekanism.chemical": "化学素材",
+  "machinehud.mekanism.chemical.empty": "空",
+  "machinehud.mekanism.chemical_amount": "貯蔵量",
+  "machinehud.mekanism.chemical_input": "入力素材",
+  "machinehud.mekanism.chemical_input_amount": "入力貯蔵量",
+  "machinehud.mekanism.chemical_output": "出力素材",
+  "machinehud.mekanism.chemical_output_amount": "出力貯蔵量",
+  "machinehud.mekanism.fluid_input": "入力液体",
+  "machinehud.mekanism.fluid_input_amount": "液体貯蔵量",
+  "machinehud.mekanism.fluid.empty": "空"
 }

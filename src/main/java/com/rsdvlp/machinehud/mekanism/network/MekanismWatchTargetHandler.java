@@ -2,12 +2,12 @@
 package com.rsdvlp.machinehud.mekanism.network;
 
 import com.rsdvlp.machinehud.common.network.WatchTargetHandler;
-import com.rsdvlp.machinehud.mekanism.data.MekanismMachineHudData;
-import com.rsdvlp.machinehud.mekanism.data.MekanismMachineHudDataReader;
-import mekanism.common.tile.machine.TileEntityEnergizedSmelter;
+import com.rsdvlp.machinehud.mekanism.data.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.List;
 
 /**
  * Mekanismの機械をサーバー側で監視するHandler。
@@ -18,9 +18,8 @@ public final class MekanismWatchTargetHandler
 
     @Override
     public boolean supports(BlockEntity blockEntity) {
-
-        // 最初はEnergized Smelterのみ対応する。
-        return blockEntity instanceof TileEntityEnergizedSmelter;
+        return blockEntity != null
+                && MekanismMachineHudDataReader.supports(blockEntity);
     }
 
     @Override
@@ -28,8 +27,7 @@ public final class MekanismWatchTargetHandler
             ServerPlayer player,
             BlockEntity blockEntity
     ) {
-
-        // サーバー側の最新データを取得する。
+        // 既存のエネルギー・加工進捗を取得する。
         MekanismMachineHudData data =
                 MekanismMachineHudDataReader.read(blockEntity);
 
@@ -37,14 +35,40 @@ public final class MekanismWatchTargetHandler
             return;
         }
 
-        // サーバーで取得した最新の加工進捗と消費量を、この機械を監視しているプレイヤーに送信する。
+        // 既存の単一化学タンク情報
+        MekanismChemicalHudData chemical =
+                MekanismChemicalReader.read(blockEntity);
+
+        // 新規：複数化学タンク情報
+        MekanismChemicalTanksHudData multiple =
+                PressurizedReactionChemicalReader.read(blockEntity);
+
+        List<MekanismChemicalTankHudData> tanks =
+                multiple != null
+                        ? multiple.tanks()
+                        : List.of();
+        // 加圧反応室の入力液体タンクを取得する。
+        // それ以外の機械ではnullになる。
+        MekanismFluidHudData fluid =
+                PressurizedReactionFluidReader.read(blockEntity);
+
         MekanismHudSyncPayload payload =
                 new MekanismHudSyncPayload(
+                        // 基礎情報
                         blockEntity.getBlockPos(),
                         data.storedEnergy(),
                         data.energyUsage(),
                         data.progress(),
-                        data.maxProgress()
+                        data.maxProgress(),
+
+                        // 単一化学タンク
+                        chemical != null ? chemical.chemicalId() : "",
+                        chemical != null ? chemical.amount() : 0L,
+                        chemical != null ? chemical.capacity() : 0L,
+                        // 複数化学タンク
+                        tanks,
+                        // 液体タンク
+                        fluid
                 );
 
         PacketDistributor.sendToPlayer(player, payload);

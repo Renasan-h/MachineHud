@@ -39,5 +39,46 @@ public final class MekanismHudElementConfig {
                 MekanismHudElement.MEKANISM_STATUS,
                 ClientConfig.SHOW_MEKANISM_STATUS
         );
+
+        // Mekanism - Chemical
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_CHEMICAL,
+                ClientConfig.SHOW_MEKANISM_CHEMICAL
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_CHEMICAL_AMOUNT,
+                ClientConfig.SHOW_MEKANISM_CHEMICAL_AMOUNT
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_CHEMICAL_INPUT,
+                ClientConfig.SHOW_MEKANISM_CHEMICAL_INPUT
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_CHEMICAL_INPUT_AMOUNT,
+                ClientConfig.SHOW_MEKANISM_CHEMICAL_INPUT_AMOUNT
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_CHEMICAL_OUTPUT,
+                ClientConfig.SHOW_MEKANISM_CHEMICAL_OUTPUT
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_CHEMICAL_OUTPUT_AMOUNT,
+                ClientConfig.SHOW_MEKANISM_CHEMICAL_OUTPUT_AMOUNT
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_FLUID_INPUT,
+                ClientConfig.SHOW_MEKANISM_FLUID_INPUT
+        );
+
+        HudElementConfig.register(
+                MekanismHudElement.MEKANISM_FLUID_INPUT_AMOUNT,
+                ClientConfig.SHOW_MEKANISM_FLUID_INPUT_AMOUNT
+        );
     }
 }
