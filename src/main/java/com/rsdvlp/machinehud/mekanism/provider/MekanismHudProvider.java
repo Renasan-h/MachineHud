@@ -70,6 +70,10 @@ public final class MekanismHudProvider implements HudProvider {
             case MEKANISM_CHEMICAL_OUTPUT_AMOUNT -> createTankAmountLine(mekanismElement, "output");
             case MEKANISM_FLUID_INPUT -> createFluidInputLine(mekanismElement);
             case MEKANISM_FLUID_INPUT_AMOUNT -> createFluidAmountLine(mekanismElement);
+            case MEKANISM_CHEMICAL_LEFT -> createTankChemicalLine(mekanismElement, "left");
+            case MEKANISM_CHEMICAL_LEFT_AMOUNT -> createTankAmountLine(mekanismElement, "left");
+            case MEKANISM_CHEMICAL_RIGHT -> createTankChemicalLine(mekanismElement, "right");
+            case MEKANISM_CHEMICAL_RIGHT_AMOUNT -> createTankAmountLine(mekanismElement, "right");
         };
     }
 

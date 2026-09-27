@@ -68,9 +68,15 @@ public final class MekanismHudProviders {
                         ? synced.chemicalTanks()
                         : List.of();
 
-        // 同期前はクライアント側のBlockEntityから読み取る。
+        // 加圧反応室の入力液体を取得する。
         MekanismFluidHudData fluidData =
                 PressurizedReactionFluidReader.read(blockEntity);
+
+        // 電解分離機の場合は、こちらのReaderで取得する。
+        if (fluidData == null) {
+            fluidData =
+                    ElectrolyticSeparatorFluidReader.read(blockEntity);
+        }
 
         // 同期済みデータがあればサーバー側の値を優先する。
         if (synced != null) {

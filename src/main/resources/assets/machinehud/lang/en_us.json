@@ -94,5 +94,9 @@
   "machinehud.mekanism.chemical_output_amount": "Output Amount",
   "machinehud.mekanism.fluid_input": "Input Fluid",
   "machinehud.mekanism.fluid_input_amount": "Fluid Amount",
-  "machinehud.mekanism.fluid.empty": "Empty"
+  "machinehud.mekanism.fluid.empty": "Empty",
+  "machinehud.mekanism.chemical.left": "Left Output",
+  "machinehud.mekanism.chemical.left_amount": "Left Output Amount",
+  "machinehud.mekanism.chemical.right": "Right Output",
+  "machinehud.mekanism.chemical.right_amount": "Right Output Amount"
 }

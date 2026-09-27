@@ -102,6 +102,30 @@ public enum MekanismHudElement implements HudElement {
             "machinehud.mekanism.chemical_output_amount",
             HudGroup.MEKANISM_PROCESSING
     ),
+
+    MEKANISM_CHEMICAL_LEFT(
+            "mekanism_chemical_left",
+            "machinehud.mekanism.chemical_left",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    MEKANISM_CHEMICAL_LEFT_AMOUNT(
+            "mekanism_chemical_left_amount",
+            "machinehud.mekanism.chemical_left_amount",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    MEKANISM_CHEMICAL_RIGHT(
+            "mekanism_chemical_right",
+            "machinehud.mekanism.chemical_right",
+            HudGroup.MEKANISM_PROCESSING
+    ),
+
+    MEKANISM_CHEMICAL_RIGHT_AMOUNT(
+            "mekanism_chemical_right_amount",
+            "machinehud.mekanism.right_amount",
+            HudGroup.MEKANISM_PROCESSING
+    ),
     ;
 
     private final String id;

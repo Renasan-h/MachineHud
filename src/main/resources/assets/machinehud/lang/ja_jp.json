@@ -83,5 +83,9 @@
   "machinehud.mekanism.chemical_output_amount": "出力貯蔵量",
   "machinehud.mekanism.fluid_input": "入力液体",
   "machinehud.mekanism.fluid_input_amount": "液体貯蔵量",
-  "machinehud.mekanism.fluid.empty": "空"
+  "machinehud.mekanism.fluid.empty": "空",
+  "machinehud.mekanism.chemical.left": "左出力",
+  "machinehud.mekanism.chemical.left_amount": "左出力量",
+  "machinehud.mekanism.chemical.right": "右出力",
+  "machinehud.mekanism.chemical.right_amount": "右出力量"
 }

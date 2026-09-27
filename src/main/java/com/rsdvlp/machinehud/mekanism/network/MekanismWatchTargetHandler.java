@@ -28,29 +28,39 @@ public final class MekanismWatchTargetHandler
             BlockEntity blockEntity
     ) {
         // 既存のエネルギー・加工進捗を取得する。
-        MekanismMachineHudData data =
-                MekanismMachineHudDataReader.read(blockEntity);
+        MekanismMachineHudData data = MekanismMachineHudDataReader.read(blockEntity);
 
         if (data == null) {
             return;
         }
 
         // 既存の単一化学タンク情報
-        MekanismChemicalHudData chemical =
-                MekanismChemicalReader.read(blockEntity);
+        MekanismChemicalHudData chemical = MekanismChemicalReader.read(blockEntity);
 
-        // 新規：複数化学タンク情報
+        /*
+         * 複数の化学タンクを持つ機械からデータを取得する。
+         * 加圧反応室： input / output
+         * 電解分離機： left / right
+         */
         MekanismChemicalTanksHudData multiple =
                 PressurizedReactionChemicalReader.read(blockEntity);
+
+        if (multiple == null) {
+            multiple = ElectrolyticSeparatorChemicalReader.read(blockEntity);
+        }
 
         List<MekanismChemicalTankHudData> tanks =
                 multiple != null
                         ? multiple.tanks()
                         : List.of();
-        // 加圧反応室の入力液体タンクを取得する。
-        // それ以外の機械ではnullになる。
-        MekanismFluidHudData fluid =
-                PressurizedReactionFluidReader.read(blockEntity);
+
+        // 加圧反応室の入力液体を取得する。
+        MekanismFluidHudData fluid = PressurizedReactionFluidReader.read(blockEntity);
+
+        // 電解分離機の場合は、こちらのReaderで取得する。
+        if (fluid == null) {
+            fluid = ElectrolyticSeparatorFluidReader.read(blockEntity);
+        }
 
         MekanismHudSyncPayload payload =
                 new MekanismHudSyncPayload(
